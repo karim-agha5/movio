@@ -32,7 +32,7 @@ class SplashFragment : Fragment() {
         Handler().postDelayed({
             findNavController()
                 .navigate(
-                    SplashFragmentDirections.actionSplashFragmentToHomeFragment(),
+                    SplashFragmentDirections.actionSplashFragmentToAuthenticationFragment(),
                     navOptions {
                         anim {
                             enter = android.R.animator.fade_in
