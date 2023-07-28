@@ -21,7 +21,7 @@
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/authenticationFragment"
-        android:name="com.example.movio.feature.authentication.AuthenticationFragment"
+        android:name="com.example.movio.feature.authentication.views.AuthenticationFragment"
         android:label="fragment_authentication"
         tools:layout="@layout/fragment_authentication" />
 </navigation>

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Movio</string>
+    <string name="web_client_id">876061655167-6ci40itiot1mj54n27tff64686ouhe66.apps.googleusercontent.com</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="let_s_sign_you_in">Let\'s sign you in</string>
@@ -11,4 +12,9 @@
     <string name="tv_don_t_have_an_account_text">Don\'t have an account?</string>
     <string name="btn_sign_up_text">Sign up</string>
     <string name="movio_application_logo_content_description">Movio Application Logo</string>
+    <string name="ok">OK</string>
+    <string name="generic_authentication_error_title">Error</string>
+    <string name="generic_authentication_error_message">Unable to authenticate</string>
+    <string name="canceled_authentication_title">Canceled Operation</string>
+    <string name="canceled_authentication_message">Unable to authenticate due to operation cancellation.</string>
 </resources>
