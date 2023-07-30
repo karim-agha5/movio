@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.PopUpToBuilder
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.example.movio.R
@@ -37,6 +38,9 @@ class SplashFragment : Fragment() {
                         anim {
                             enter = android.R.animator.fade_in
                             exit = android.R.animator.fade_out
+                        }
+                        popUpTo(R.id.splashFragment){
+                            this.inclusive = true
                         }
                     }
                 )

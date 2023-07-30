@@ -18,6 +18,7 @@ import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleO
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.services.GoogleSignInService
+import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -27,6 +28,8 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import io.reactivex.rxjava3.disposables.Disposable
 import java.util.Arrays
 
@@ -36,6 +39,8 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var disposable: Disposable
+    private val firebaseAuth by lazy {Firebase.auth}
+    private val authenticationHelper by lazy {AuthenticationHelper}
     private val tag = this.javaClass.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,8 +68,9 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
             //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email","public_profile"));
         }
 
+        binding.btnContinueWithTwitter.setOnClickListener { twitterAuthenticationFlow() }
 
-        binding.btnContinueWithGoogle.setOnClickListener { sign() }
+        binding.btnContinueWithGoogle.setOnClickListener { googleAuthenticationFlow() }
 
         val source = AuthenticationHelper.getAuthenticationResultSource()
         disposable = source.subscribe{
@@ -85,9 +91,16 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
 
     }
 
-    private fun sign(){
-        val googleService = GoogleSignInService.getInstance(requireActivity(),this)
-        googleService.login(null)
+    private fun googleAuthenticationFlow(){
+        GoogleSignInService
+            .getInstance(requireActivity(),this)
+            .login(null)
+    }
+
+    private fun twitterAuthenticationFlow(){
+        TwitterAuthenticationService
+            .getInstance(requireActivity(),firebaseAuth,authenticationHelper)
+            .login(null)
     }
 
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest){
@@ -130,6 +143,6 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
 
     override fun onDestroy() {
         super.onDestroy()
-        AuthenticationHelper.disposeAuthenticationResult(disposable)
+        authenticationHelper.disposeAuthenticationResult(disposable)
     }
 }
