@@ -2,6 +2,8 @@ package com.example.movio.feature.authentication.helpers
 
 import com.google.android.gms.auth.api.Auth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -33,4 +35,7 @@ object AuthenticationHelper {
         compositeDisposable.dispose()
     }
 
+    fun signOut(){
+        Firebase.auth.signOut()
+    }
 }

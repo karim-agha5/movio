@@ -1,7 +1,5 @@
 package com.example.movio.feature.authentication.views
 
-import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,7 +8,6 @@ import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.example.movio.MainActivity
 import com.example.movio.R
 import com.example.movio.databinding.FragmentAuthenticationBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
@@ -19,27 +16,22 @@ import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.FacebookSdk
-import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
+import com.example.movio.feature.common.helpers.UserManager
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.reactivex.rxjava3.disposables.Disposable
-import java.util.Arrays
 
 class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
 
     private lateinit var binding: FragmentAuthenticationBinding
+    private val firebaseAuth by lazy {Firebase.auth}
+    private val userManager = UserManager.getInstance(firebaseAuth)
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var disposable: Disposable
-    private val firebaseAuth by lazy {Firebase.auth}
     private val authenticationHelper by lazy {AuthenticationHelper}
     private val tag = this.javaClass.simpleName
 
@@ -63,7 +55,6 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-
         binding.btnContinueWithFacebook.setOnClickListener {
             //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email","public_profile"));
         }
@@ -77,6 +68,7 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
             when(it){
                 is AuthenticationResult.Success -> {
                     Log.i(tag, "Received the account inside the fragment | ${it.user}")
+                    userManager.authenticateUser(it.user)
                 }
                 is AuthenticationResult.Failure -> {
                     if(it.throwable is ApiException){

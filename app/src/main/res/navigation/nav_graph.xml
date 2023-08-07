@@ -24,4 +24,9 @@
         android:name="com.example.movio.feature.authentication.views.AuthenticationFragment"
         android:label="fragment_authentication"
         tools:layout="@layout/fragment_authentication" />
+    <action
+        android:id="@+id/action_global_homeFragment"
+        app:destination="@id/homeFragment"
+        app:popUpTo="@id/splashFragment"
+        app:popUpToInclusive="true" />
 </navigation>

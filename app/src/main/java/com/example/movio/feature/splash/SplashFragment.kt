@@ -2,17 +2,22 @@ package com.example.movio.feature.splash
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.PopUpToBuilder
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.example.movio.R
-import kotlinx.coroutines.delay
+import com.example.movio.feature.common.helpers.UserManager
+import com.example.movio.feature.home.HomeFragmentDirections
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class SplashFragment : Fragment() {
+
+    private val userManager = UserManager.getInstance(Firebase.auth)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +34,30 @@ class SplashFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Navigate to HomeScreen after 3 secs with fading animation.
-        Handler().postDelayed({
+        // Navigate to Authentication or Home after 2 secs with a fading animation.
+        Handler(Looper.getMainLooper()).postDelayed({navigateFromSplash()},2000)
+    }
+
+    /*
+    * Navigates to either the AuthenticationFragment or to the HomeFragment
+    * */
+    private fun navigateFromSplash(){
+        if(userManager.isLoggedIn()){
+            findNavController()
+                .navigate(
+                    HomeFragmentDirections.actionGlobalHomeFragment(),
+                    navOptions {
+                        anim {
+                            enter = android.R.anim.fade_in
+                            exit = android.R.anim.fade_out
+                        }
+                        popUpTo(R.id.splashFragment){
+                            inclusive = true
+                        }
+                    }
+                )
+        }
+        else{
             findNavController()
                 .navigate(
                     SplashFragmentDirections.actionSplashFragmentToAuthenticationFragment(),
@@ -40,10 +67,10 @@ class SplashFragment : Fragment() {
                             exit = android.R.animator.fade_out
                         }
                         popUpTo(R.id.splashFragment){
-                            this.inclusive = true
+                            inclusive = true
                         }
                     }
                 )
-        },2000)
+        }
     }
 }
