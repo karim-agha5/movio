@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Movio</string>
+    <string name="web_client_id">876061655167-6ci40itiot1mj54n27tff64686ouhe66.apps.googleusercontent.com</string>
+
+    <!-- Facebook authentication -->
+    <string name="facebook_app_id">2054009201610050</string>
+    <string name="fb_login_protocol_scheme">fb2054009201610050</string>
+    <string name="facebook_client_token">82efcb1e3a3a57a35b90648d55238fff</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="let_s_sign_you_in">Let\'s sign you in</string>
+    <string name="btn_facebook_authentication_text">Continue with Facebook</string>
+    <string name="btn_google_authentication_text">Continue with Google</string>
+    <string name="btn_twitter_authentication_text">Continue with Twitter</string>
+    <string name="authentication_divider_text">or</string>
+    <string name="btn_sign_in_with_password_text">Sign in with password</string>
+    <string name="tv_don_t_have_an_account_text">Don\'t have an account?</string>
+    <string name="btn_sign_up_text">Sign up</string>
+    <string name="movio_application_logo_content_description">Movio Application Logo</string>
+    <string name="ok">OK</string>
+    <string name="generic_authentication_error_title">Error</string>
+    <string name="generic_authentication_error_message">Unable to authenticate</string>
+    <string name="canceled_authentication_title">Canceled Operation</string>
+    <string name="canceled_authentication_message">Unable to authenticate due to operation cancellation.</string>
 </resources>

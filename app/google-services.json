@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "876061655167",
+    "project_id": "movio-a7726",
+    "storage_bucket": "movio-a7726.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876061655167:android:3da8c1ec3d224be2e23f4a",
+        "android_client_info": {
+          "package_name": "com.example.movio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "876061655167-7kvivekr4bvtafulisfm3v21ltfbiuhk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.movio",
+            "certificate_hash": "6c7046513b5bf2dd6577e1c64b380c25eaca0819"
+          }
+        },
+        {
+          "client_id": "876061655167-6ci40itiot1mj54n27tff64686ouhe66.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBwxbDsQOsW6Ji3ECSUyzw8y9ZNEEA2gg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "876061655167-0v74rkgicug2ng9lbfhrv7b8arioc0ir.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

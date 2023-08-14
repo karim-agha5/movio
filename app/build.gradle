@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -23,6 +25,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildFeatures{
+        dataBinding true
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -33,11 +38,42 @@ android {
 }
 
 dependencies {
+    def nav_version = "2.6.0"
 
-    implementation 'androidx.core:core-ktx:1.8.0'
+
+    implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:32.2.0')
+
+    // Google Sign-In
+    implementation 'com.google.android.gms:play-services-auth:20.6.0'
+
+    // Facebook Sign-In
+    implementation 'com.facebook.android:facebook-login:latest.release'
+
+    implementation 'com.facebook.android:facebook-android-sdk:latest.release'
+
+
+    // Firebase authentication
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+    //RxAndroid
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+
+    // RxJava 3
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.6'
+
+    // Navigation Component
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    // Lottie animations
+    implementation 'com.airbnb.android:lottie:6.0.0'
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
