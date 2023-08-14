@@ -1,6 +1,5 @@
 package com.example.movio.feature.authentication.services
 
-import android.util.Log
 import androidx.activity.ComponentActivity
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.LoginCredentials
@@ -13,7 +12,6 @@ import com.google.firebase.auth.OAuthProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -65,37 +63,23 @@ class TwitterAuthenticationService private constructor(
     private suspend fun twitterSigningFlow(){
         val pendingResultTask = firebaseAuth
             .startActivityForSignInWithProvider(componentActivity,provider.build())
-            /*.addOnSuccessListener {
-                // TODO make sure to receive the OAuth access token
-                // so you can call the Twitter API and get basic profile info by calling their REST API
-                authenticationHelper.onSuccess(it.user)
-            }
-            .addOnFailureListener {
-                authenticationHelper.onFailure(it)
-            }*/
+
         getPendingResultTaskResult(pendingResultTask)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun getPendingResultTaskResult(pendingResultTask: Task<AuthResult>){
         withContext(Dispatchers.IO){
-            val userDeferred = async {
-               // pendingResultTask.result.user ?: pendingResultTask.exception
-                pendingResultTask.await()
-            }
+            val userDeferred = async { pendingResultTask.await() }
 
             val result = userDeferred.await()
 
             if(result.user is FirebaseUser){
                 // TODO make sure to receive the OAuth access token
                 // so you can call the Twitter API and get basic profile info by calling their REST API
-                Log.i("Exception", "twitter authentication successful | ${result.user}")
-                //authenticationHelper.onSuccess(result.user)
-                withContext(Dispatchers.Main){authenticationHelper.onSuccess(result.user)}
+                authenticationHelper.onSuccess(result.user)
             }
             else{
-                //authenticationHelper.onFailure(pendingResultTask.exception)
-                Log.i("Exception", "twitter authentication error | ${userDeferred.getCompletionExceptionOrNull()}")
                 authenticationHelper.onFailure(userDeferred.getCompletionExceptionOrNull())
             }
         }

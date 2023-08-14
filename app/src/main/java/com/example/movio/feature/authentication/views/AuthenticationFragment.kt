@@ -76,6 +76,7 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
                 is AuthenticationResult.Success -> {
                     Log.i(tag, "Received the account inside the fragment | ${it.user}")
                     userManager.authenticateUser(it.user)
+                    // TODO navigate to the HomeFragment
                 }
                 is AuthenticationResult.Failure -> {
                     if(it.throwable is ApiException){
