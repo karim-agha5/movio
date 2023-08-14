@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.databinding.FragmentAuthenticationBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
@@ -23,6 +24,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import io.reactivex.rxjava3.disposables.Disposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
 
@@ -59,9 +62,13 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
             //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email","public_profile"));
         }
 
-        binding.btnContinueWithTwitter.setOnClickListener { twitterAuthenticationFlow() }
+        binding.btnContinueWithTwitter.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.Main) { twitterAuthenticationFlow() }
+        }
 
-        binding.btnContinueWithGoogle.setOnClickListener { googleAuthenticationFlow() }
+        binding.btnContinueWithGoogle.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.Main) { googleAuthenticationFlow() }
+        }
 
         val source = AuthenticationHelper.getAuthenticationResultSource()
         disposable = source.subscribe{
@@ -83,13 +90,13 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
 
     }
 
-    private fun googleAuthenticationFlow(){
+    private suspend fun googleAuthenticationFlow(){
         GoogleSignInService
             .getInstance(requireActivity(),this)
             .login(null)
     }
 
-    private fun twitterAuthenticationFlow(){
+    private suspend fun twitterAuthenticationFlow(){
         TwitterAuthenticationService
             .getInstance(requireActivity(),firebaseAuth,authenticationHelper)
             .login(null)

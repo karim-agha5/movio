@@ -64,7 +64,7 @@ class FacebookAuthenticationService private constructor(
         })
     }
 
-    override fun login(credentials: LoginCredentials?) {
+    override suspend fun login(credentials: LoginCredentials?) {
         loginManager.logIn(componentActivity,callbackManager,permissions)
     }
 }

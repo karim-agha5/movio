@@ -108,7 +108,7 @@ class GoogleSignInService private constructor(
     }
 
 
-    override fun login(credentials: LoginCredentials?) {
+    override suspend fun login(credentials: LoginCredentials?) {
         oneTapClient.beginSignIn(signInRequest)
             .addOnSuccessListener {
                 // The Activity Result callback launcher requires an IntentSenderRequest
