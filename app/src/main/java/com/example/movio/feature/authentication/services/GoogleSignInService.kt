@@ -9,12 +9,17 @@ import com.example.movio.feature.authentication.helpers.AuthenticationResultCall
 import com.example.movio.feature.authentication.helpers.LoginCredentials
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
+import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class GoogleSignInService private constructor(
     private val componentActivity: ComponentActivity,
@@ -62,6 +67,7 @@ class GoogleSignInService private constructor(
             .build()
     }
 
+    // Used for building the one tap client configurations
     private fun buildGoogleIdTokenRequestOptions() : GoogleIdTokenRequestOptions{
         return GoogleIdTokenRequestOptions
             .builder()
@@ -72,8 +78,10 @@ class GoogleSignInService private constructor(
             .build()
     }
 
-
-    fun authenticateWithFirebase(data: Intent?){
+    /**
+     * Main-safe
+     * */
+    suspend fun authenticateWithFirebase(data: Intent?){
          try{
              val credential = oneTapClient.getSignInCredentialFromIntent(data)
              val googleIdToken = credential.googleIdToken
@@ -91,39 +99,48 @@ class GoogleSignInService private constructor(
          }
     }
 
-    private fun getFirebaseUser(googleIdToken: String?) {
+    /**
+     * Main-safe
+     * */
+    private suspend fun getFirebaseUser(googleIdToken: String?) {
         val firebaseCredential = GoogleAuthProvider.getCredential(googleIdToken,null)
-        auth.signInWithCredential(firebaseCredential)
-            .addOnCompleteListener(componentActivity){
-                if(it.isSuccessful){
-                    // Signing in is successful
-                    val user = auth.currentUser
-                    AuthenticationHelper.onSuccess(user)
-                }
-                else{
-                    // Signing in has failed
-                    AuthenticationHelper.onFailure(it.exception)
-                }
+        withContext(Dispatchers.IO){
+            val deferredResult = async { auth.signInWithCredential(firebaseCredential).await() }
+            try {
+                // Signing in is successful
+                AuthenticationHelper.onSuccess(deferredResult.await().user)
+            }catch (e: Exception){
+                // Signing in has failed
+                AuthenticationHelper.onFailure(e)
             }
+        }
     }
 
-
     override suspend fun login(credentials: LoginCredentials?) {
-        oneTapClient.beginSignIn(signInRequest)
-            .addOnSuccessListener {
+        withContext(Dispatchers.IO){
+            val resultDeferred = async {
+                // call the .await() method to wait for the task to be completed
+                oneTapClient.beginSignIn(signInRequest).await()
+            }
+
+            try{
                 // The Activity Result callback launcher requires an IntentSenderRequest
                 // The One Tap client returns an Intent Sender which you use
                 // to build an Intent Sender Request and pass it to the launcher
-                val intentSenderRequest = IntentSenderRequest.Builder(it.pendingIntent.intentSender).build()
+                val intentSender = resultDeferred.await().pendingIntent.intentSender
+                val intentSenderRequest = IntentSenderRequest.Builder(intentSender).build()
                 // TODO add the callback to a continuation coroutine
                 launcher.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
-            }
-            .addOnFailureListener(componentActivity) {
+
+            }catch (e: Exception){
                 // The Caller has been temporarily blocked due to too many canceled sign-in prompts
                 // or
                 // The user doesn't have any saved credentials on the device
                 // also deal with generic errors
-                AuthenticationHelper.onFailure(it)
+                AuthenticationHelper.onFailure(e)
             }
+
+
+        }
     }
 }

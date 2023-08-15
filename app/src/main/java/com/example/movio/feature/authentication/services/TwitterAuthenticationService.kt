@@ -71,7 +71,10 @@ class TwitterAuthenticationService private constructor(
     private suspend fun getPendingResultTaskResult(pendingResultTask: Task<AuthResult>){
         withContext(Dispatchers.IO){
             val userDeferred = async { pendingResultTask.await() }
-
+            /*
+            * TODO consider wrapping the .await() call with a try and catch block
+            *  as exiting the browser while logging/signing up crashes the app
+            *  */
             val result = userDeferred.await()
 
             if(result.user is FirebaseUser){

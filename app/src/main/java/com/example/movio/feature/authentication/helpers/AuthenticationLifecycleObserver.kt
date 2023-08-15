@@ -6,7 +6,10 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.example.movio.feature.authentication.services.GoogleSignInService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * This class is added as a lifecycle observer and registers the launcher that is responsible for
@@ -27,7 +30,9 @@ class AuthenticationLifecycleObserver(
             owner,
             ActivityResultContracts.StartIntentSenderForResult()
         ){
-            googleSignInService.authenticateWithFirebase(it.data)
+            owner.lifecycleScope.launch(Dispatchers.Main) {
+                googleSignInService.authenticateWithFirebase(it.data)
+            }
         }
     }
 
