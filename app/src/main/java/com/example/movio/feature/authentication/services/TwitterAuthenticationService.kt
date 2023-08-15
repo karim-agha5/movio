@@ -1,5 +1,6 @@
 package com.example.movio.feature.authentication.services
 
+import android.util.Log
 import androidx.activity.ComponentActivity
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.LoginCredentials
@@ -9,8 +10,10 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.OAuthProvider
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -67,24 +70,22 @@ class TwitterAuthenticationService private constructor(
         getPendingResultTaskResult(pendingResultTask)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    /**
+     * Main-safe function that sends a [FirebaseUser] or an [Exception] to the observer.
+     * */
     private suspend fun getPendingResultTaskResult(pendingResultTask: Task<AuthResult>){
-        withContext(Dispatchers.IO){
-            val userDeferred = async { pendingResultTask.await() }
-            /*
-            * TODO consider wrapping the .await() call with a try and catch block
-            *  as exiting the browser while logging/signing up crashes the app
-            *  */
-            val result = userDeferred.await()
+       withContext(Dispatchers.IO){
+           // TODO currently experimenting with runCatching. Look for all the edge cases surrounding
+           // the runCatching and async builders.
+            val result = runCatching { pendingResultTask.await() }
 
-            if(result.user is FirebaseUser){
-                // TODO make sure to receive the OAuth access token
-                // so you can call the Twitter API and get basic profile info by calling their REST API
-                authenticationHelper.onSuccess(result.user)
-            }
-            else{
-                authenticationHelper.onFailure(userDeferred.getCompletionExceptionOrNull())
-            }
+           when{
+               // TODO make sure to receive the OAuth access token
+               // so you can call the Twitter API and get basic profile info by calling their REST API
+               result.isSuccess -> authenticationHelper.onSuccess(result.getOrNull()?.user)
+               result.isFailure -> authenticationHelper.onFailure(result.exceptionOrNull())
+           }
+
         }
     }
 

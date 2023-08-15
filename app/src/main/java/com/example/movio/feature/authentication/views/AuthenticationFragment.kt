@@ -69,12 +69,14 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
         binding.btnContinueWithGoogle.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Main) { googleAuthenticationFlow() }
         }
-        Log.i(tag, Thread.currentThread().name)
         val source = AuthenticationHelper.getAuthenticationResultSource()
         disposable = source.subscribe{
+            /**
+             * TODO should handle the cases were null is sent from the source observable.
+             *  Look [TwitterAuthenticationService]
+             */
             when(it){
                 is AuthenticationResult.Success -> {
-                    Log.i(tag, "Received the account inside the fragment | ${it.user}")
                     userManager.authenticateUser(it.user)
                     // TODO navigate to the HomeFragment
                 }
@@ -119,7 +121,7 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
         val title: String
         val message: String
         when(statusCode) {
-            CommonStatusCodes.CANCELED -> {
+            CommonStatusCodes.CANCELED  -> {
                  title = getString(R.string.canceled_authentication_title)
                  message = getString(R.string.canceled_authentication_message)
             }

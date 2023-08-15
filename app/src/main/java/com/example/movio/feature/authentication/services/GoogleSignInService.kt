@@ -105,6 +105,7 @@ class GoogleSignInService private constructor(
     private suspend fun getFirebaseUser(googleIdToken: String?) {
         val firebaseCredential = GoogleAuthProvider.getCredential(googleIdToken,null)
         withContext(Dispatchers.IO){
+            // TODO a cancellation exception may be thrown from within the async builder. Handle it.
             val deferredResult = async { auth.signInWithCredential(firebaseCredential).await() }
             try {
                 val user = deferredResult.await().user
@@ -119,6 +120,7 @@ class GoogleSignInService private constructor(
 
     override suspend fun login(credentials: LoginCredentials?) {
         withContext(Dispatchers.IO){
+            // TODO a cancellation exception may be thrown from within the async builder. Handle it.
             val resultDeferred = async {
                 // call the .await() method to wait for the task to be completed
                 oneTapClient.beginSignIn(signInRequest).await()
