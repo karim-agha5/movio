@@ -107,8 +107,9 @@ class GoogleSignInService private constructor(
         withContext(Dispatchers.IO){
             val deferredResult = async { auth.signInWithCredential(firebaseCredential).await() }
             try {
+                val user = deferredResult.await().user
                 // Signing in is successful
-                AuthenticationHelper.onSuccess(deferredResult.await().user)
+                AuthenticationHelper.onSuccess(user)
             }catch (e: Exception){
                 // Signing in has failed
                 AuthenticationHelper.onFailure(e)

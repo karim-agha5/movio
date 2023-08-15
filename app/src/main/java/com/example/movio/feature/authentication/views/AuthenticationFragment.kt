@@ -69,7 +69,7 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
         binding.btnContinueWithGoogle.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Main) { googleAuthenticationFlow() }
         }
-
+        Log.i(tag, Thread.currentThread().name)
         val source = AuthenticationHelper.getAuthenticationResultSource()
         disposable = source.subscribe{
             when(it){
@@ -108,10 +108,12 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
     }
 
     private fun showDialog(message: String?){
-        buildDialog(
-            getString(R.string.generic_authentication_error_title),
-            message
-        ).show()
+        lifecycleScope.launch(Dispatchers.Main){
+            buildDialog(
+                getString(R.string.generic_authentication_error_title),
+                message
+            ).show()
+        }
     }
     private fun showDialog(statusCode: Int){
         val title: String
@@ -130,7 +132,7 @@ class AuthenticationFragment : Fragment(),AuthenticationResultCallbackLauncher {
                 message = getString(R.string.generic_authentication_error_message)
             }
         }
-         buildDialog(title,message).show()
+         lifecycleScope.launch(Dispatchers.Main){ buildDialog(title,message).show() }
     }
 
     private fun buildDialog(title: String,message: String?) : MaterialAlertDialogBuilder{
