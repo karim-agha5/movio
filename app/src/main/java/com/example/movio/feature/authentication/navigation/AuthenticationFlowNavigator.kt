@@ -1,0 +1,21 @@
+package com.example.movio.feature.authentication.navigation
+
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import com.example.movio.NavGraphDirections
+
+class AuthenticationFlowNavigator(private val navController: NavController) {
+
+    /**
+     * Starts the authentication flow with the first authentication screen.
+     * */
+    fun start(){
+        navController.navigate(NavGraphDirections.actionGlobalAuthenticationFragment())
+    }
+
+    fun navigateToHomeFragment(navOptions: NavOptions?){
+        navController.navigate(
+            NavGraphDirections.actionGlobalHomeFragment(),navOptions
+        )
+    }
+}

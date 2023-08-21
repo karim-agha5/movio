@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
+import com.example.movio.NavGraphDirections
 import com.example.movio.R
 import com.example.movio.feature.common.helpers.UserManager
 import com.example.movio.feature.home.HomeFragmentDirections
@@ -60,7 +61,7 @@ class SplashFragment : Fragment() {
         else{
             findNavController()
                 .navigate(
-                    SplashFragmentDirections.actionSplashFragmentToAuthenticationFragment(),
+                    NavGraphDirections.actionGlobalAuthenticationFragment(),
                     navOptions {
                         anim {
                             enter = android.R.animator.fade_in
