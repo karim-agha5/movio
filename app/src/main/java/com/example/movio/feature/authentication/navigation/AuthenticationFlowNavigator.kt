@@ -13,9 +13,13 @@ class AuthenticationFlowNavigator(private val navController: NavController) {
         navController.navigate(NavGraphDirections.actionGlobalAuthenticationFragment())
     }
 
-    fun navigateToHomeFragment(navOptions: NavOptions?){
+    fun navigateToHomeScreen(navOptions: NavOptions?){
         navController.navigate(
             NavGraphDirections.actionGlobalHomeFragment(),navOptions
         )
+    }
+
+    fun navigateToEmailAndPasswordScreen(navOptions: NavOptions){
+
     }
 }

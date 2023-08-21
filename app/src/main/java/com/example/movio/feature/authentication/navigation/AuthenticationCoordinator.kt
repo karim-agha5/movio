@@ -11,12 +11,29 @@ import kotlinx.coroutines.withContext
  * This class is main-safe as navigation requires to be on the main thread.
  *  It contains all the logic necessary for the navigation in the authentication flow.
  * */
-class AuthenticationCoordinator(private val flowNavigator: AuthenticationFlowNavigator) : Coordinator {
+class AuthenticationCoordinator private constructor(private val flowNavigator: AuthenticationFlowNavigator)
+    : Coordinator {
+
+
+    companion object{
+        @Volatile private var instance: AuthenticationCoordinator? = null
+
+        fun getInstance(flowNavigator: AuthenticationFlowNavigator) =
+             instance ?: synchronized(this){
+                instance ?: AuthenticationCoordinator(flowNavigator).also { instance = it }
+        }
+    }
 
     /**
-     * Starts the authentication flow with the first authentication screen.
+     * An action is passed when an event takes place on the UI.
+     * Each action represents a destination in the flow.
      * */
-    override fun start() = flowNavigator.start()
+    override suspend fun postAction(action: Coordinator.Action) {
+        when(action){
+            is AuthenticationActions.ToHomeScreen -> navigateToHomeScreen()
+            is AuthenticationActions.ToEmailAndPasswordScreen -> navigateToEmailAndPasswordScreen()
+        }
+    }
 
     private fun buildHomeFragmentNavOptions() : NavOptions {
         return navOptions {
@@ -30,15 +47,16 @@ class AuthenticationCoordinator(private val flowNavigator: AuthenticationFlowNav
         }
     }
 
-    suspend fun navigateToHomeFragment() {
+    private suspend fun navigateToHomeScreen() {
         withContext(Dispatchers.Main){
-            flowNavigator.navigateToHomeFragment(buildHomeFragmentNavOptions())
+            flowNavigator.navigateToHomeScreen(buildHomeFragmentNavOptions())
         }
     }
 
-
-    override fun onEvent(/*TODO should receive an argument of type event*/) {
-        TODO("Not yet implemented")
+    private suspend fun navigateToEmailAndPasswordScreen(){
+        withContext(Dispatchers.Main){
+            // flowNavigator.navigateToEmailAndPasswordScreen()
+        }
     }
 
 }

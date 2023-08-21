@@ -13,12 +13,14 @@ import androidx.navigation.AnimBuilder
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.example.movio.R
+import com.example.movio.core.MovioApplication
 import com.example.movio.core.common.CoordinatorHost
 import com.example.movio.databinding.FragmentAuthenticationBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
+import com.example.movio.feature.authentication.navigation.AuthenticationActions
 import com.example.movio.feature.authentication.navigation.AuthenticationCoordinator
 import com.example.movio.feature.authentication.navigation.AuthenticationFlowNavigator
 import com.example.movio.feature.authentication.services.GoogleSignInService
@@ -34,7 +36,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AuthenticationFragment :
-    Fragment(),AuthenticationResultCallbackLauncher,CoordinatorHost<AuthenticationCoordinator> {
+    Fragment(),AuthenticationResultCallbackLauncher,CoordinatorHost {
 
     private lateinit var binding: FragmentAuthenticationBinding
     private val firebaseAuth by lazy {Firebase.auth}
@@ -43,9 +45,13 @@ class AuthenticationFragment :
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var disposable: Disposable
     private val authenticationHelper by lazy {AuthenticationHelper}
-    override val coordinator by lazy{
+    /*override val coordinator by lazy{
         AuthenticationCoordinator(AuthenticationFlowNavigator(findNavController()))
+    }*/
+    override val coordinator by lazy {
+        (requireActivity().application as MovioApplication).movioContainer.rootCoordinator.requireCoordinator()
     }
+
     private val tag = this.javaClass.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,7 +129,8 @@ class AuthenticationFragment :
 
     private fun navigateToHomeFragment() {
         lifecycleScope.launch {
-            coordinator.navigateToHomeFragment()
+            //coordinator.navigateToHomeFragment()
+            coordinator.postAction(AuthenticationActions.ToHomeScreen)
         }
     }
 
