@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.example.movio.NavGraphDirections
 
+// TODO consider making this class an inner class to AuthenticationCoordinator
 class AuthenticationFlowNavigator(private val navController: NavController) {
 
     /**

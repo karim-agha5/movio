@@ -9,9 +9,6 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.AnimBuilder
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
 import com.example.movio.R
 import com.example.movio.core.MovioApplication
 import com.example.movio.core.common.CoordinatorHost
@@ -21,8 +18,6 @@ import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleO
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.navigation.AuthenticationActions
-import com.example.movio.feature.authentication.navigation.AuthenticationCoordinator
-import com.example.movio.feature.authentication.navigation.AuthenticationFlowNavigator
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.example.movio.feature.common.helpers.UserManager
@@ -38,16 +33,15 @@ import kotlinx.coroutines.launch
 class AuthenticationFragment :
     Fragment(),AuthenticationResultCallbackLauncher,CoordinatorHost {
 
-    private lateinit var binding: FragmentAuthenticationBinding
+    private var _binding: FragmentAuthenticationBinding? = null
+    private val binding
+        get() = _binding!!
     private val firebaseAuth by lazy {Firebase.auth}
     private val userManager = UserManager.getInstance(firebaseAuth)
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var disposable: Disposable
     private val authenticationHelper by lazy {AuthenticationHelper}
-    /*override val coordinator by lazy{
-        AuthenticationCoordinator(AuthenticationFlowNavigator(findNavController()))
-    }*/
     override val coordinator by lazy {
         (requireActivity().application as MovioApplication).movioContainer.rootCoordinator.requireCoordinator()
     }
@@ -62,13 +56,14 @@ class AuthenticationFragment :
         authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(requireActivity().activityResultRegistry,googleSignInService)
         lifecycle.addObserver(authenticationLifecycleObserver)
+        val c = (requireActivity().application as MovioApplication).movioContainer.rootCoordinator
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_authentication,container,false)
+        _binding = DataBindingUtil.inflate(inflater,R.layout.fragment_authentication,container,false)
         return binding.root
     }
 
@@ -79,8 +74,7 @@ class AuthenticationFragment :
         }
 
         binding.btnContinueWithTwitter.setOnClickListener {
-            //lifecycleScope.launch(Dispatchers.Main) { twitterAuthenticationFlow() }
-            navigateToHomeFragment()
+            lifecycleScope.launch(Dispatchers.Main) { twitterAuthenticationFlow() }
         }
 
         binding.btnContinueWithGoogle.setOnClickListener {
@@ -95,7 +89,6 @@ class AuthenticationFragment :
             when(it){
                 is AuthenticationResult.Success -> {
                     userManager.authenticateUser(it.user)
-                    // TODO navigate to the HomeFragment
                     navigateToHomeFragment()
                 }
                 is AuthenticationResult.Failure -> {
@@ -129,7 +122,6 @@ class AuthenticationFragment :
 
     private fun navigateToHomeFragment() {
         lifecycleScope.launch {
-            //coordinator.navigateToHomeFragment()
             coordinator.postAction(AuthenticationActions.ToHomeScreen)
         }
     }
@@ -170,6 +162,10 @@ class AuthenticationFragment :
             .setNeutralButton(getString(R.string.ok)) { _, _ -> /* Do nothing*/ }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onDestroy() {
         super.onDestroy()
         authenticationHelper.disposeAuthenticationResult(disposable)
