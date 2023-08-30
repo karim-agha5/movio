@@ -1,5 +1,6 @@
 package com.example.movio.core.common
 
+import android.util.Log
 import androidx.navigation.NavController
 import com.example.movio.feature.authentication.navigation.AuthenticationCoordinator
 import com.example.movio.feature.authentication.navigation.AuthenticationFlowNavigator
@@ -10,12 +11,11 @@ class RootCoordinator : FlowContext{
      * Each coordinator object has a nullable and non-nullable reference in order to dispose the object
      * when its flow is completed and to avoid continuously checking for nullability.
      * */
-
     private lateinit var navController: NavController
     private lateinit var state: FlowState
 
     /**
-     * Must be called when onCreate is called.
+     * Must be called when the MainActivity's onCreate is called.
      * */
     fun init(navController: NavController){
         if(!this::navController.isInitialized) {

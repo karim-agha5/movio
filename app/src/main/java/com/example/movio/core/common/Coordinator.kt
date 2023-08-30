@@ -11,7 +11,6 @@ interface Coordinator {
      * A single method to coordinate views in a flow to simplify the Coordinator API used by the views.
      * */
     suspend fun postAction(action: Action)
-
     /**
      * Marker interface to so onEvent() can receive an implementation of the Event interface instead of Any.
      * */

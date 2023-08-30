@@ -1,5 +1,6 @@
 package com.example.movio.feature.authentication.navigation
 
+import android.util.Log
 import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
 import com.example.movio.R
@@ -36,6 +37,7 @@ class AuthenticationCoordinator private constructor(
      * */
     override suspend fun postAction(action: Coordinator.Action) {
         when(action){
+            is AuthenticationActions.ToAuthenticationScreen -> navigateToAuthenticationScreen()
             is AuthenticationActions.ToHomeScreen -> {
                 navigateToHomeScreen()
                 flowState.switchState()
@@ -50,9 +52,27 @@ class AuthenticationCoordinator private constructor(
                 enter = R.anim.from_right_to_current
                 exit = R.anim.from_current_to_left
             }
-            popUpTo(R.id.authenticationFragment){
+            popUpTo(R.id.splashFragment){
                 inclusive = true
             }
+        }
+    }
+
+    private fun buildAuthenticationFragmentNavOptions() : NavOptions {
+        return navOptions {
+            anim {
+                enter = android.R.anim.fade_in
+                exit = android.R.anim.fade_out
+            }
+            popUpTo(R.id.splashFragment){
+                inclusive = true
+            }
+        }
+    }
+
+    private suspend fun navigateToAuthenticationScreen(){
+        withContext(Dispatchers.Main){
+            flowNavigator.navigateToAuthenticationScreen(buildAuthenticationFragmentNavOptions())
         }
     }
 
@@ -67,5 +87,4 @@ class AuthenticationCoordinator private constructor(
             // flowNavigator.navigateToEmailAndPasswordScreen()
         }
     }
-
 }

@@ -3,6 +3,7 @@ package com.example.movio
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.movio.core.MovioApplication
@@ -13,8 +14,7 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
-    private val auth = Firebase.auth
-    private val userManager = UserManager.getInstance(auth) // TODO add this to the app class
+    private val userManager by lazy { (application as MovioApplication).movioContainer.userManager }
     private val tag = this.javaClass.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        userManager.authenticateUser(auth.currentUser)
+        userManager.authenticateUser((application as MovioApplication).movioContainer.firebaseAuth.currentUser)
         if(userManager.isLoggedIn()){
             Log.i(tag, "found a user in activity | ")
         }

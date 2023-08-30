@@ -3,25 +3,33 @@ package com.example.movio.feature.splash
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.example.movio.NavGraphDirections
 import com.example.movio.R
+import com.example.movio.core.MovioApplication
+import com.example.movio.feature.authentication.navigation.AuthenticationActions
 import com.example.movio.feature.common.helpers.UserManager
 import com.example.movio.feature.home.HomeFragmentDirections
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SplashFragment : Fragment() {
 
-    private val userManager = UserManager.getInstance(Firebase.auth)
+    private val userManager by lazy {
+        (requireActivity().application as MovioApplication).movioContainer.userManager
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val coordinator by lazy {
+        (requireActivity().application as MovioApplication).movioContainer.rootCoordinator.requireCoordinator()
     }
 
     override fun onCreateView(
@@ -36,7 +44,16 @@ class SplashFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Navigate to Authentication or Home after 2 secs with a fading animation.
-        Handler(Looper.getMainLooper()).postDelayed({navigateFromSplash()},2000)
+        Handler(Looper.getMainLooper())
+            .postDelayed(
+            {
+                /*lifecycleScope.launch(Dispatchers.Main) {
+                    navigateFromSplash()
+                }*/
+                navigateFromSplash()
+            },
+            2000
+        )
     }
 
     /*
@@ -74,4 +91,13 @@ class SplashFragment : Fragment() {
                 )
         }
     }
+
+    /*private suspend fun navigateFromSplash(){
+        if(userManager.isLoggedIn()){
+            coordinator.postAction(AuthenticationActions.ToHomeScreen)
+        }
+        else{
+            coordinator.postAction(AuthenticationActions.ToAuthenticationScreen)
+        }
+    }*/
 }

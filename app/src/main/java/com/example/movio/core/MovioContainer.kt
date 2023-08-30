@@ -1,6 +1,9 @@
 package com.example.movio.core
 
 import com.example.movio.core.common.RootCoordinator
+import com.example.movio.feature.common.helpers.UserManager
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 /**
  * A container of objects that are shared across the whole app.
@@ -8,4 +11,7 @@ import com.example.movio.core.common.RootCoordinator
 class MovioContainer{
 
     val rootCoordinator = RootCoordinator()
+    val firebaseAuth = Firebase.auth
+    val userManager = UserManager.getInstance(firebaseAuth)
+
 }
