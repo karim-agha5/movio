@@ -7,7 +7,7 @@ import com.example.movio.feature.authentication.navigation.AuthenticationFlowNav
 class AuthenticationFlowState(override val flowContext: FlowContext) : FlowState {
 
     override fun requireCoordinator(navController: NavController) : Coordinator {
-        return AuthenticationCoordinator.getInstance(AuthenticationFlowNavigator(navController),this)
+        return AuthenticationCoordinator(AuthenticationFlowNavigator(navController),this)
     }
 
     override fun switchState(){

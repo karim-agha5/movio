@@ -1,17 +1,12 @@
 package com.example.movio.feature.authentication.views
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.example.movio.R
-import com.example.movio.core.MovioApplication
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.CoordinatorHost
 import com.example.movio.databinding.FragmentAuthenticationBinding
@@ -22,13 +17,10 @@ import com.example.movio.feature.authentication.helpers.AuthenticationResultCall
 import com.example.movio.feature.authentication.navigation.AuthenticationActions
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
-import com.example.movio.feature.common.helpers.UserManager
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

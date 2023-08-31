@@ -1,7 +1,6 @@
 package com.example.movio.core
 
 import android.app.Application
-import android.util.Log
 import com.google.firebase.FirebaseApp
 
 class MovioApplication : Application() {

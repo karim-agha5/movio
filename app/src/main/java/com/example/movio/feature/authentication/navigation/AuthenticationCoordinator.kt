@@ -1,6 +1,5 @@
 package com.example.movio.feature.authentication.navigation
 
-import android.util.Log
 import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
 import com.example.movio.R
@@ -13,23 +12,10 @@ import kotlinx.coroutines.withContext
  * This class is main-safe as navigation requires to be on the main thread.
  *  It contains all the logic necessary for the navigation in the authentication flow.
  * */
-class AuthenticationCoordinator private constructor(
+class AuthenticationCoordinator constructor(
     private val flowNavigator: AuthenticationFlowNavigator,
     private val flowState: FlowState
-    )
-    : Coordinator {
-
-    companion object{
-        @Volatile private var instance: AuthenticationCoordinator? = null
-
-        fun getInstance(
-            flowNavigator: AuthenticationFlowNavigator,
-            flowState: FlowState
-        ) =
-             instance ?: synchronized(this){
-                instance ?: AuthenticationCoordinator(flowNavigator,flowState).also { instance = it }
-        }
-    }
+    ) : Coordinator {
 
     /**
      * An action is passed when an event takes place on the UI.

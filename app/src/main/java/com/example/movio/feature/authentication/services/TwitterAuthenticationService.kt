@@ -1,6 +1,5 @@
 package com.example.movio.feature.authentication.services
 
-import android.util.Log
 import androidx.activity.ComponentActivity
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.LoginCredentials
@@ -10,11 +9,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.OAuthProvider
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
