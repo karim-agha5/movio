@@ -1,6 +1,9 @@
-package com.example.movio.core.common
+package com.example.movio.feature.home.navigation
 
 import androidx.navigation.NavController
+import com.example.movio.core.common.Coordinator
+import com.example.movio.core.common.FlowContext
+import com.example.movio.core.common.FlowState
 
 class AuthenticatedFlowState(override val flowContext: FlowContext) : FlowState {
 

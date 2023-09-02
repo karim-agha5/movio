@@ -1,6 +1,7 @@
 package com.example.movio.core.common
 
 import androidx.navigation.NavController
+import com.example.movio.feature.authentication.navigation.AuthenticationFlowState
 
 class RootCoordinator : FlowContext{
 
@@ -16,9 +17,7 @@ class RootCoordinator : FlowContext{
      * Must be called when the MainActivity's onCreate is called.
      * */
     fun init(navController: NavController){
-        if(_navController == null){
-            _navController = navController
-        }
+        _navController = navController
         initState()
     }
 

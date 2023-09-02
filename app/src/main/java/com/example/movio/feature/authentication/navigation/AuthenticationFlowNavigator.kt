@@ -1,8 +1,10 @@
 package com.example.movio.feature.authentication.navigation
 
+import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.example.movio.NavGraphDirections
+import com.example.movio.feature.authentication.views.AuthenticationFragmentDirections
 
 // TODO consider making this class an inner class to AuthenticationCoordinator
 class AuthenticationFlowNavigator(private var _navController: NavController?){
@@ -17,6 +19,9 @@ class AuthenticationFlowNavigator(private var _navController: NavController?){
         navController.navigate(NavGraphDirections.actionGlobalHomeFragment(),navOptions)
     }
     fun navigateToEmailAndPasswordScreen(navOptions: NavOptions){
-
+        navController.navigate(
+            AuthenticationFragmentDirections.actionAuthenticationFragmentToSignupFragment(),
+            navOptions
+        )
     }
 }

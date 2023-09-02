@@ -12,14 +12,18 @@
         tools:layout="@layout/fragment_splash" />
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.movio.feature.home.HomeFragment"
+        android:name="com.example.movio.feature.home.views.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/authenticationFragment"
         android:name="com.example.movio.feature.authentication.views.AuthenticationFragment"
         android:label="fragment_authentication"
-        tools:layout="@layout/fragment_authentication" />
+        tools:layout="@layout/fragment_authentication" >
+        <action
+            android:id="@+id/action_authenticationFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+    </fragment>
     <action
         android:id="@+id/action_global_homeFragment"
         app:destination="@id/homeFragment"
@@ -30,4 +34,8 @@
         app:destination="@id/authenticationFragment"
         app:popUpTo="@id/authenticationFragment"
         app:popUpToInclusive="false" />
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.example.movio.feature.authentication.signup.views.SignupFragment"
+        android:label="SignupFragment" />
 </navigation>

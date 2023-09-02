@@ -1,7 +1,8 @@
-package com.example.movio.feature.authentication.views
+package com.example.movio.feature.authentication.signup.views
 
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
-import com.example.movio.core.common.CoordinatorHost
-import com.example.movio.databinding.FragmentAuthenticationBinding
+import com.example.movio.databinding.FragmentSignupBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
@@ -18,6 +18,7 @@ import com.example.movio.feature.authentication.helpers.AuthenticationResultCall
 import com.example.movio.feature.authentication.navigation.AuthenticationActions
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
+import com.example.movio.feature.common.helpers.UserManager
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -26,25 +27,16 @@ import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class AuthenticationFragment :
-    BaseFragment<FragmentAuthenticationBinding>(),AuthenticationResultCallbackLauncher,CoordinatorHost {
+class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResultCallbackLauncher {
 
-    private val userManager by lazy { movioApplication.movioContainer.userManager }
+    private val coordinator by lazy { movioApplication.movioContainer.rootCoordinator.requireCoordinator() }
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var disposable: Disposable
-    private val authenticationHelper by lazy {AuthenticationHelper}
-    override val coordinator by lazy {
-        movioApplication.movioContainer.rootCoordinator.requireCoordinator()
-    }
-
-    private val tag = this.javaClass.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
-        // Register the authentication lifecycle observer
-        // to unregister the launcher when the Lifecycle is destroyed.
         authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(requireActivity().activityResultRegistry,googleSignInService)
         lifecycle.addObserver(authenticationLifecycleObserver)
@@ -53,31 +45,17 @@ class AuthenticationFragment :
     override fun inflateBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): FragmentAuthenticationBinding {
-        return FragmentAuthenticationBinding.inflate(inflater,container,false)
+    ): FragmentSignupBinding {
+        return FragmentSignupBinding.inflate(inflater,container,false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnSignInWithPassword.setOnClickListener {
-            lifecycleScope.launch {
-                coordinator.postAction(AuthenticationActions.ToEmailAndPasswordScreen)
-            }
-        }
+        binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/}
+        binding.btnGoogle.setOnClickListener { lifecycleScope.launch { startGoogleAuthenticationFlow() } }
+        binding.btnTwitter.setOnClickListener { lifecycleScope.launch { startTwitterAuthenticationFlow() } }
 
-        binding.btnContinueWithFacebook.setOnClickListener {
-            //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email","public_profile"));
-            /*TODO implement when the app is published*/
-        }
-
-        binding.btnContinueWithTwitter.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.Main) { startTwitterAuthenticationFlow() }
-        }
-
-        binding.btnContinueWithGoogle.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.Main) { startGoogleAuthenticationFlow() }
-        }
         val source = AuthenticationHelper.getAuthenticationResultObservableSource()
         disposable = source.subscribe{
             /**
@@ -91,31 +69,36 @@ class AuthenticationFragment :
         }
     }
 
+    override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
+        authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
+    }
+
     private suspend fun startGoogleAuthenticationFlow(){
-        GoogleSignInService
-            .getInstance(requireActivity(),this)
-            .login(null)
+        googleSignInService.login(null)
     }
 
     private suspend fun startTwitterAuthenticationFlow(){
         TwitterAuthenticationService
-            .getInstance(requireActivity(),movioApplication.movioContainer.firebaseAuth,authenticationHelper)
+            .getInstance(
+                requireActivity(),
+                movioApplication.movioContainer.firebaseAuth,
+                AuthenticationHelper
+            )
             .login(null)
     }
 
-    override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest){
-        authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
-    }
-
-    private fun navigateToHomeFragment() {
-        lifecycleScope.launch {
-            coordinator.postAction(AuthenticationActions.ToHomeScreen)
-        }
-    }
-
     private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
+       authenticateUser(firebaseUser)
+        navigateToHome()
+    }
+
+    private fun authenticateUser(firebaseUser: FirebaseUser?){
+        val userManager = UserManager.getInstance(movioApplication.movioContainer.firebaseAuth)
         userManager.authenticateUser(firebaseUser)
-        navigateToHomeFragment()
+    }
+
+    private fun navigateToHome(){
+        lifecycleScope.launch { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
     }
 
     private fun showAppropriateDialog(throwable: Throwable?){
@@ -136,12 +119,12 @@ class AuthenticationFragment :
         val message: String
         when(statusCode) {
             CommonStatusCodes.CANCELED  -> {
-                 title = getString(R.string.canceled_authentication_title)
-                 message = getString(R.string.canceled_authentication_message)
+                title = getString(R.string.canceled_authentication_title)
+                message = getString(R.string.canceled_authentication_message)
             }
             CommonStatusCodes.NETWORK_ERROR -> {
-                 title = getString(R.string.canceled_authentication_title)
-                 message = getString(R.string.canceled_authentication_message)
+                title = getString(R.string.canceled_authentication_title)
+                message = getString(R.string.canceled_authentication_message)
             }
             else -> {
                 title = getString(R.string.generic_authentication_error_title)
@@ -150,10 +133,10 @@ class AuthenticationFragment :
         }
         // Show the dialog on the main thread
         // because this function is called from an observer on a background thread
-         lifecycleScope.launch(Dispatchers.Main){ buildDialog(title,message).show() }
+        lifecycleScope.launch(Dispatchers.Main){ buildDialog(title,message).show() }
     }
 
-    private fun buildDialog(title: String,message: String?) : MaterialAlertDialogBuilder{
+    private fun buildDialog(title: String,message: String?) : MaterialAlertDialogBuilder {
         val defaultMessage = getString(R.string.generic_authentication_error_message)
         return MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
@@ -163,6 +146,6 @@ class AuthenticationFragment :
 
     override fun onDestroy() {
         super.onDestroy()
-        authenticationHelper.disposeAuthenticationResult(disposable)
+        AuthenticationHelper.disposeAuthenticationResult(disposable)
     }
 }

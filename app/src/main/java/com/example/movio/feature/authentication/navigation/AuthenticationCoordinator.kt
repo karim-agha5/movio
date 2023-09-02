@@ -1,5 +1,6 @@
 package com.example.movio.feature.authentication.navigation
 
+import android.util.Log
 import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
 import com.example.movio.R
@@ -32,11 +33,11 @@ class AuthenticationCoordinator constructor(
         }
     }
 
-    private fun buildHomeFragmentNavOptions() : NavOptions {
+    private fun buildAuthenticationFragmentNavOptions() : NavOptions {
         return navOptions {
             anim {
-                enter = R.anim.from_right_to_current
-                exit = R.anim.from_current_to_left
+                enter = android.R.anim.fade_in
+                popExit = android.R.anim.fade_out
             }
             popUpTo(R.id.splashFragment){
                 inclusive = true
@@ -44,11 +45,22 @@ class AuthenticationCoordinator constructor(
         }
     }
 
-    private fun buildAuthenticationFragmentNavOptions() : NavOptions {
+    private fun buildEmailAndPasswordSignupNavOptions() : NavOptions{
         return navOptions {
             anim {
-                enter = android.R.anim.fade_in
-                exit = android.R.anim.fade_out
+                enter = R.anim.from_right_to_current
+                exit = R.anim.from_current_to_left
+                popEnter = R.anim.from_left_to_current
+                popExit = R.anim.from_current_to_right
+            }
+        }
+    }
+
+    private fun buildHomeFragmentNavOptions() : NavOptions {
+        return navOptions {
+            anim {
+                enter = R.anim.from_right_to_current
+                exit = R.anim.from_current_to_left
             }
             popUpTo(R.id.splashFragment){
                 inclusive = true
@@ -62,15 +74,15 @@ class AuthenticationCoordinator constructor(
         }
     }
 
-    private suspend fun navigateToHomeScreen() {
+    private suspend fun navigateToEmailAndPasswordScreen(){
         withContext(Dispatchers.Main){
-            flowNavigator.navigateToHomeScreen(buildHomeFragmentNavOptions())
+             flowNavigator.navigateToEmailAndPasswordScreen(buildEmailAndPasswordSignupNavOptions())
         }
     }
 
-    private suspend fun navigateToEmailAndPasswordScreen(){
+    private suspend fun navigateToHomeScreen() {
         withContext(Dispatchers.Main){
-            // flowNavigator.navigateToEmailAndPasswordScreen()
+            flowNavigator.navigateToHomeScreen(buildHomeFragmentNavOptions())
         }
     }
 }

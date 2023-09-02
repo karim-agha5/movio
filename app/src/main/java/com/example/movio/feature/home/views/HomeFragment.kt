@@ -1,4 +1,4 @@
-package com.example.movio.feature.home
+package com.example.movio.feature.home.views
 
 import android.os.Bundle
 import android.util.Log
