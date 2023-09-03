@@ -1,15 +1,19 @@
 package com.example.movio.feature.authentication.signup.views
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
+import com.example.movio.core.util.FormUtils
 import com.example.movio.databinding.FragmentSignupBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
@@ -55,6 +59,14 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/}
         binding.btnGoogle.setOnClickListener { lifecycleScope.launch { startGoogleAuthenticationFlow() } }
         binding.btnTwitter.setOnClickListener { lifecycleScope.launch { startTwitterAuthenticationFlow() } }
+        binding.btnSignup.setOnClickListener {
+            if(FormUtils.isEmailValid(binding.etEmail.text.toString())){
+                navigateToHome()
+            }
+            else{
+                setTextInputLayoutErrorStyling()
+            }
+        }
 
         val source = AuthenticationHelper.getAuthenticationResultObservableSource()
         disposable = source.subscribe{
@@ -142,6 +154,14 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             .setTitle(title)
             .setMessage(message ?: defaultMessage)
             .setNeutralButton(getString(R.string.ok)) { _, _ -> /* Do nothing*/ }
+    }
+
+    private fun setTextInputLayoutErrorStyling(){
+        FormUtils.setTextInputLayoutErrorStyling(
+            requireContext(),
+            arrayOf(binding.tilEmail,binding.tilPassword),
+            arrayOf(resources.getString(R.string.incorrect_email),"Incorrect Password")
+        )
     }
 
     override fun onDestroy() {

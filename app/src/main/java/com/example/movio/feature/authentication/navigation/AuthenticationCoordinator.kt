@@ -62,8 +62,8 @@ class AuthenticationCoordinator constructor(
                 enter = R.anim.from_right_to_current
                 exit = R.anim.from_current_to_left
             }
-            popUpTo(R.id.splashFragment){
-                inclusive = true
+            popUpTo(R.id.nav_graph){
+                inclusive = false
             }
         }
     }

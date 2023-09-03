@@ -31,4 +31,12 @@
     <string name="signup_with_facebook">Signup with Facebook</string>
     <string name="signup_with_google">Signup with Google</string>
     <string name="sign_up_with_twitter">Sign up with Twitter</string>
+
+
+
+    <!-- Start Form Error Messages -->
+
+    <string name="incorrect_email">Incorrect Email</string>
+
+    <!-- End Form Error Messages-->
 </resources>
