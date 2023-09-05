@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.util.Patterns
 import androidx.core.content.ContextCompat
 import com.example.movio.R
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 class FormUtils{
@@ -49,8 +50,22 @@ class FormUtils{
 
         }
 
-        fun isEmailValid(email: String) : Boolean{
+        fun resetTextInputLayoutStyling(
+            context: Context,
+            textInputLayout: TextInputLayout
+        ){
+            textInputLayout.boxStrokeWidth = 0
+            textInputLayout.isErrorEnabled = false
+        }
+
+        fun isEmailFieldValid(email: String) : Boolean{
             return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        }
+
+        fun isPasswordFieldValid(textField: TextInputEditText) : Boolean{
+            return     textField.text?.isNotBlank() == true
+                    && textField.text?.isNotEmpty() == true
+                    && textField.text?.length!! >= 6
         }
     }
 }

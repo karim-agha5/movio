@@ -1,15 +1,10 @@
 package com.example.movio.feature.authentication.signup.views
 
-import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
-import android.util.Patterns
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
@@ -19,7 +14,9 @@ import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
+import com.example.movio.feature.authentication.helpers.SignupCredentials
 import com.example.movio.feature.authentication.navigation.AuthenticationActions
+import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.example.movio.feature.common.helpers.UserManager
@@ -60,8 +57,8 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         binding.btnGoogle.setOnClickListener { lifecycleScope.launch { startGoogleAuthenticationFlow() } }
         binding.btnTwitter.setOnClickListener { lifecycleScope.launch { startTwitterAuthenticationFlow() } }
         binding.btnSignup.setOnClickListener {
-            if(FormUtils.isEmailValid(binding.etEmail.text.toString())){
-                navigateToHome()
+            if(areFieldsValid()){
+                lifecycleScope.launch { signUpUsingEmailAndPassword() }
             }
             else{
                 setTextInputLayoutErrorStyling()
@@ -99,8 +96,20 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             .login(null)
     }
 
+    private suspend fun signUpUsingEmailAndPassword(){
+        val credentials =
+            SignupCredentials(binding.etEmail.text.toString(),binding.etPassword.text.toString())
+
+        EmailAndPasswordAuthenticationService
+            .getInstance(
+                movioApplication.movioContainer.firebaseAuth,
+                movioApplication.movioContainer.authenticationHelper
+            )
+            .signup(credentials)
+    }
+
     private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
-       authenticateUser(firebaseUser)
+        authenticateUser(firebaseUser)
         navigateToHome()
     }
 
@@ -156,12 +165,55 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             .setNeutralButton(getString(R.string.ok)) { _, _ -> /* Do nothing*/ }
     }
 
+    private fun areFieldsValid() : Boolean{
+        return isEmailFieldValid() && isPasswordFieldValid()
+    }
+
+    private fun isEmailFieldValid() : Boolean {
+        return FormUtils.isEmailFieldValid(binding.etEmail.text.toString())
+    }
+
+    private fun isPasswordFieldValid() : Boolean {
+        return FormUtils.isPasswordFieldValid(binding.etPassword)
+    }
+
+    private fun setEmailFieldStyling(){
+        val context = requireContext()
+        val tilEmail = binding.tilEmail
+
+        if(isEmailFieldValid()){
+            FormUtils.resetTextInputLayoutStyling(context,tilEmail)
+        }
+        else{
+            FormUtils.setTextInputLayoutErrorStyling(
+                context,
+                tilEmail,
+                resources.getString(R.string.incorrect_email_format)
+            )
+        }
+
+    }
+
+    private fun setPasswordFieldStyling() {
+        val context = requireContext()
+        val tilPassword = binding.tilPassword
+
+        if (isPasswordFieldValid()) {
+            FormUtils.resetTextInputLayoutStyling(context, tilPassword)
+        }
+        else {
+            FormUtils.setTextInputLayoutErrorStyling(
+                context,
+                tilPassword,
+                resources.getString(R.string.incorrect_password_format)
+            )
+        }
+
+    }
+
     private fun setTextInputLayoutErrorStyling(){
-        FormUtils.setTextInputLayoutErrorStyling(
-            requireContext(),
-            arrayOf(binding.tilEmail,binding.tilPassword),
-            arrayOf(resources.getString(R.string.incorrect_email),"Incorrect Password")
-        )
+        setEmailFieldStyling()
+        setPasswordFieldStyling()
     }
 
     override fun onDestroy() {

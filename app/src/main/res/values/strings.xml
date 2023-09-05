@@ -36,7 +36,8 @@
 
     <!-- Start Form Error Messages -->
 
-    <string name="incorrect_email">Incorrect Email</string>
+    <string name="incorrect_email_format">Incorrect email format</string>
+    <string name="incorrect_password_format">Password must be 6 characters or more</string>
 
     <!-- End Form Error Messages-->
 </resources>
