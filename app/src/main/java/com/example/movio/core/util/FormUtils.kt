@@ -51,7 +51,6 @@ class FormUtils{
         }
 
         fun resetTextInputLayoutStyling(
-            context: Context,
             textInputLayout: TextInputLayout
         ){
             textInputLayout.boxStrokeWidth = 0

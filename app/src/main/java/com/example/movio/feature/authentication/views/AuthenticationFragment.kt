@@ -33,7 +33,7 @@ class AuthenticationFragment :
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var disposable: Disposable
-    private val authenticationHelper by lazy {AuthenticationHelper}
+    private val authenticationHelper by lazy  {movioApplication.movioContainer.authenticationHelper }
     override val coordinator by lazy {
         movioApplication.movioContainer.rootCoordinator.requireCoordinator()
     }
@@ -78,7 +78,7 @@ class AuthenticationFragment :
         binding.btnContinueWithGoogle.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Main) { startGoogleAuthenticationFlow() }
         }
-        val source = AuthenticationHelper.getAuthenticationResultObservableSource()
+        val source = authenticationHelper.getAuthenticationResultObservableSource()
         disposable = source.subscribe{
             /**
              * TODO should handle the cases were null is sent from the source observable.

@@ -182,7 +182,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         val tilEmail = binding.tilEmail
 
         if(isEmailFieldValid()){
-            FormUtils.resetTextInputLayoutStyling(context,tilEmail)
+            FormUtils.resetTextInputLayoutStyling(tilEmail)
         }
         else{
             FormUtils.setTextInputLayoutErrorStyling(
@@ -199,7 +199,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         val tilPassword = binding.tilPassword
 
         if (isPasswordFieldValid()) {
-            FormUtils.resetTextInputLayoutStyling(context, tilPassword)
+            FormUtils.resetTextInputLayoutStyling(tilPassword)
         }
         else {
             FormUtils.setTextInputLayoutErrorStyling(
