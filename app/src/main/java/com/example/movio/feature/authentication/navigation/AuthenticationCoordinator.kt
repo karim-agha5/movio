@@ -1,11 +1,11 @@
 package com.example.movio.feature.authentication.navigation
 
-import android.util.Log
 import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
 import com.example.movio.R
 import com.example.movio.core.common.Coordinator
 import com.example.movio.core.common.FlowState
+import com.example.movio.core.common.StateActions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -24,12 +24,11 @@ class AuthenticationCoordinator constructor(
      * */
     override suspend fun postAction(action: Coordinator.Action) {
         when(action){
-            is AuthenticationActions.ToAuthenticationScreen -> navigateToAuthenticationScreen()
-            is AuthenticationActions.ToHomeScreen -> {
-                navigateToHomeScreen()
-                flowState.switchState()
-            }
-            is AuthenticationActions.ToEmailAndPasswordScreen -> navigateToEmailAndPasswordScreen()
+            is AuthenticationActions.ToAuthenticationScreen     -> navigateToAuthenticationScreen()
+            is AuthenticationActions.ToSignInScreen             -> navigateToSignInScreen()
+            is AuthenticationActions.ToEmailAndPasswordScreen   -> navigateToEmailAndPasswordScreen()
+            is AuthenticationActions.ToHomeScreen               -> navigateToHomeScreen()
+            is StateActions.ToAuthenticated                     -> switchState()
         }
     }
 
@@ -45,6 +44,20 @@ class AuthenticationCoordinator constructor(
         }
     }
 
+    private fun buildSignInFragmentNavOptions() : NavOptions{
+        return navOptions {
+            anim {
+                enter = R.anim.from_right_to_current
+                exit = R.anim.from_current_to_left
+                popEnter = R.anim.from_left_to_current
+                popExit = R.anim.from_current_to_right
+            }
+            popUpTo(R.id.authenticationFragment){
+                inclusive = false
+            }
+        }
+    }
+
     private fun buildEmailAndPasswordSignupNavOptions() : NavOptions{
         return navOptions {
             anim {
@@ -52,6 +65,9 @@ class AuthenticationCoordinator constructor(
                 exit = R.anim.from_current_to_left
                 popEnter = R.anim.from_left_to_current
                 popExit = R.anim.from_current_to_right
+            }
+            popUpTo(R.id.authenticationFragment){
+                inclusive = false
             }
         }
     }
@@ -74,6 +90,12 @@ class AuthenticationCoordinator constructor(
         }
     }
 
+    private suspend fun navigateToSignInScreen(){
+        withContext(Dispatchers.Main){
+            flowNavigator.navigateToSignInScreen(buildSignInFragmentNavOptions())
+        }
+    }
+
     private suspend fun navigateToEmailAndPasswordScreen(){
         withContext(Dispatchers.Main){
              flowNavigator.navigateToEmailAndPasswordScreen(buildEmailAndPasswordSignupNavOptions())
@@ -84,5 +106,9 @@ class AuthenticationCoordinator constructor(
         withContext(Dispatchers.Main){
             flowNavigator.navigateToHomeScreen(buildHomeFragmentNavOptions())
         }
+    }
+
+    private fun switchState(){
+        flowState.switchState()
     }
 }

@@ -19,11 +19,7 @@
         android:id="@+id/authenticationFragment"
         android:name="com.example.movio.feature.authentication.views.AuthenticationFragment"
         android:label="fragment_authentication"
-        tools:layout="@layout/fragment_authentication" >
-        <action
-            android:id="@+id/action_authenticationFragment_to_signupFragment"
-            app:destination="@id/signupFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_authentication" />
     <action
         android:id="@+id/action_global_homeFragment"
         app:destination="@id/homeFragment"
@@ -38,4 +34,9 @@
         android:id="@+id/signupFragment"
         android:name="com.example.movio.feature.authentication.signup.views.SignupFragment"
         android:label="SignupFragment" />
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.example.movio.feature.authentication.signin.views.SignInFragment"
+        android:label="SignInFragment" />
+    <action android:id="@+id/action_global_signInFragment" app:destination="@id/signInFragment" /><action android:id="@+id/action_global_signupFragment" app:destination="@id/signupFragment"/>
 </navigation>

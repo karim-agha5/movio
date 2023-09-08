@@ -15,13 +15,17 @@ class AuthenticationFlowNavigator(private var _navController: NavController?){
         navController.navigate(NavGraphDirections.actionGlobalAuthenticationFragment(),navOptions)
     }
 
-    fun navigateToHomeScreen(navOptions: NavOptions?){
-        navController.navigate(NavGraphDirections.actionGlobalHomeFragment(),navOptions)
+    fun navigateToSignInScreen(navOptions: NavOptions?){
+        navController.navigate(NavGraphDirections.actionGlobalSignInFragment(),navOptions)
     }
     fun navigateToEmailAndPasswordScreen(navOptions: NavOptions){
         navController.navigate(
-            AuthenticationFragmentDirections.actionAuthenticationFragmentToSignupFragment(),
+            NavGraphDirections.actionGlobalSignupFragment(),
             navOptions
         )
+    }
+
+    fun navigateToHomeScreen(navOptions: NavOptions?){
+        navController.navigate(NavGraphDirections.actionGlobalHomeFragment(),navOptions)
     }
 }

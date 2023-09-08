@@ -5,81 +5,92 @@ import com.example.movio.feature.authentication.helpers.LoginCredentials
 import com.example.movio.feature.authentication.helpers.SignupCredentials
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlin.Exception
 
 class EmailAndPasswordAuthenticationService private constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val authenticationHelper: AuthenticationHelper
-) :
-    SignupServiceContract<SignupCredentials>,LoginServiceContract<LoginCredentials> {
+) /*: SignupServiceContract<SignupCredentials>,LoginServiceContract<LoginCredentials>*/ {
 
 
     companion object{
         @Volatile
         private var instance: EmailAndPasswordAuthenticationService? = null
 
-        fun getInstance(
-            firebaseAuth: FirebaseAuth,
-            authenticationHelper: AuthenticationHelper
-        ): EmailAndPasswordAuthenticationService{
+        fun getInstance(firebaseAuth: FirebaseAuth): EmailAndPasswordAuthenticationService{
             return instance ?: synchronized(this){
-                EmailAndPasswordAuthenticationService(firebaseAuth,authenticationHelper).also { instance = it }
+                EmailAndPasswordAuthenticationService(firebaseAuth).also { instance = it }
             }
         }
     }
 
-    override suspend fun signup(credentials: SignupCredentials?) {
+    suspend fun signup(credentials: SignupCredentials?) : FirebaseUser? {
+        var firebaseUser: FirebaseUser? = null
+
         if(credentials != null){
-            withContext(Dispatchers.IO){
-                val deferredResult = async {
-                    try{
-                        firebaseAuth
-                            .createUserWithEmailAndPassword(credentials.email,credentials.password)
-                            .await()
-                    }catch (e: Exception){ e }
-                }
-
-                try{
-                    val user = (deferredResult.await() as AuthResult).user
-                    authenticationHelper.onSuccess(user)
-
-                }catch (e: Exception){
-                    authenticationHelper.onFailure(e)
-                }
-            }
-
+            firebaseUser = launchSignupWithEmailAndPassword(credentials)
         }
         else{
             // TODO implement later
         }
+
+        return firebaseUser
     }
 
-    override suspend fun login(credentials: LoginCredentials?) {
-        if(credentials != null){
-            withContext(Dispatchers.IO){
-                val deferredResult = async {
-                    try{
-                        firebaseAuth
-                            .signInWithEmailAndPassword(credentials.email,credentials.password)
-                            .await()
-                    }catch (e: Exception){ e }
-                }
+    /**
+     * Launches a coroutine that attempts to create a new user with the specified credentials,
+     * Sends the email in the credentials a verification link, and then signs out the user because
+     * once a user is returned, they're automatically signed in even if their email isn't verified.
+     * */
+    private suspend fun launchSignupWithEmailAndPassword(
+        credentials: SignupCredentials
+    ) : FirebaseUser?{
 
-                try{
-                    val user = (deferredResult.await() as AuthResult).user
-                    authenticationHelper.onSuccess(user)
+        var firebaseUser: FirebaseUser? = null
 
-                }catch (e: Exception){
-                    authenticationHelper.onFailure(e)
-                }
+        withContext(Dispatchers.IO){
+            val deferredResult = async {
+                try {
+                    firebaseAuth
+                        .createUserWithEmailAndPassword(credentials.email,credentials.password)
+                        .await()
+                }catch (e: Exception){ e}
             }
+            firebaseUser = (deferredResult.await() as AuthResult).user
+            firebaseAuth.signOut()
+            firebaseUser?.sendEmailVerification()
+        }
 
-        }
-        else{
+        return firebaseUser
+    }
+     suspend fun login(credentials: LoginCredentials?) : FirebaseUser?{
+         var firebaseUser: FirebaseUser? = null
+
+         if(credentials != null){
+             withContext(Dispatchers.IO){
+                 val deferredResult = async {
+                     try {
+                         firebaseAuth
+                             .signInWithEmailAndPassword(credentials.email,credentials.password)
+                             .await()
+                     }catch(e: Exception){e}
+                 }
+
+                 firebaseUser = (deferredResult.await() as AuthResult).user
+                 if(firebaseUser?.isEmailVerified == false){
+                     firebaseAuth.signOut()
+                 }
+             }
+         }
+         else{
             // TODO implement later
-        }
+         }
+
+         return firebaseUser
     }
 }

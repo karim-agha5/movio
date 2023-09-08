@@ -1,7 +1,7 @@
-package com.example.movio.feature.authentication.signup.views
+package com.example.movio.feature.authentication.signin.views
 
 import android.os.Bundle
-import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +10,14 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
-import com.example.movio.core.common.StateActions
 import com.example.movio.core.util.FormUtils
 import com.example.movio.core.util.hideKeyboard
-import com.example.movio.databinding.FragmentSignupBinding
+import com.example.movio.databinding.FragmentSignInBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
+import com.example.movio.feature.authentication.helpers.LoginCredentials
 import com.example.movio.feature.authentication.helpers.SignupCredentials
 import com.example.movio.feature.authentication.navigation.AuthenticationActions
 import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
@@ -35,21 +35,23 @@ import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResultCallbackLauncher {
+
+class SignInFragment :
+    BaseFragment<FragmentSignInBinding>(), AuthenticationResultCallbackLauncher{
 
     private val coordinator by lazy { movioApplication.movioContainer.rootCoordinator.requireCoordinator() }
-    private val authenticationHelper by lazy { movioApplication.movioContainer.authenticationHelper }
-    private val service by lazy {
+    private val service by lazy{
         EmailAndPasswordAuthenticationService
-        .getInstance(movioApplication.movioContainer.firebaseAuth)
+            .getInstance(movioApplication.movioContainer.firebaseAuth)
     }
     private val signupViewModel by lazy {
-        val factory = SignupViewModelFactory(service,authenticationHelper)
+        val factory = SignupViewModelFactory(service,AuthenticationHelper)
         factory.create(SignupViewModel::class.java)
     }
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var disposable: Disposable
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +64,8 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     override fun inflateBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): FragmentSignupBinding {
-        return FragmentSignupBinding.inflate(inflater,container,false)
+    ): FragmentSignInBinding {
+        return FragmentSignInBinding.inflate(inflater,container,false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -72,21 +74,39 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/}
         binding.btnGoogle.setOnClickListener { lifecycleScope.launch { startGoogleAuthenticationFlow() } }
         binding.btnTwitter.setOnClickListener { lifecycleScope.launch { startTwitterAuthenticationFlow() } }
-        binding.tvSignIn.setOnClickListener { navigateToSignInScreen() }
-        binding.btnSignup.setOnClickListener {
+        binding.tvSignUp.setOnClickListener {
+            lifecycleScope.launch {
+                coordinator.postAction(AuthenticationActions.ToEmailAndPasswordScreen)
+            }
+        }
+        binding.btnSignIn.setOnClickListener {
             if(areFieldsValid()){
                 hideKeyboard(requireActivity())
-                lifecycleScope.launch { signUpUsingEmailAndPassword() }
+                lifecycleScope.launch { signInUsingEmailAndPassword() }
             }
             else{
                 setTextInputLayoutErrorStyling()
             }
         }
 
-        signupViewModel.emailVerified.observe(viewLifecycleOwner){ onEmailVerificationStatusReceived(it) }
+        signupViewModel.emailVerified.observe(viewLifecycleOwner){
+            when(it){
+                is EmailVerificationStatus.EmailNotVerified -> showEmailNotVerifiedToast()
+                else -> {/*Do nothing*/}
+            }
+        }
 
-        val source = authenticationHelper.getAuthenticationResultObservableSource()
-        disposable = source.subscribe{ onAuthenticationResultReceived(it) }
+        val source = AuthenticationHelper.getAuthenticationResultObservableSource()
+        disposable = source.subscribe{
+            /**
+             * TODO should handle the cases were null is sent from the source observable.
+             *  Look [TwitterAuthenticationService]
+             */
+            when(it){
+                is AuthenticationResult.Success -> onSuccessfulAuthentication(it.user)
+                is AuthenticationResult.Failure -> showAppropriateDialog(it.throwable)
+            }
+        }
     }
 
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
@@ -107,29 +127,13 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             .login(null)
     }
 
-    private fun signUpUsingEmailAndPassword(){
-        val credentials =
-            SignupCredentials(binding.etEmail.text.toString(),binding.etPassword.text.toString())
+    private fun signInUsingEmailAndPassword(){
+        val credentials = LoginCredentials(
+            binding.etEmail.text.toString(),
+            binding.etPassword.text.toString()
+        )
 
-        signupViewModel.signup(credentials)
-    }
-
-    private fun onEmailVerificationStatusReceived(emailVerificationStatus: EmailVerificationStatus){
-        when(emailVerificationStatus){
-            is EmailVerificationStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
-            else -> {/* Do Nothing */}
-        }
-    }
-
-    private fun onAuthenticationResultReceived(authenticationResult: AuthenticationResult){
-        /**
-         * TODO should handle the cases were null is sent from the source observable.
-         *  Look [TwitterAuthenticationService]
-         */
-        when(authenticationResult){
-            is AuthenticationResult.Success -> onSuccessfulAuthentication(authenticationResult.user)
-            is AuthenticationResult.Failure -> showAppropriateDialog(authenticationResult.throwable)
-        }
+        signupViewModel.login(credentials)
     }
 
     private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
@@ -144,10 +148,6 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
 
     private fun navigateToHome(){
         lifecycleScope.launch { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
-    }
-
-    private fun navigateToSignInScreen(){
-        lifecycleScope.launch { coordinator.postAction(AuthenticationActions.ToSignInScreen) }
     }
 
     private fun showAppropriateDialog(throwable: Throwable?){
@@ -244,13 +244,12 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         setPasswordFieldStyling()
     }
 
-    private fun showShouldVerifyEmailToast(){
-        Toast.makeText(requireContext(), resources.getString(R.string.should_verify_email), Toast.LENGTH_LONG).show()
+    private fun showEmailNotVerifiedToast(){
+        Toast.makeText(requireContext(), resources.getString(R.string.email_not_verified), Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         AuthenticationHelper.disposeAuthenticationResult(disposable)
-        lifecycleScope.launch { coordinator.postAction(StateActions.ToAuthenticated) }
     }
 }

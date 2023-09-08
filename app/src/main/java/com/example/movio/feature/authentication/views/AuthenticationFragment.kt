@@ -60,6 +60,12 @@ class AuthenticationFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.btnSignInWithPassword.setOnClickListener {
+            lifecycleScope.launch {
+                coordinator.postAction(AuthenticationActions.ToSignInScreen)
+            }
+        }
+
         binding.btnSignup.setOnClickListener {
             lifecycleScope.launch {
                 coordinator.postAction(AuthenticationActions.ToEmailAndPasswordScreen)
