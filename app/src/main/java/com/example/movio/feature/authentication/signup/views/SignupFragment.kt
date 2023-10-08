@@ -37,15 +37,17 @@ import kotlinx.coroutines.launch
 
 class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResultCallbackLauncher {
 
-    private val coordinator by lazy { movioApplication.movioContainer.rootCoordinator.requireCoordinator() }
-    private val authenticationHelper by lazy { movioApplication.movioContainer.authenticationHelper }
-    private val service by lazy {
-        EmailAndPasswordAuthenticationService
-        .getInstance(movioApplication.movioContainer.firebaseAuth)
+    private val coordinator by lazy {
+        movioApplication
+            .movioContainer
+            .rootCoordinator
+            .requireCoordinator()
     }
+
+    private val authenticationHelper by lazy { movioApplication.movioContainer.authenticationHelper }
     private val signupViewModel by lazy {
-        val factory = SignupViewModelFactory(service,authenticationHelper)
-        factory.create(SignupViewModel::class.java)
+        coordinator
+            .requireViewModel<SignupCredentials,AuthenticationActions,EmailVerificationStatus>(this::class.java)
     }
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
@@ -77,13 +79,18 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             if(areFieldsValid()){
                 hideKeyboard(requireActivity())
                 lifecycleScope.launch { signUpUsingEmailAndPassword() }
+                Toast.makeText(requireContext(), "Signed up successfully!", Toast.LENGTH_SHORT).show()
             }
             else{
                 setTextInputLayoutErrorStyling()
             }
         }
 
-        signupViewModel.emailVerified.observe(viewLifecycleOwner){ onEmailVerificationStatusReceived(it) }
+
+        signupViewModel.result.observe(viewLifecycleOwner){
+            onEmailVerificationStatusReceived(it)
+        }
+
 
         val source = authenticationHelper.getAuthenticationResultObservableSource()
         disposable = source.subscribe{ onAuthenticationResultReceived(it) }
@@ -111,7 +118,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         val credentials =
             SignupCredentials(binding.etEmail.text.toString(),binding.etPassword.text.toString())
 
-        signupViewModel.signup(credentials)
+        signupViewModel.postAction(credentials,AuthenticationActions.SignupClicked)
     }
 
     private fun onEmailVerificationStatusReceived(emailVerificationStatus: EmailVerificationStatus){

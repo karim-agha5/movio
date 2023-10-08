@@ -1,11 +1,16 @@
 package com.example.movio.feature.authentication.navigation
 
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
 import com.example.movio.R
-import com.example.movio.core.common.Coordinator
-import com.example.movio.core.common.FlowState
+import com.example.movio.core.common.BaseViewModel
+import com.example.movio.core.common.Data
 import com.example.movio.core.common.StateActions
+import com.example.movio.core.navigation.Coordinator
+import com.example.movio.core.navigation.FlowState
+import com.example.movio.feature.authentication.navigation.viewmodelsfactory.AuthenticationViewModelsFactory
+import com.example.movio.feature.authentication.signup.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -15,8 +20,11 @@ import kotlinx.coroutines.withContext
  * */
 class AuthenticationCoordinator constructor(
     private val flowNavigator: AuthenticationFlowNavigator,
+    val authenticationViewModelsFactory: AuthenticationViewModelsFactory,
     private val flowState: FlowState
     ) : Coordinator {
+
+    private var currentAction: AuthenticationActions = AuthenticationActions.ToAuthenticationScreen
 
     /**
      * An action is passed when an event takes place on the UI.
@@ -25,12 +33,45 @@ class AuthenticationCoordinator constructor(
     override suspend fun postAction(action: Coordinator.Action) {
         when(action){
             is AuthenticationActions.ToAuthenticationScreen     -> navigateToAuthenticationScreen()
-            is AuthenticationActions.ToSignInScreen             -> navigateToSignInScreen()
-            is AuthenticationActions.ToEmailAndPasswordScreen   -> navigateToEmailAndPasswordScreen()
+            is AuthenticationActions.ToSignInScreen             -> {
+                navigateToSignInScreen()
+                currentAction = AuthenticationActions.ToSignInScreen
+            }
+            is AuthenticationActions.ToEmailAndPasswordScreen   -> {
+                navigateToEmailAndPasswordScreen()
+                currentAction = AuthenticationActions.ToEmailAndPasswordScreen
+            }
             is AuthenticationActions.ToHomeScreen               -> navigateToHomeScreen()
             is StateActions.ToAuthenticated                     -> switchState()
         }
     }
+
+
+     /*override fun < D : Data,  A : Coordinator.Action,  S : Status>
+            requireViewModel(cls: Class<out Fragment>):
+            BaseViewModel<D, A, S> {
+        // Check the run-time type of the caller and return the appropriate view model accordingly.
+        // Check the run-time type of the caller and send it to the factory to return the appropriate
+        // view model accordingly.
+        // The Coordinator shouldn't be aware of the views. So the appropriate view model creation
+        // is delegated to the factory.
+
+        return authenticationViewModelsFactory.createViewModel(cls)
+    }*/
+
+    override fun <D : Data,  A : Coordinator.Action, S : Status>
+            requireViewModel(cls: Class<out Fragment>):
+            BaseViewModel<D, A, S> {
+        // Check the run-time type of the caller and return the appropriate view model accordingly.
+        // Check the run-time type of the caller and send it to the factory to return the appropriate
+        // view model accordingly.
+        // The Coordinator shouldn't be aware of the views. So the appropriate view model creation
+        // is delegated to the factory.
+
+        // TODO unsafe cast. work around for the time being. change later.
+        return authenticationViewModelsFactory.createViewModel(cls) as BaseViewModel<D, A, S>
+    }
+
 
     private fun buildAuthenticationFragmentNavOptions() : NavOptions {
         return navOptions {

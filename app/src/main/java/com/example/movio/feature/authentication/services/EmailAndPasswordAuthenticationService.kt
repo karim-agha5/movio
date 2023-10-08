@@ -1,6 +1,6 @@
 package com.example.movio.feature.authentication.services
 
-import com.example.movio.feature.authentication.helpers.AuthenticationHelper
+import com.example.movio.feature.authentication.helpers.BaseCredentials
 import com.example.movio.feature.authentication.helpers.LoginCredentials
 import com.example.movio.feature.authentication.helpers.SignupCredentials
 import com.google.firebase.auth.AuthResult

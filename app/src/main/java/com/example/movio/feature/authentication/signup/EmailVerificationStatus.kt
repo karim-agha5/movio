@@ -1,6 +1,7 @@
 package com.example.movio.feature.authentication.signup
 
-sealed class EmailVerificationStatus{
+interface Status
+sealed class EmailVerificationStatus : Status{
     object ShouldVerifyEmail: EmailVerificationStatus()
     object EmailNotVerified: EmailVerificationStatus()
     object EmailVerified: EmailVerificationStatus()

@@ -1,7 +1,6 @@
 package com.example.movio.feature.authentication.views
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +8,8 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
-import com.example.movio.core.common.CoordinatorHost
+import com.example.movio.core.navigation.CoordinatorHost
 import com.example.movio.databinding.FragmentAuthenticationBinding
-import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
@@ -27,7 +25,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AuthenticationFragment :
-    BaseFragment<FragmentAuthenticationBinding>(),AuthenticationResultCallbackLauncher,CoordinatorHost {
+    BaseFragment<FragmentAuthenticationBinding>(),AuthenticationResultCallbackLauncher,
+    CoordinatorHost {
 
     private val userManager by lazy { movioApplication.movioContainer.userManager }
     private lateinit var googleSignInService: GoogleSignInService

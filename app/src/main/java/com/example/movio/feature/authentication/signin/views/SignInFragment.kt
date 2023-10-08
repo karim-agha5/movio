@@ -44,9 +44,12 @@ class SignInFragment :
         EmailAndPasswordAuthenticationService
             .getInstance(movioApplication.movioContainer.firebaseAuth)
     }
-    private val signupViewModel by lazy {
+    /*private val signupViewModel by lazy {
         val factory = SignupViewModelFactory(service,AuthenticationHelper)
         factory.create(SignupViewModel::class.java)
+    }*/
+    private val signInViewModel by lazy{
+        coordinator.requireViewModel<LoginCredentials,AuthenticationActions,EmailVerificationStatus>(this::class.java)
     }
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
@@ -89,7 +92,14 @@ class SignInFragment :
             }
         }
 
-        signupViewModel.emailVerified.observe(viewLifecycleOwner){
+        /*signupViewModel.emailVerified.observe(viewLifecycleOwner){
+            when(it){
+                is EmailVerificationStatus.EmailNotVerified -> showEmailNotVerifiedToast()
+                else -> {*//*Do nothing*//*}
+            }
+        }*/
+
+        signInViewModel.result.observe(viewLifecycleOwner){
             when(it){
                 is EmailVerificationStatus.EmailNotVerified -> showEmailNotVerifiedToast()
                 else -> {/*Do nothing*/}
@@ -107,6 +117,12 @@ class SignInFragment :
                 is AuthenticationResult.Failure -> showAppropriateDialog(it.throwable)
             }
         }
+    }
+
+    private fun testingViewModel(){
+        val vm = coordinator
+            .requireViewModel<LoginCredentials,AuthenticationActions,EmailVerificationStatus>(this::class.java)
+        vm.postAction(LoginCredentials("",""),AuthenticationActions.ToSignInScreen)
     }
 
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
@@ -133,7 +149,8 @@ class SignInFragment :
             binding.etPassword.text.toString()
         )
 
-        signupViewModel.login(credentials)
+        //signupViewModel.login(credentials)
+        signInViewModel.postAction(credentials,AuthenticationActions.SignInClicked)
     }
 
     private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){

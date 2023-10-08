@@ -1,6 +1,7 @@
 package com.example.movio.core
 
-import com.example.movio.core.common.RootCoordinator
+import com.example.movio.core.helpers.ViewModelsFactoryProvider
+import com.example.movio.core.navigation.RootCoordinator
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.common.helpers.UserManager
 import com.google.firebase.auth.ktx.auth
@@ -11,9 +12,10 @@ import com.google.firebase.ktx.Firebase
  * */
 class MovioContainer{
 
-    val rootCoordinator = RootCoordinator()
+    private val viewModelsFactoryProvider = ViewModelsFactoryProvider
     val firebaseAuth = Firebase.auth
     val authenticationHelper = AuthenticationHelper
+    val rootCoordinator = RootCoordinator(viewModelsFactoryProvider,firebaseAuth, authenticationHelper)
     val userManager = UserManager.getInstance(firebaseAuth)
 
 }
