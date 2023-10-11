@@ -1,4 +1,4 @@
-package com.example.movio.feature.authentication.signup
+package com.example.movio.feature.authentication.status
 
 import com.example.movio.core.common.Status
 

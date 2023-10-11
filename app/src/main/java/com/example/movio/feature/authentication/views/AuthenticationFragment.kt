@@ -13,7 +13,7 @@ import com.example.movio.databinding.FragmentAuthenticationBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
-import com.example.movio.feature.authentication.navigation.AuthenticationActions
+import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.google.android.gms.common.api.ApiException

@@ -6,15 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.movio.core.common.BaseViewModel
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.SignupCredentials
-import com.example.movio.feature.authentication.navigation.AuthenticationActions
+import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
-import com.example.movio.feature.authentication.signup.EmailVerificationStatus
+import com.example.movio.feature.authentication.status.EmailVerificationStatus
 import kotlinx.coroutines.launch
 
 class SignupViewModel(
     private val emailAndPasswordAuthenticationService: EmailAndPasswordAuthenticationService,
     private val authenticationHelper: AuthenticationHelper
-) : BaseViewModel<SignupCredentials,AuthenticationActions,EmailVerificationStatus>() {
+) : BaseViewModel<SignupCredentials, AuthenticationActions, EmailVerificationStatus>() {
 
 
     private val _result = MutableLiveData<EmailVerificationStatus>()

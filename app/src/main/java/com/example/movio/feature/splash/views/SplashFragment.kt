@@ -1,17 +1,17 @@
-package com.example.movio.feature.splash
+package com.example.movio.feature.splash.views
 
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.window.SplashScreen
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.MovioApplication
-import com.example.movio.feature.authentication.navigation.AuthenticationActions
+import com.example.movio.feature.common.actions.AuthenticationActions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

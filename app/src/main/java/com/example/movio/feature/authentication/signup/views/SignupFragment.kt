@@ -18,10 +18,10 @@ import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleO
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.SignupCredentials
-import com.example.movio.feature.authentication.navigation.AuthenticationActions
+import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
-import com.example.movio.feature.authentication.signup.EmailVerificationStatus
+import com.example.movio.feature.authentication.status.EmailVerificationStatus
 import com.example.movio.feature.common.helpers.UserManager
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -42,7 +42,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     private val authenticationHelper by lazy { movioApplication.movioContainer.authenticationHelper }
     private val signupViewModel by lazy {
         coordinator
-            .requireViewModel<SignupCredentials,AuthenticationActions,EmailVerificationStatus>(this::class.java)
+            .requireViewModel<SignupCredentials, AuthenticationActions, EmailVerificationStatus>(this::class.java)
     }
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
@@ -112,8 +112,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     private fun signUpUsingEmailAndPassword(){
         val credentials =
             SignupCredentials(binding.etEmail.text.toString(),binding.etPassword.text.toString())
-
-        signupViewModel.postAction(credentials,AuthenticationActions.SignupClicked)
+        signupViewModel.postAction(credentials, AuthenticationActions.SignupClicked)
     }
 
     private fun onEmailVerificationStatusReceived(emailVerificationStatus: EmailVerificationStatus){
