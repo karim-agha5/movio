@@ -1,7 +1,6 @@
 package com.example.movio.feature.authentication.signin.views
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,21 +10,17 @@ import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.util.FormUtils
-import com.example.movio.core.util.hideKeyboard
+import com.example.movio.core.util.Utils
 import com.example.movio.databinding.FragmentSignInBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.LoginCredentials
-import com.example.movio.feature.authentication.helpers.SignupCredentials
 import com.example.movio.feature.authentication.navigation.AuthenticationActions
-import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.example.movio.feature.authentication.signup.EmailVerificationStatus
-import com.example.movio.feature.authentication.signup.viewmodel.SignupViewModel
-import com.example.movio.feature.authentication.signup.viewmodel.SignupViewModelFactory
 import com.example.movio.feature.common.helpers.UserManager
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -40,16 +35,9 @@ class SignInFragment :
     BaseFragment<FragmentSignInBinding>(), AuthenticationResultCallbackLauncher{
 
     private val coordinator by lazy { movioApplication.movioContainer.rootCoordinator.requireCoordinator() }
-    private val service by lazy{
-        EmailAndPasswordAuthenticationService
-            .getInstance(movioApplication.movioContainer.firebaseAuth)
-    }
-    /*private val signupViewModel by lazy {
-        val factory = SignupViewModelFactory(service,AuthenticationHelper)
-        factory.create(SignupViewModel::class.java)
-    }*/
     private val signInViewModel by lazy{
-        coordinator.requireViewModel<LoginCredentials,AuthenticationActions,EmailVerificationStatus>(this::class.java)
+        coordinator
+            .requireViewModel<LoginCredentials,AuthenticationActions,EmailVerificationStatus>(this::class.java)
     }
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
@@ -84,20 +72,13 @@ class SignInFragment :
         }
         binding.btnSignIn.setOnClickListener {
             if(areFieldsValid()){
-                hideKeyboard(requireActivity())
+                Utils.hideKeyboard(requireActivity())
                 lifecycleScope.launch { signInUsingEmailAndPassword() }
             }
             else{
                 setTextInputLayoutErrorStyling()
             }
         }
-
-        /*signupViewModel.emailVerified.observe(viewLifecycleOwner){
-            when(it){
-                is EmailVerificationStatus.EmailNotVerified -> showEmailNotVerifiedToast()
-                else -> {*//*Do nothing*//*}
-            }
-        }*/
 
         signInViewModel.result.observe(viewLifecycleOwner){
             when(it){
@@ -117,12 +98,6 @@ class SignInFragment :
                 is AuthenticationResult.Failure -> showAppropriateDialog(it.throwable)
             }
         }
-    }
-
-    private fun testingViewModel(){
-        val vm = coordinator
-            .requireViewModel<LoginCredentials,AuthenticationActions,EmailVerificationStatus>(this::class.java)
-        vm.postAction(LoginCredentials("",""),AuthenticationActions.ToSignInScreen)
     }
 
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {

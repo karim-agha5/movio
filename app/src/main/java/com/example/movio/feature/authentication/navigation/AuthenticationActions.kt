@@ -1,8 +1,8 @@
 package com.example.movio.feature.authentication.navigation
 
-import com.example.movio.core.navigation.Coordinator
+import com.example.movio.core.common.Action
 
-sealed class AuthenticationActions : Coordinator.Action{
+sealed class AuthenticationActions : Action {
     object  ToAuthenticationScreen : AuthenticationActions()
     object ToSignInScreen : AuthenticationActions()
     object ToEmailAndPasswordScreen : AuthenticationActions()

@@ -4,13 +4,15 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
 import com.example.movio.R
+import com.example.movio.core.common.Action
 import com.example.movio.core.common.BaseViewModel
 import com.example.movio.core.common.Data
 import com.example.movio.core.common.StateActions
+import com.example.movio.core.common.Status
 import com.example.movio.core.navigation.Coordinator
 import com.example.movio.core.navigation.FlowState
+import com.example.movio.core.navigation.RootCoordinator
 import com.example.movio.feature.authentication.navigation.viewmodelsfactory.AuthenticationViewModelsFactory
-import com.example.movio.feature.authentication.signup.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -20,46 +22,40 @@ import kotlinx.coroutines.withContext
  * */
 class AuthenticationCoordinator constructor(
     private val flowNavigator: AuthenticationFlowNavigator,
-    val authenticationViewModelsFactory: AuthenticationViewModelsFactory,
+    private val authenticationViewModelsFactory: AuthenticationViewModelsFactory,
     private val flowState: FlowState
     ) : Coordinator {
 
-    private var currentAction: AuthenticationActions = AuthenticationActions.ToAuthenticationScreen
+    //private var currentAction: AuthenticationActions = AuthenticationActions.ToAuthenticationScreen
 
     /**
      * An action is passed when an event takes place on the UI.
      * Each action represents a destination in the flow.
      * */
-    override suspend fun postAction(action: Coordinator.Action) {
+    override suspend fun postAction(action: Action) {
         when(action){
             is AuthenticationActions.ToAuthenticationScreen     -> navigateToAuthenticationScreen()
             is AuthenticationActions.ToSignInScreen             -> {
                 navigateToSignInScreen()
-                currentAction = AuthenticationActions.ToSignInScreen
+                //currentAction = AuthenticationActions.ToSignInScreen
             }
             is AuthenticationActions.ToEmailAndPasswordScreen   -> {
                 navigateToEmailAndPasswordScreen()
-                currentAction = AuthenticationActions.ToEmailAndPasswordScreen
+                //currentAction = AuthenticationActions.ToEmailAndPasswordScreen
             }
             is AuthenticationActions.ToHomeScreen               -> navigateToHomeScreen()
             is StateActions.ToAuthenticated                     -> switchState()
         }
     }
 
-
-     /*override fun < D : Data,  A : Coordinator.Action,  S : Status>
-            requireViewModel(cls: Class<out Fragment>):
-            BaseViewModel<D, A, S> {
-        // Check the run-time type of the caller and return the appropriate view model accordingly.
-        // Check the run-time type of the caller and send it to the factory to return the appropriate
-        // view model accordingly.
-        // The Coordinator shouldn't be aware of the views. So the appropriate view model creation
-        // is delegated to the factory.
-
-        return authenticationViewModelsFactory.createViewModel(cls)
-    }*/
-
-    override fun <D : Data,  A : Coordinator.Action, S : Status>
+    /**
+     * Delegates the view model creation to the factory as through the class instance of the view
+     * as the coordinator shouldn't be aware of the views.
+     *
+     * @param  cls instance of the view that requires a view model.
+     * @return An instance of [BaseViewModel] based on caller's class type.
+     * */
+    override fun <D : Data,  A : Action, S : Status>
             requireViewModel(cls: Class<out Fragment>):
             BaseViewModel<D, A, S> {
         // Check the run-time type of the caller and return the appropriate view model accordingly.
@@ -149,6 +145,13 @@ class AuthenticationCoordinator constructor(
         }
     }
 
+    /**
+     * Delegates changing the flow state of the app to the current state of the app.
+     *
+     * (e.g. If the current state of the app is the [AuthenticationFlowState],
+     * then the [AuthenticationFlowState] is responsible for changing the state of the [RootCoordinator] to
+     * the appropriate state.)
+     * */
     private fun switchState(){
         flowState.switchState()
     }

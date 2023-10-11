@@ -1,7 +1,6 @@
 package com.example.movio.feature.authentication.signup.views
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,7 @@ import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.StateActions
 import com.example.movio.core.util.FormUtils
-import com.example.movio.core.util.hideKeyboard
+import com.example.movio.core.util.Utils
 import com.example.movio.databinding.FragmentSignupBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
@@ -20,12 +19,9 @@ import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.SignupCredentials
 import com.example.movio.feature.authentication.navigation.AuthenticationActions
-import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.example.movio.feature.authentication.signup.EmailVerificationStatus
-import com.example.movio.feature.authentication.signup.viewmodel.SignupViewModel
-import com.example.movio.feature.authentication.signup.viewmodel.SignupViewModelFactory
 import com.example.movio.feature.common.helpers.UserManager
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -43,7 +39,6 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             .rootCoordinator
             .requireCoordinator()
     }
-
     private val authenticationHelper by lazy { movioApplication.movioContainer.authenticationHelper }
     private val signupViewModel by lazy {
         coordinator
@@ -77,9 +72,9 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         binding.tvSignIn.setOnClickListener { navigateToSignInScreen() }
         binding.btnSignup.setOnClickListener {
             if(areFieldsValid()){
-                hideKeyboard(requireActivity())
+                Utils.hideKeyboard(requireActivity())
                 lifecycleScope.launch { signUpUsingEmailAndPassword() }
-                Toast.makeText(requireContext(), "Signed up successfully!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Signed up successfully. Verify your email", Toast.LENGTH_SHORT).show()
             }
             else{
                 setTextInputLayoutErrorStyling()
@@ -258,6 +253,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     override fun onDestroy() {
         super.onDestroy()
         AuthenticationHelper.disposeAuthenticationResult(disposable)
+        // TODO maybe change the state when the user is actually authenticated, not when the fragment is destroyed
         lifecycleScope.launch { coordinator.postAction(StateActions.ToAuthenticated) }
     }
 }

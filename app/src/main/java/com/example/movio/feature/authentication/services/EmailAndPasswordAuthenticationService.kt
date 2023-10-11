@@ -1,21 +1,20 @@
 package com.example.movio.feature.authentication.services
 
-import com.example.movio.feature.authentication.helpers.BaseCredentials
 import com.example.movio.feature.authentication.helpers.LoginCredentials
 import com.example.movio.feature.authentication.helpers.SignupCredentials
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlin.Exception
 
+// TODO refactor the suspend functions as they're unreadable
 class EmailAndPasswordAuthenticationService private constructor(
     private val firebaseAuth: FirebaseAuth,
-) /*: SignupServiceContract<SignupCredentials>,LoginServiceContract<LoginCredentials>*/ {
+) {
 
 
     companion object{

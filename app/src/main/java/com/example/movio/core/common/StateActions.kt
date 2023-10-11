@@ -1,7 +1,9 @@
 package com.example.movio.core.common
 
-import com.example.movio.core.navigation.Coordinator
 
-sealed class StateActions : Coordinator.Action{
+/**
+ * These Actions represent an an event that occurred and supposed to change the state of the coordinator
+ * */
+sealed class StateActions : Action{
     object ToAuthenticated : StateActions()
 }

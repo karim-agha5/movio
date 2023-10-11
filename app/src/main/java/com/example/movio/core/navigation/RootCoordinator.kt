@@ -5,8 +5,6 @@ import com.example.movio.core.helpers.ViewModelsFactoryProvider
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.navigation.AuthenticationFlowState
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
 // TODO this class doesn't follow the SRP. Refactor later.
 class RootCoordinator(
