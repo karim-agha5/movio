@@ -12,6 +12,7 @@ abstract class BaseFragment<VB : ViewBinding?> : Fragment() {
 
     private     var _binding: VB? = null
     protected   val binding get() = _binding!!
+
     // Must be instantiated lazely
     protected   val movioApplication by lazy { (requireActivity().application as MovioApplication) }
 

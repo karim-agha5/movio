@@ -82,6 +82,7 @@ class SignInFragment :
 
         signInViewModel.result.observe(viewLifecycleOwner){
             when(it){
+                is EmailVerificationStatus.EmailVerified -> { /* Do Nothing */ }
                 is EmailVerificationStatus.EmailNotVerified -> showEmailNotVerifiedToast()
                 else -> {/*Do nothing*/}
             }
@@ -94,7 +95,9 @@ class SignInFragment :
              *  Look [TwitterAuthenticationService]
              */
             when(it){
-                is AuthenticationResult.Success -> onSuccessfulAuthentication(it.user)
+                is AuthenticationResult.Success -> {
+                    //onSuccessfulAuthentication(it.user)
+                }
                 is AuthenticationResult.Failure -> showAppropriateDialog(it.throwable)
             }
         }
@@ -126,7 +129,7 @@ class SignInFragment :
         signInViewModel.postAction(credentials, AuthenticationActions.SignInClicked)
     }
 
-    private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
+    /*private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
         authenticateUser(firebaseUser)
         navigateToHome()
     }
@@ -138,7 +141,7 @@ class SignInFragment :
 
     private fun navigateToHome(){
         lifecycleScope.launch { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
-    }
+    }*/
 
     private fun showAppropriateDialog(throwable: Throwable?){
         if(throwable is ApiException) showDialog(throwable.statusCode)

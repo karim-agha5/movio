@@ -8,7 +8,7 @@ class MovioApplication : Application() {
     lateinit var movioContainer: MovioContainer
     override fun onCreate() {
         super.onCreate()
-        movioContainer = MovioContainer()
+        movioContainer = MovioContainer(this)
         FirebaseApp.initializeApp(this)
     }
 }

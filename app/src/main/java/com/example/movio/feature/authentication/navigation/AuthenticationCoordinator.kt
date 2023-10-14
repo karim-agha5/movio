@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
  * This class is main-safe as navigation requires to be on the main thread.
  *  It contains all the logic necessary for the navigation in the authentication flow.
  * */
-class AuthenticationCoordinator constructor(
+class AuthenticationCoordinator(
     private val flowNavigator: AuthenticationFlowNavigator,
     private val authenticationViewModelsFactory: AuthenticationViewModelsFactory,
     private val flowState: FlowState

@@ -74,7 +74,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             if(areFieldsValid()){
                 Utils.hideKeyboard(requireActivity())
                 lifecycleScope.launch { signUpUsingEmailAndPassword() }
-                Toast.makeText(requireContext(), "Signed up successfully. Verify your email", Toast.LENGTH_SHORT).show()
+
             }
             else{
                 setTextInputLayoutErrorStyling()
@@ -128,12 +128,14 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
          *  Look [TwitterAuthenticationService]
          */
         when(authenticationResult){
-            is AuthenticationResult.Success -> onSuccessfulAuthentication(authenticationResult.user)
+            is AuthenticationResult.Success -> {
+                // onSuccessfulAuthentication(authenticationResult.user)
+            }
             is AuthenticationResult.Failure -> showAppropriateDialog(authenticationResult.throwable)
         }
     }
 
-    private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
+   /* private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
         authenticateUser(firebaseUser)
         navigateToHome()
     }
@@ -145,7 +147,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
 
     private fun navigateToHome(){
         lifecycleScope.launch { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
-    }
+    }*/
 
     private fun navigateToSignInScreen(){
         lifecycleScope.launch { coordinator.postAction(AuthenticationActions.ToSignInScreen) }
