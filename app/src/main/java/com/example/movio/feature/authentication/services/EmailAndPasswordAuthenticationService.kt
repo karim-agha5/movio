@@ -10,6 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlin.Exception
+import kotlin.Throws
 
 // TODO refactor the suspend functions as they're unreadable
 class EmailAndPasswordAuthenticationService private constructor(
@@ -67,6 +68,7 @@ class EmailAndPasswordAuthenticationService private constructor(
 
         return firebaseUser
     }
+    @Throws(Exception::class)
      suspend fun login(credentials: LoginCredentials?) : FirebaseUser?{
          var firebaseUser: FirebaseUser? = null
 

@@ -10,35 +10,38 @@ import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.util.FormUtils
-import com.example.movio.core.util.Utils
 import com.example.movio.databinding.FragmentSignInBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
-import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.LoginCredentials
-import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
-import com.example.movio.feature.authentication.status.EmailVerificationStatus
-import com.example.movio.feature.common.helpers.UserManager
+import com.example.movio.feature.authentication.signin.actions.SignInActions
+import com.example.movio.feature.authentication.status.SignInStatus
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
 class SignInFragment :
-    BaseFragment<FragmentSignInBinding>(), AuthenticationResultCallbackLauncher{
+    BaseFragment<FragmentSignInBinding>(), AuthenticationResultCallbackLauncher {
 
-    private val coordinator by lazy { movioApplication.movioContainer.rootCoordinator.requireCoordinator() }
-    private val signInViewModel by lazy{
-        coordinator
-            .requireViewModel<LoginCredentials, AuthenticationActions, EmailVerificationStatus>(this::class.java)
+    private val coordinator by lazy {
+        movioApplication
+            .movioContainer
+            .rootCoordinator
+            .requireCoordinator()
     }
+
+    private val signInViewModel by lazy {
+        coordinator
+            .requireViewModel<LoginCredentials, SignInActions, SignInStatus>(this@SignInFragment::class.java)
+    }
+
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var disposable: Disposable
@@ -63,11 +66,11 @@ class SignInFragment :
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/}
-        binding.btnGoogle.setOnClickListener { lifecycleScope.launch { startGoogleAuthenticationFlow() } }
+       /* binding.btnGoogle.setOnClickListener { lifecycleScope.launch { startGoogleAuthenticationFlow() } }
         binding.btnTwitter.setOnClickListener { lifecycleScope.launch { startTwitterAuthenticationFlow() } }
         binding.tvSignUp.setOnClickListener {
             lifecycleScope.launch {
-                coordinator.postAction(AuthenticationActions.ToEmailAndPasswordScreen)
+               // coordinator.postAction(AuthenticationActions.ToEmailAndPasswordScreen)
             }
         }
         binding.btnSignIn.setOnClickListener {
@@ -82,8 +85,8 @@ class SignInFragment :
 
         signInViewModel.result.observe(viewLifecycleOwner){
             when(it){
-                is EmailVerificationStatus.EmailVerified -> { /* Do Nothing */ }
-                is EmailVerificationStatus.EmailNotVerified -> showEmailNotVerifiedToast()
+                is SignInStatus.EmailVerified -> { /* Do Nothing */ }
+                is SignInStatus.EmailNotVerified -> showEmailNotVerifiedToast()
                 else -> {/*Do nothing*/}
             }
         }
@@ -96,13 +99,50 @@ class SignInFragment :
              */
             when(it){
                 is AuthenticationResult.Success -> {
-                    //onSuccessfulAuthentication(it.user)
+                    // onSuccessfulAuthentication(it.user)
                 }
                 is AuthenticationResult.Failure -> showAppropriateDialog(it.throwable)
             }
         }
+
+        */
+
+
+        binding.btnGoogle.setOnClickListener {
+            signInViewModel.postAction(null,SignInActions.GoogleClicked)
+        }
+
+        binding.btnTwitter.setOnClickListener {
+            signInViewModel.postAction(null,SignInActions.TwitterClicked)
+        }
+
+        binding.btnSignIn.setOnClickListener {
+            val loginCredentials = LoginCredentials(
+                binding.etEmail.text.toString(),
+                binding.etPassword.text.toString()
+            )
+            signInViewModel.postAction(loginCredentials,SignInActions.SignInClicked)
+        }
+
+        signInViewModel.result.observe(viewLifecycleOwner){
+            onResultReceived(it)
+        }
+
+
     }
 
+    private fun onResultReceived(result: SignInStatus){
+        lifecycleScope.launch {
+            when(result){
+                is SignInStatus.EmailVerified -> {
+                    signInViewModel.onPostResultActionExecuted(SignInActions.SuccessAction)
+                }
+                else -> {
+                    signInViewModel.onPostResultActionExecuted(SignInActions.FailureAction)
+                }
+            }
+        }
+    }
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
         authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
     }
@@ -120,15 +160,15 @@ class SignInFragment :
             )
             .login(null)
     }
-
+/*
     private fun signInUsingEmailAndPassword(){
         val credentials = LoginCredentials(
             binding.etEmail.text.toString(),
             binding.etPassword.text.toString()
         )
-        signInViewModel.postAction(credentials, AuthenticationActions.SignInClicked)
+        signInViewModel.postAction(credentials, SignInActions.SignInClicked)
     }
-
+*/
     /*private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
         authenticateUser(firebaseUser)
         navigateToHome()
@@ -243,6 +283,6 @@ class SignInFragment :
 
     override fun onDestroy() {
         super.onDestroy()
-        AuthenticationHelper.disposeAuthenticationResult(disposable)
+        // AuthenticationHelper.disposeAuthenticationResult(disposable)
     }
 }

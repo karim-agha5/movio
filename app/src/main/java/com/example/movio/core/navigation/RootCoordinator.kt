@@ -1,8 +1,10 @@
 package com.example.movio.core.navigation
 
 import android.app.Application
+import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import com.example.movio.core.MovioApplication
 import com.example.movio.core.common.Action
 import com.example.movio.core.common.BaseViewModel
 import com.example.movio.core.common.Data
@@ -11,6 +13,7 @@ import com.example.movio.core.helpers.ViewModelsFactoryProvider
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.navigation.AuthenticationFlowState
 import com.example.movio.feature.authentication.navigation.viewmodelsfactory.AuthenticationViewModelsFactory
+import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.common.helpers.UserManager
 import com.google.firebase.auth.FirebaseAuth
 
@@ -35,7 +38,7 @@ class RootCoordinator(
      * Must be called when the MainActivity's onCreate is called.
      * */
     fun init(navController: NavController){
-        _navController = navController
+        this._navController = navController
         initState()
     }
 

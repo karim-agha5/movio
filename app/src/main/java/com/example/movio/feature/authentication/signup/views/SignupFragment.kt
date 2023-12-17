@@ -21,12 +21,11 @@ import com.example.movio.feature.authentication.helpers.SignupCredentials
 import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
-import com.example.movio.feature.authentication.status.EmailVerificationStatus
-import com.example.movio.feature.common.helpers.UserManager
+import com.example.movio.feature.authentication.signup.actions.SignupActions
+import com.example.movio.feature.authentication.status.SignInStatus
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,7 +41,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     private val authenticationHelper by lazy { movioApplication.movioContainer.authenticationHelper }
     private val signupViewModel by lazy {
         coordinator
-            .requireViewModel<SignupCredentials, AuthenticationActions, EmailVerificationStatus>(this::class.java)
+            .requireViewModel<SignupCredentials, SignupActions, SignInStatus>(this::class.java)
     }
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
@@ -83,7 +82,11 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
 
 
         signupViewModel.result.observe(viewLifecycleOwner){
-            onEmailVerificationStatusReceived(it)
+            when(it){
+                is SignInStatus.SignInFailed -> showAppropriateDialog(it.throwable)
+                is SignInStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
+                else -> {/*Do Nothing*/}
+            }
         }
 
 
@@ -112,12 +115,12 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     private fun signUpUsingEmailAndPassword(){
         val credentials =
             SignupCredentials(binding.etEmail.text.toString(),binding.etPassword.text.toString())
-        signupViewModel.postAction(credentials, AuthenticationActions.SignupClicked)
+        signupViewModel.postAction(credentials, SignupActions.SignupClicked)
     }
 
-    private fun onEmailVerificationStatusReceived(emailVerificationStatus: EmailVerificationStatus){
-        when(emailVerificationStatus){
-            is EmailVerificationStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
+    private fun onEmailVerificationStatusReceived(signInStatus: SignInStatus){
+        when(signInStatus){
+            is SignInStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
             else -> {/* Do Nothing */}
         }
     }

@@ -28,4 +28,6 @@ abstract class BaseViewModel<D : Data, ActionType : Action, S : Status>(applicat
     // TODO consider removing these two methods and adding them to an interface(s)
     protected abstract suspend fun postActionOnSuccess()
     protected abstract suspend fun postActionOnFailure()
+
+    abstract suspend fun onPostResultActionExecuted(action: ActionType);
 }

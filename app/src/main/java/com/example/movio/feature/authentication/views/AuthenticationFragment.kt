@@ -41,6 +41,7 @@ class AuthenticationFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        movioApplication.movioContainer.rootCoordinator
         googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
         // Register the authentication lifecycle observer
         // to unregister the launcher when the Lifecycle is destroyed.

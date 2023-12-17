@@ -2,19 +2,16 @@ package com.example.movio.feature.authentication.navigation.viewmodelsfactory
 
 import android.app.Application
 import androidx.fragment.app.Fragment
+import com.example.movio.core.MovioApplication
 import com.example.movio.core.common.Action
 import com.example.movio.core.common.BaseViewModel
 import com.example.movio.core.common.Data
 import com.example.movio.core.common.Status
-import com.example.movio.core.navigation.Coordinator
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
-import com.example.movio.feature.authentication.helpers.LoginCredentials
-import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
 import com.example.movio.feature.authentication.signin.viewmodel.SignInViewModel
 import com.example.movio.feature.authentication.signin.viewmodel.SignInViewModelFactory
 import com.example.movio.feature.authentication.signin.views.SignInFragment
-import com.example.movio.feature.authentication.status.EmailVerificationStatus
 import com.example.movio.feature.authentication.signup.viewmodel.SignupViewModel
 import com.example.movio.feature.authentication.signup.viewmodel.SignupViewModelFactory
 import com.example.movio.feature.authentication.signup.views.SignupFragment
@@ -41,16 +38,28 @@ class AuthenticationViewModelsFactory(
             EmailAndPasswordAuthenticationService
                 .getInstance(firebaseAuth)
 
-        val factory = SignupViewModelFactory(service,authenticationHelper,application)
+        val factory = SignupViewModelFactory(
+            service,
+            (application as MovioApplication).movioContainer.googleSignInService,
+            application.movioContainer.twitterAuthenticationService,
+            authenticationHelper,
+            application
+        )
         return factory.create(SignupViewModel::class.java)
     }
 
-    private fun createSignInViewModel() : BaseViewModel<LoginCredentials, AuthenticationActions, EmailVerificationStatus>{
+    private fun createSignInViewModel() : SignInViewModel {
         val service =
             EmailAndPasswordAuthenticationService
                 .getInstance(firebaseAuth)
 
-        val factory = SignInViewModelFactory(service,authenticationHelper,application)
+        val factory = SignInViewModelFactory(
+            service,
+            (application as MovioApplication).movioContainer.googleSignInService,
+            application.movioContainer.twitterAuthenticationService,
+            authenticationHelper,
+            application
+        )
         return factory.create(SignInViewModel::class.java)
     }
 

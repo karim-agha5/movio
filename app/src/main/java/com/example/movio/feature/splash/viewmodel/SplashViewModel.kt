@@ -47,6 +47,10 @@ class SplashViewModel(
     override suspend fun postActionOnFailure() =
         coordinator.postAction(AuthenticationActions.ToAuthenticationScreen)
 
+    override suspend fun onPostResultActionExecuted(action: AuthenticationActions) {
+        TODO("Not yet implemented")
+    }
+
 
     private suspend fun navigateFromSplash(){
         if(userManager.isLoggedIn()) postActionOnSuccess()
