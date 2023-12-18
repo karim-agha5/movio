@@ -27,7 +27,6 @@ class AuthenticationCoordinator(
     private val flowState: FlowState
     ) : Coordinator {
 
-    //private var currentAction: AuthenticationActions = AuthenticationActions.ToAuthenticationScreen
 
     /**
      * An action is passed when an event takes place on the UI.
@@ -36,14 +35,8 @@ class AuthenticationCoordinator(
     override suspend fun postAction(action: Action) {
         when(action){
             is AuthenticationActions.ToAuthenticationScreen     -> navigateToAuthenticationScreen()
-            is AuthenticationActions.ToSignInScreen             -> {
-                navigateToSignInScreen()
-                //currentAction = AuthenticationActions.ToSignInScreen
-            }
-            is AuthenticationActions.ToEmailAndPasswordScreen   -> {
-                navigateToEmailAndPasswordScreen()
-                //currentAction = AuthenticationActions.ToEmailAndPasswordScreen
-            }
+            is AuthenticationActions.ToSignInScreen             -> navigateToSignInScreen()
+            is AuthenticationActions.ToEmailAndPasswordScreen   -> navigateToEmailAndPasswordScreen()
             is AuthenticationActions.ToHomeScreen               -> navigateToHomeScreen()
             is StateActions.ToAuthenticated                     -> switchState()
         }
@@ -142,6 +135,7 @@ class AuthenticationCoordinator(
 
     private suspend fun navigateToHomeScreen() {
         withContext(Dispatchers.Main){
+            switchState()
             flowNavigator.navigateToHomeScreen(buildHomeFragmentNavOptions())
         }
     }

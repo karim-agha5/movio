@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movio.core.MovioApplication
 import com.example.movio.core.common.BaseViewModel
+import com.example.movio.core.common.StateActions
 import com.example.movio.core.navigation.Coordinator
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
@@ -50,13 +51,16 @@ class SignInViewModel(
         _result.postValue(SignInStatus.EmailVerified)
     }
 
-    override suspend fun postActionOnFailure() {
+    override suspend fun postActionOnFailure(throwable: Throwable?) {
         _result.postValue(SignInStatus.EmailNotVerified)
     }
 
     override suspend fun onPostResultActionExecuted(action: SignInActions) {
         if(action is SignInActions.SuccessAction){
             onSuccessfulAuthentication(firebaseUser)
+        }
+        else{
+
         }
     }
 
@@ -96,6 +100,10 @@ class SignInViewModel(
             authenticationHelper
                 .getAuthenticationResultObservableSource()
                 .subscribe {
+                    /**
+                     * TODO should handle the cases were null is sent from the source observable.
+                     *  Look [TwitterAuthenticationService]
+                     */
                     when(it){
                         is AuthenticationResult.Success -> viewModelScope.launch { onUserReturned(it.user) }
                         is AuthenticationResult.Failure -> _result.postValue(SignInStatus.SignInFailed(it.throwable))
@@ -109,7 +117,7 @@ class SignInViewModel(
             postActionOnSuccess()
         }
         else{
-            postActionOnFailure()
+            postActionOnFailure(null)
         }
     }
 

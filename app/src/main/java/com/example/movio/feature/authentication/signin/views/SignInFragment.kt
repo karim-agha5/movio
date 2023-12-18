@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.util.FormUtils
+import com.example.movio.core.util.Utils
 import com.example.movio.databinding.FragmentSignInBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
@@ -117,11 +118,18 @@ class SignInFragment :
         }
 
         binding.btnSignIn.setOnClickListener {
-            val loginCredentials = LoginCredentials(
-                binding.etEmail.text.toString(),
-                binding.etPassword.text.toString()
-            )
-            signInViewModel.postAction(loginCredentials,SignInActions.SignInClicked)
+            if(areFieldsValid()){
+                Utils.hideKeyboard(requireActivity())
+
+                val loginCredentials = LoginCredentials(
+                    binding.etEmail.text.toString(),
+                    binding.etPassword.text.toString()
+                )
+                signInViewModel.postAction(loginCredentials,SignInActions.SignInClicked)
+            }
+            else{
+                setTextInputLayoutErrorStyling()
+            }
         }
 
         signInViewModel.result.observe(viewLifecycleOwner){
@@ -134,12 +142,12 @@ class SignInFragment :
     private fun onResultReceived(result: SignInStatus){
         lifecycleScope.launch {
             when(result){
-                is SignInStatus.EmailVerified -> {
-                    signInViewModel.onPostResultActionExecuted(SignInActions.SuccessAction)
-                }
-                else -> {
+                is SignInStatus.EmailVerified -> signInViewModel.onPostResultActionExecuted(SignInActions.SuccessAction)
+                is SignInStatus.EmailNotVerified -> {
+                    showDialog("Your E-mail is not verified yet.")
                     signInViewModel.onPostResultActionExecuted(SignInActions.FailureAction)
                 }
+                else -> {/*Do Nothing*/}
             }
         }
     }

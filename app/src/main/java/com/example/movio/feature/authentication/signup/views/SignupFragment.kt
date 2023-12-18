@@ -22,6 +22,7 @@ import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.example.movio.feature.authentication.signup.actions.SignupActions
+import com.example.movio.feature.authentication.signup.status.SignupStatus
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -41,7 +42,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     private val authenticationHelper by lazy { movioApplication.movioContainer.authenticationHelper }
     private val signupViewModel by lazy {
         coordinator
-            .requireViewModel<SignupCredentials, SignupActions, SignInStatus>(this::class.java)
+            .requireViewModel<SignupCredentials, SignupActions, SignupStatus>(this::class.java)
     }
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
@@ -64,7 +65,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+/*
         binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/}
         binding.btnGoogle.setOnClickListener { lifecycleScope.launch { startGoogleAuthenticationFlow() } }
         binding.btnTwitter.setOnClickListener { lifecycleScope.launch { startTwitterAuthenticationFlow() } }
@@ -73,25 +74,38 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             if(areFieldsValid()){
                 Utils.hideKeyboard(requireActivity())
                 lifecycleScope.launch { signUpUsingEmailAndPassword() }
-
             }
             else{
                 setTextInputLayoutErrorStyling()
             }
         }
+*/
 
+        binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/}
+        binding.btnGoogle.setOnClickListener { signupViewModel.postAction(null,SignupActions.GoogleClicked) }
+        binding.btnTwitter.setOnClickListener { signupViewModel.postAction(null,SignupActions.TwitterClicked) }
+        binding.btnSignup.setOnClickListener {
+            if(areFieldsValid()){
+                signupViewModel.postAction(
+                    SignupCredentials(binding.etEmail.text.toString(),binding.etPassword.text.toString()),
+                    SignupActions.SignupClicked
+                )
+            }
+        }
 
         signupViewModel.result.observe(viewLifecycleOwner){
             when(it){
-                is SignInStatus.SignInFailed -> showAppropriateDialog(it.throwable)
-                is SignInStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
+                is SignupStatus.SignupFailed -> showAppropriateDialog(it.throwable)
+                is SignupStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
                 else -> {/*Do Nothing*/}
             }
         }
 
-
+/*
         val source = authenticationHelper.getAuthenticationResultObservableSource()
         disposable = source.subscribe{ onAuthenticationResultReceived(it) }
+ */
+
     }
 
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
@@ -256,7 +270,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
 
     override fun onDestroy() {
         super.onDestroy()
-        AuthenticationHelper.disposeAuthenticationResult(disposable)
+        //AuthenticationHelper.disposeAuthenticationResult(disposable)
         // TODO maybe change the state when the user is actually authenticated, not when the fragment is destroyed
         lifecycleScope.launch { coordinator.postAction(StateActions.ToAuthenticated) }
     }

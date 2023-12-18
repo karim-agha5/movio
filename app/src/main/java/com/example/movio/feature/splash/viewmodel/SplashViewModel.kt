@@ -44,7 +44,7 @@ class SplashViewModel(
         coordinator.postAction(AuthenticationActions.ToHomeScreen)
 
 
-    override suspend fun postActionOnFailure() =
+    override suspend fun postActionOnFailure(throwable: Throwable?) =
         coordinator.postAction(AuthenticationActions.ToAuthenticationScreen)
 
     override suspend fun onPostResultActionExecuted(action: AuthenticationActions) {
@@ -54,6 +54,6 @@ class SplashViewModel(
 
     private suspend fun navigateFromSplash(){
         if(userManager.isLoggedIn()) postActionOnSuccess()
-        else                         postActionOnFailure()
+        else                         postActionOnFailure(null)
     }
 }
