@@ -6,16 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.movio.core.navigation.Coordinator
 
-
-/*
-abstract class BaseViewModel<D : Data, ActionType : Action, S : Status> : ViewModel() {
-
-    abstract val result: LiveData<S>
-
-    abstract fun postAction(data: D?,action: ActionType)
-}*/
-
-
 abstract class BaseViewModel<D : Data, ActionType : Action, S : Status>(application: Application)
     : AndroidViewModel(application) {
 
@@ -26,8 +16,8 @@ abstract class BaseViewModel<D : Data, ActionType : Action, S : Status>(applicat
     abstract fun postAction(data: D?,action: ActionType)
 
     // TODO consider removing these two methods and adding them to an interface(s)
-    protected abstract suspend fun postActionOnSuccess()
-    protected abstract suspend fun postActionOnFailure(throwable: Throwable?)
+    protected abstract fun postActionOnSuccess()
+    protected abstract fun postActionOnFailure(throwable: Throwable?)
 
     abstract suspend fun onPostResultActionExecuted(action: ActionType);
 }

@@ -15,10 +15,10 @@ import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.example.movio.feature.authentication.signup.actions.SignupActions
 import com.example.movio.feature.authentication.signup.status.SignupStatus
-import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.actions.AuthenticationActions
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.UnsupportedOperationException
 import kotlin.jvm.Throws
@@ -60,9 +60,9 @@ class SignupViewModel(
         }
     }
 
-    override suspend fun postActionOnSuccess() = _result.postValue(SignupStatus.ShouldVerifyEmail)
+    override fun postActionOnSuccess() = _result.postValue(SignupStatus.ShouldVerifyEmail)
 
-    override suspend fun postActionOnFailure(throwable: Throwable?) = _result.postValue(SignupStatus.SignupFailed(throwable))
+    override fun postActionOnFailure(throwable: Throwable?) = _result.postValue(SignupStatus.SignupFailed(throwable))
 
     @Throws(UnsupportedOperationException::class)
     override suspend fun onPostResultActionExecuted(action: SignupActions) {
@@ -72,24 +72,58 @@ class SignupViewModel(
     private fun signup(credentials: SignupCredentials?){
         viewModelScope.launch{
             try{
-                val user = emailAndPasswordAuthenticationService.signup(credentials)
+                emailAndPasswordAuthenticationService.signup(credentials)
                 postActionOnSuccess()
             }catch(e: Exception){ postActionOnFailure(e) }
         }
     }
 
-    private fun onUserReturned(user: FirebaseUser?){
-
-    }
 
     private fun signupWithGoogle(){
-        viewModelScope.launch { googleSignInService.login(null) }
+        viewModelScope.launch {
+            googleSignInService.login(null)
+            authenticationHelper
+                .getAuthenticationResultObservableSource()
+                .subscribe {
+                    when(it){
+                        is AuthenticationResult.Success -> onUserReturned(it.user)
+                        is AuthenticationResult.Failure -> postActionOnFailure(it.throwable)
+                    }
+                }
+        }
     }
 
     private fun signupWithTwitter(){
-        viewModelScope.launch { twitterAuthenticationService.signup(null) }
+        viewModelScope.launch {
+            twitterAuthenticationService.signup(null)
+            authenticationHelper
+                .getAuthenticationResultObservableSource()
+                .subscribe {
+                    when(it){
+                        is AuthenticationResult.Success -> onUserReturned(it.user)
+                        is AuthenticationResult.Failure -> postActionOnFailure(it.throwable)
+                    }
+                }
+        }
     }
 
+    private fun onUserReturned(user: FirebaseUser?){
+        authenticateUser(user)
+        navigateToHome()
+    }
+
+    private fun authenticateUser(user: FirebaseUser?){
+        getApplication<MovioApplication>()
+            .movioContainer
+            .userManager
+            .authenticateUser(user)
+    }
+
+    private fun navigateToHome(){
+        // Consider using the lifecycle of the view because config change might happen before navigation
+        // May cause unexpected behaviors
+        viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
+    }
     private fun navigateToSignInScreen(){
         viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToSignInScreen) }
     }

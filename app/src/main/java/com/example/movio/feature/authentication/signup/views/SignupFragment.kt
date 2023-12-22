@@ -95,8 +95,8 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
 
         signupViewModel.result.observe(viewLifecycleOwner){
             when(it){
-                is SignupStatus.SignupFailed -> showAppropriateDialog(it.throwable)
                 is SignupStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
+                is SignupStatus.SignupFailed -> showAppropriateDialog(it.throwable)
                 else -> {/*Do Nothing*/}
             }
         }

@@ -19,6 +19,7 @@ import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.helpers.UserManager
 import com.google.firebase.auth.FirebaseUser
+import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -38,6 +39,15 @@ class SignInViewModel(
 
     private var firebaseUser: FirebaseUser? = null
 
+    private var disposable: Disposable
+
+    init {
+        disposable = authenticationHelper
+            .getAuthenticationResultObservableSource()
+            .subscribe {  }
+    }
+
+
     override fun postAction(data: LoginCredentials?, action: SignInActions) {
         when(action){
             is SignInActions.SignInClicked -> login(data)
@@ -47,11 +57,11 @@ class SignInViewModel(
         }
     }
 
-    override suspend fun postActionOnSuccess() {
+    override fun postActionOnSuccess() {
         _result.postValue(SignInStatus.EmailVerified)
     }
 
-    override suspend fun postActionOnFailure(throwable: Throwable?) {
+    override fun postActionOnFailure(throwable: Throwable?) {
         _result.postValue(SignInStatus.EmailNotVerified)
     }
 
@@ -112,7 +122,7 @@ class SignInViewModel(
         }
     }
 
-    private suspend fun onUserReturned(firebaseUser: FirebaseUser?){
+    private fun onUserReturned(firebaseUser: FirebaseUser?){
         if(firebaseUser?.isEmailVerified == true) {
             postActionOnSuccess()
         }
@@ -135,5 +145,10 @@ class SignInViewModel(
         // Consider using the lifecycle of the view because config change might happen before navigation
         // May cause unexpected behaviors
         viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposable.dispose()
     }
 }

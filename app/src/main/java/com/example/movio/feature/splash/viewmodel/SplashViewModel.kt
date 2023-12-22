@@ -40,19 +40,21 @@ class SplashViewModel(
         }
     }
 
-    override suspend fun postActionOnSuccess() =
-        coordinator.postAction(AuthenticationActions.ToHomeScreen)
+    override fun postActionOnSuccess() {
+        viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
+    }
 
 
-    override suspend fun postActionOnFailure(throwable: Throwable?) =
-        coordinator.postAction(AuthenticationActions.ToAuthenticationScreen)
+    override fun postActionOnFailure(throwable: Throwable?) {
+        viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToAuthenticationScreen) }
+    }
 
     override suspend fun onPostResultActionExecuted(action: AuthenticationActions) {
         TODO("Not yet implemented")
     }
 
 
-    private suspend fun navigateFromSplash(){
+    private fun navigateFromSplash(){
         if(userManager.isLoggedIn()) postActionOnSuccess()
         else                         postActionOnFailure(null)
     }
