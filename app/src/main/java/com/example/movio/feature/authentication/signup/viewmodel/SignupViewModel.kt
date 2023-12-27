@@ -46,7 +46,7 @@ class SignupViewModel(
             .subscribe {
                 when(it){
                     is AuthenticationResult.Success -> navigateToSignInScreen()
-                    is AuthenticationResult.Failure -> viewModelScope.launch { postActionOnFailure(it.throwable) }
+                    is AuthenticationResult.Failure -> postActionOnFailure(it.throwable)
                 }
             }
     }
