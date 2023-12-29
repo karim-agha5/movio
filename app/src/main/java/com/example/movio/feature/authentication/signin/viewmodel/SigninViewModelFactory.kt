@@ -10,8 +10,8 @@ import com.example.movio.feature.authentication.services.TwitterAuthenticationSe
 
 class SignInViewModelFactory(
     private val emailAndPasswordAuthenticationService: EmailAndPasswordAuthenticationService,
-    private val googleSignInService: GoogleSignInService,
-    private val twitterAuthenticationService: TwitterAuthenticationService,
+    //private val googleSignInService: GoogleSignInService,
+    //private val twitterAuthenticationService: TwitterAuthenticationService,
     private val authenticationHelper: AuthenticationHelper,
     private val application: Application
 ) : ViewModelProvider.Factory{
@@ -19,8 +19,8 @@ class SignInViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SignInViewModel(
             emailAndPasswordAuthenticationService,
-            googleSignInService,
-            twitterAuthenticationService,
+            //googleSignInService,
+            //twitterAuthenticationService,
             authenticationHelper,
             application
         ) as T

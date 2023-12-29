@@ -30,6 +30,7 @@ class AuthenticationFragment :
 
     private val userManager by lazy { movioApplication.movioContainer.userManager }
     private lateinit var googleSignInService: GoogleSignInService
+    private lateinit var twitterSignInService: TwitterAuthenticationService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var disposable: Disposable
     private val authenticationHelper by lazy  {movioApplication.movioContainer.authenticationHelper }
@@ -41,13 +42,21 @@ class AuthenticationFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        movioApplication.movioContainer.rootCoordinator
-        googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
+       /* googleSignInService = GoogleSignInService.getInstance()
+        twitterSignInService = TwitterAuthenticationService.getInstance(
+            movioApplication.movioContainer.firebaseAuth,
+            authenticationHelper
+        )
+        googleSignInService.register(requireActivity())
+        googleSignInService.register(this)
+        twitterSignInService.register(requireActivity())
         // Register the authentication lifecycle observer
         // to unregister the launcher when the Lifecycle is destroyed.
         authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(requireActivity().activityResultRegistry,googleSignInService)
         lifecycle.addObserver(authenticationLifecycleObserver)
+
+        */
     }
 
     override fun inflateBinding(
@@ -84,6 +93,7 @@ class AuthenticationFragment :
         binding.btnContinueWithGoogle.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Main) { startGoogleAuthenticationFlow() }
         }
+        /*
         val source = authenticationHelper.getAuthenticationResultObservableSource()
         disposable = source.subscribe{
             /**
@@ -95,18 +105,16 @@ class AuthenticationFragment :
                 is AuthenticationResult.Failure -> showAppropriateDialog(it.throwable)
             }
         }
+        */
+
     }
 
     private suspend fun startGoogleAuthenticationFlow(){
-        GoogleSignInService
-            .getInstance(requireActivity(),this)
-            .login(null)
+        googleSignInService.login(null)
     }
 
     private suspend fun startTwitterAuthenticationFlow(){
-        TwitterAuthenticationService
-            .getInstance(requireActivity(),movioApplication.movioContainer.firebaseAuth,authenticationHelper)
-            .login(null)
+            twitterSignInService.login(null)
     }
 
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest){
@@ -169,6 +177,6 @@ class AuthenticationFragment :
 
     override fun onDestroy() {
         super.onDestroy()
-        authenticationHelper.disposeAuthenticationResult(disposable)
+        //authenticationHelper.disposeAuthenticationResult(disposable)
     }
 }

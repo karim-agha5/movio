@@ -29,11 +29,11 @@ class MovioContainer(private val application: Application){
         RootCoordinator(application,viewModelsFactoryProvider,firebaseAuth, authenticationHelper,userManager)
 
     // Should be called by the start destination
-    fun initDependenciesOnActivityInstance(
+ /*   fun initDependenciesOnActivityInstance(
         activity: ComponentActivity,
         launcher: AuthenticationResultCallbackLauncher
     ){
         googleSignInService = GoogleSignInService.getInstance(activity,launcher)
         twitterAuthenticationService = TwitterAuthenticationService.getInstance(activity,firebaseAuth, authenticationHelper)
-    }
+    }*/
 }

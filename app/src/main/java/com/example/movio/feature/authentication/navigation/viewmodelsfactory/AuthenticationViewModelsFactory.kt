@@ -40,8 +40,8 @@ class AuthenticationViewModelsFactory(
 
         val factory = SignupViewModelFactory(
             service,
-            (application as MovioApplication).movioContainer.googleSignInService,
-            application.movioContainer.twitterAuthenticationService,
+            //(application as MovioApplication).movioContainer.googleSignInService,
+            //application.movioContainer.twitterAuthenticationService,
             authenticationHelper,
             application
         )
@@ -55,8 +55,8 @@ class AuthenticationViewModelsFactory(
 
         val factory = SignInViewModelFactory(
             service,
-            (application as MovioApplication).movioContainer.googleSignInService,
-            application.movioContainer.twitterAuthenticationService,
+            //(application as MovioApplication).movioContainer.googleSignInService,
+            //application.movioContainer.twitterAuthenticationService,
             authenticationHelper,
             application
         )

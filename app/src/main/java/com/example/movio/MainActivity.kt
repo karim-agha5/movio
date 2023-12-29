@@ -9,7 +9,7 @@ import com.example.movio.core.MovioApplication
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 
-class MainActivity : AppCompatActivity(), AuthenticationResultCallbackLauncher {
+class MainActivity : AppCompatActivity()/*, AuthenticationResultCallbackLauncher*/ {
 
     private val userManager by lazy { (application as MovioApplication).movioContainer.userManager }
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
@@ -18,9 +18,9 @@ class MainActivity : AppCompatActivity(), AuthenticationResultCallbackLauncher {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        (application as MovioApplication).movioContainer.initDependenciesOnActivityInstance(this,this)
+        //(application as MovioApplication).movioContainer.initDependenciesOnActivityInstance(this,this)
         initRootCoordinator()
-        initAuthenticationObserver()
+        //initAuthenticationObserver()
     }
 
 
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), AuthenticationResultCallbackLauncher {
             .rootCoordinator
             .init(navController)
     }
-
+/*
     private fun initAuthenticationObserver(){
         authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(
@@ -43,19 +43,21 @@ class MainActivity : AppCompatActivity(), AuthenticationResultCallbackLauncher {
             )
         lifecycle.addObserver(authenticationLifecycleObserver)
     }
-
+*/
     override fun onStart() {
         super.onStart()
         userManager.authenticateUser((application as MovioApplication).movioContainer.firebaseAuth.currentUser)
-        if(userManager.isLoggedIn()){
+        /*if(userManager.isLoggedIn()){
             Log.i(tag, "found a user in activity | ")
         }
         else{
             Log.i(tag, "couldn't find a user in activity | ")
-        }
+        }*/
     }
-
+/*
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
         authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
     }
+
+ */
 }

@@ -12,6 +12,7 @@ import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.util.FormUtils
 import com.example.movio.core.util.Utils
 import com.example.movio.databinding.FragmentSignInBinding
+import com.example.movio.feature.authentication.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
@@ -38,21 +39,29 @@ class SignInFragment :
             .requireCoordinator()
     }
 
+    /*
+   *  TODO find another way to get a view model other than the coordinator.
+   *   the coordinator is supposed to be only inside the view model.
+   *   the view should be agnostic of anything except its state
+   * */
     private val signInViewModel by lazy {
         coordinator
             .requireViewModel<LoginCredentials, SignInActions, SignInStatus>(this@SignInFragment::class.java)
+        as FederatedAuthenticationBaseViewModel
     }
 
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
-    private lateinit var disposable: Disposable
+    //private lateinit var disposable: Disposable
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
+        //googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
+        signInViewModel.register(requireActivity())
+        signInViewModel.register(this)
         authenticationLifecycleObserver =
-            AuthenticationLifecycleObserver(requireActivity().activityResultRegistry,googleSignInService)
+            AuthenticationLifecycleObserver(requireActivity().activityResultRegistry,signInViewModel.getGoogleSignInService())
         lifecycle.addObserver(authenticationLifecycleObserver)
     }
 
@@ -109,13 +118,9 @@ class SignInFragment :
         */
 
 
-        binding.btnGoogle.setOnClickListener {
-            signInViewModel.postAction(null,SignInActions.GoogleClicked)
-        }
+        binding.btnGoogle.setOnClickListener { signInViewModel.postAction(null,SignInActions.GoogleClicked) }
 
-        binding.btnTwitter.setOnClickListener {
-            signInViewModel.postAction(null,SignInActions.TwitterClicked)
-        }
+        binding.btnTwitter.setOnClickListener { signInViewModel.postAction(null,SignInActions.TwitterClicked) }
 
         binding.btnSignIn.setOnClickListener {
             if(areFieldsValid()){
@@ -132,29 +137,27 @@ class SignInFragment :
             }
         }
 
-        signInViewModel.result.observe(viewLifecycleOwner){
-            onResultReceived(it)
-        }
-
+        signInViewModel.result.observe(viewLifecycleOwner){ onResultReceived(it) }
 
     }
 
-    private fun onResultReceived(result: SignInStatus){
-        lifecycleScope.launch {
-            when(result){
-                is SignInStatus.EmailVerified -> signInViewModel.onPostResultActionExecuted(SignInActions.SuccessAction)
-                is SignInStatus.EmailNotVerified -> {
-                    showDialog("Your E-mail is not verified yet.")
-                    signInViewModel.onPostResultActionExecuted(SignInActions.FailureAction)
-                }
-                else -> {/*Do Nothing*/}
-            }
-        }
-    }
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
         authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
     }
 
+    private fun onResultReceived(result: SignInStatus){
+        when(result){
+            is SignInStatus.EmailVerified       ->  signInViewModel.onPostResultActionExecuted(SignInActions.SuccessAction)
+            is SignInStatus.EmailNotVerified    ->  onUnverifiedEmailLoginAttempt()
+            else -> {/*Do Nothing*/}
+        }
+    }
+
+    private fun onUnverifiedEmailLoginAttempt(){
+        showEmailNotVerifiedToast()
+        signInViewModel.onPostResultActionExecuted(SignInActions.FailureAction)
+    }
+/*
     private suspend fun startGoogleAuthenticationFlow(){
         googleSignInService.login(null)
     }
@@ -168,7 +171,7 @@ class SignInFragment :
             )
             .login(null)
     }
-/*
+
     private fun signInUsingEmailAndPassword(){
         val credentials = LoginCredentials(
             binding.etEmail.text.toString(),
@@ -176,8 +179,8 @@ class SignInFragment :
         )
         signInViewModel.postAction(credentials, SignInActions.SignInClicked)
     }
-*/
-    /*private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
+
+    private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
         authenticateUser(firebaseUser)
         navigateToHome()
     }
@@ -291,6 +294,7 @@ class SignInFragment :
 
     override fun onDestroy() {
         super.onDestroy()
+        signInViewModel.unregister()
         // AuthenticationHelper.disposeAuthenticationResult(disposable)
     }
 }

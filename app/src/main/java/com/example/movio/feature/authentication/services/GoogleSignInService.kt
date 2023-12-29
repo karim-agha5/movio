@@ -1,12 +1,16 @@
 package com.example.movio.feature.authentication.services
 
 import android.content.Intent
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.IntentSenderRequest
 import com.example.movio.R
+import com.example.movio.core.interfaces.auth.AuthenticationResultCallbackLauncherRegistrar
+import com.example.movio.core.interfaces.auth.ComponentActivityRegistrar
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.LoginCredentials
+import com.example.movio.feature.authentication.signup.views.SignupFragment
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.Identity
@@ -19,31 +23,57 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.lang.IllegalStateException
+import kotlin.jvm.Throws
 
 class GoogleSignInService private constructor(
-    private val componentActivity: ComponentActivity,
-    private val launcher: AuthenticationResultCallbackLauncher
-) : LoginServiceContract<LoginCredentials> {
+   // private val componentActivity: ComponentActivity,
+    // private val launcher: AuthenticationResultCallbackLauncher
+) : LoginServiceContract<LoginCredentials>,
+    ComponentActivityRegistrar,
+    AuthenticationResultCallbackLauncherRegistrar{
 
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
+    private lateinit var componentActivity: ComponentActivity
+    private var launcher: AuthenticationResultCallbackLauncher? = null
     private val auth by lazy { Firebase.auth }
-    private val tag = this.javaClass.simpleName
 
     companion object{
         @Volatile private var instance: GoogleSignInService? = null
 
         fun getInstance(
-            componentActivity: ComponentActivity,
-            launcher: AuthenticationResultCallbackLauncher
+            //componentActivity: ComponentActivity,
+            //launcher: AuthenticationResultCallbackLauncher
         ): GoogleSignInService =
             instance ?: synchronized(this) {
-                instance ?: GoogleSignInService(componentActivity,launcher).also { instance = it }
+                instance ?: GoogleSignInService().also { instance = it }
             }
     }
 
-
+/*
     init {
+        initOneTapClient()
+        buildSignInRequest()
+    }
+*/
+    override fun register(launcher: AuthenticationResultCallbackLauncher) {
+        this.launcher = launcher
+    }
+
+    override fun unregister() {
+        this.launcher = null
+    }
+
+    override fun register(componentActivity: ComponentActivity) {
+        this.componentActivity = componentActivity
+    }
+
+    @Throws(IllegalStateException::class)
+    fun init(){
+        if(launcher == null || !this::componentActivity.isInitialized){
+            throw IllegalStateException("AuthenticationResultCallbackLauncher or ComponentActivity isn't registered")
+        }
         initOneTapClient()
         buildSignInRequest()
     }
@@ -118,23 +148,24 @@ class GoogleSignInService private constructor(
     }
 
     override suspend fun login(credentials: LoginCredentials?) {
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             // TODO a cancellation exception may be thrown from within the async builder. Handle it.
             val resultDeferred = async {
                 // call the .await() method to wait for the task to be completed
                 oneTapClient.beginSignIn(signInRequest).await()
             }
 
-            try{
+            try {
                 // The Activity Result callback launcher requires an IntentSenderRequest
                 // The One Tap client returns an Intent Sender which you use
                 // to build an Intent Sender Request and pass it to the launcher
                 val intentSender = resultDeferred.await().pendingIntent.intentSender
                 val intentSenderRequest = IntentSenderRequest.Builder(intentSender).build()
                 // TODO add the callback to a continuation coroutine
-                launcher.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
-
-            }catch (e: Exception){
+                Log.i("MainActivity", "inside google sign in service | AuthenticationHelper -> ${AuthenticationHelper.hashCode()} \n Observable -> ${AuthenticationHelper.getAuthenticationResultObservableSource().hashCode()}" +
+                        "\n is launcher signupfragment ? -> ${launcher is SignupFragment}")
+                launcher?.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
+            } catch (e: Exception) {
                 // The Caller has been temporarily blocked due to too many canceled sign-in prompts
                 // or
                 // The user doesn't have any saved credentials on the device

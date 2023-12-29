@@ -49,7 +49,7 @@ class SplashViewModel(
         viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToAuthenticationScreen) }
     }
 
-    override suspend fun onPostResultActionExecuted(action: AuthenticationActions) {
+    override fun onPostResultActionExecuted(action: AuthenticationActions) {
         TODO("Not yet implemented")
     }
 

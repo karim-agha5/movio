@@ -1,6 +1,7 @@
 package com.example.movio.feature.authentication.signup.views
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +12,8 @@ import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.StateActions
 import com.example.movio.core.util.FormUtils
-import com.example.movio.core.util.Utils
 import com.example.movio.databinding.FragmentSignupBinding
+import com.example.movio.feature.authentication.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
@@ -33,26 +34,38 @@ import kotlinx.coroutines.launch
 
 class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResultCallbackLauncher {
 
+
     private val coordinator by lazy {
         movioApplication
             .movioContainer
             .rootCoordinator
             .requireCoordinator()
     }
-    private val authenticationHelper by lazy { movioApplication.movioContainer.authenticationHelper }
+    //private val authenticationHelper by lazy { movioApplication.movioContainer.authenticationHelper }
+    /*
+   *  TODO find another way to get a view model other than the coordinator.
+   *   the coordinator is supposed to be only inside the view model.
+   *   the view should be agnostic of anything except its state
+   * */
     private val signupViewModel by lazy {
         coordinator
             .requireViewModel<SignupCredentials, SignupActions, SignupStatus>(this::class.java)
+        as FederatedAuthenticationBaseViewModel
     }
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
-    private lateinit var disposable: Disposable
+    //private lateinit var disposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
+        //googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
+        signupViewModel.register(requireActivity())
+        signupViewModel.register(this)
         authenticationLifecycleObserver =
-            AuthenticationLifecycleObserver(requireActivity().activityResultRegistry,googleSignInService)
+            AuthenticationLifecycleObserver(
+                requireActivity().activityResultRegistry,
+                signupViewModel.getGoogleSignInService()
+            )
         lifecycle.addObserver(authenticationLifecycleObserver)
     }
 
@@ -93,13 +106,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             }
         }
 
-        signupViewModel.result.observe(viewLifecycleOwner){
-            when(it){
-                is SignupStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
-                is SignupStatus.SignupFailed -> showAppropriateDialog(it.throwable)
-                else -> {/*Do Nothing*/}
-            }
-        }
+        signupViewModel.result.observe(viewLifecycleOwner){ onResultReceived(it) }
 
 /*
         val source = authenticationHelper.getAuthenticationResultObservableSource()
@@ -109,9 +116,18 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     }
 
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
+        Log.i("MainActivity", "inside launchAuthenticationResultCallbackLauncher")
         authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
     }
 
+    private fun onResultReceived(signupStatus: SignupStatus){
+        when(signupStatus){
+            is SignupStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
+            is SignupStatus.SignupFailed -> showAppropriateDialog(signupStatus.throwable)
+            else -> {/*Do Nothing*/ }
+        }
+    }
+/*
     private suspend fun startGoogleAuthenticationFlow(){
         googleSignInService.login(null)
     }
@@ -131,7 +147,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             SignupCredentials(binding.etEmail.text.toString(),binding.etPassword.text.toString())
         signupViewModel.postAction(credentials, SignupActions.SignupClicked)
     }
-
+*/
     private fun onEmailVerificationStatusReceived(signInStatus: SignInStatus){
         when(signInStatus){
             is SignInStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
@@ -164,13 +180,14 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
 
     private fun navigateToHome(){
         lifecycleScope.launch { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
-    }*/
+    }
 
     private fun navigateToSignInScreen(){
         lifecycleScope.launch { coordinator.postAction(AuthenticationActions.ToSignInScreen) }
     }
-
+*/
     private fun showAppropriateDialog(throwable: Throwable?){
+       Log.i("MainActivity", "exception inside showAppropriateDialog-> ${throwable?.message}")
         if(throwable is ApiException) showDialog(throwable.statusCode)
         else showDialog(throwable?.message)
     }
@@ -272,6 +289,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         super.onDestroy()
         //AuthenticationHelper.disposeAuthenticationResult(disposable)
         // TODO maybe change the state when the user is actually authenticated, not when the fragment is destroyed
-        lifecycleScope.launch { coordinator.postAction(StateActions.ToAuthenticated) }
+        //lifecycleScope.launch { coordinator.postAction(StateActions.ToAuthenticated) }
+        signupViewModel.unregister()
     }
 }
