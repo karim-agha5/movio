@@ -1,16 +1,13 @@
 package com.example.movio.feature.authentication.signin.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movio.core.MovioApplication
-import com.example.movio.core.common.BaseViewModel
-import com.example.movio.core.common.StateActions
 import com.example.movio.core.navigation.Coordinator
-import com.example.movio.feature.authentication.FederatedAuthenticationBaseViewModel
+import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher

@@ -13,9 +13,13 @@ import com.example.movio.databinding.FragmentAuthenticationBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
+import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
+import com.example.movio.feature.authentication.helpers.LoginCredentials
 import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
+import com.example.movio.feature.authentication.signin.actions.SignInActions
+import com.example.movio.feature.authentication.status.SignInStatus
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -28,35 +32,36 @@ class AuthenticationFragment :
     BaseFragment<FragmentAuthenticationBinding>(),AuthenticationResultCallbackLauncher,
     CoordinatorHost {
 
-    private val userManager by lazy { movioApplication.movioContainer.userManager }
+/*    private val userManager by lazy { movioApplication.movioContainer.userManager }
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var twitterSignInService: TwitterAuthenticationService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var disposable: Disposable
     private val authenticationHelper by lazy  {movioApplication.movioContainer.authenticationHelper }
+
+ */
     override val coordinator by lazy {
         movioApplication.movioContainer.rootCoordinator.requireCoordinator()
     }
+
+    private val authenticationViewModel by lazy {
+        coordinator
+            .requireViewModel<LoginCredentials,SignInActions,SignInStatus>(this::class.java)
+        as FederatedAuthenticationBaseViewModel
+    }
+    private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
 
     private val tag = this.javaClass.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       /* googleSignInService = GoogleSignInService.getInstance()
-        twitterSignInService = TwitterAuthenticationService.getInstance(
-            movioApplication.movioContainer.firebaseAuth,
-            authenticationHelper
-        )
-        googleSignInService.register(requireActivity())
-        googleSignInService.register(this)
-        twitterSignInService.register(requireActivity())
+        authenticationViewModel.register(requireActivity())
+        authenticationViewModel.register(this)
         // Register the authentication lifecycle observer
         // to unregister the launcher when the Lifecycle is destroyed.
         authenticationLifecycleObserver =
-            AuthenticationLifecycleObserver(requireActivity().activityResultRegistry,googleSignInService)
+            AuthenticationLifecycleObserver(requireActivity().activityResultRegistry,authenticationViewModel.getGoogleSignInService())
         lifecycle.addObserver(authenticationLifecycleObserver)
-
-        */
     }
 
     override fun inflateBinding(
@@ -68,7 +73,7 @@ class AuthenticationFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+/*
         binding.btnSignInWithPassword.setOnClickListener {
             lifecycleScope.launch {
                 coordinator.postAction(AuthenticationActions.ToSignInScreen)
@@ -93,7 +98,9 @@ class AuthenticationFragment :
         binding.btnContinueWithGoogle.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Main) { startGoogleAuthenticationFlow() }
         }
-        /*
+
+
+
         val source = authenticationHelper.getAuthenticationResultObservableSource()
         disposable = source.subscribe{
             /**
@@ -107,8 +114,16 @@ class AuthenticationFragment :
         }
         */
 
-    }
+        binding.btnContinueWithFacebook.setOnClickListener { authenticationViewModel.postAction(null,SignInActions.FacebookClicked) }
+        binding.btnContinueWithGoogle.setOnClickListener { authenticationViewModel.postAction(null,SignInActions.GoogleClicked) }
+        binding.btnContinueWithTwitter.setOnClickListener { authenticationViewModel.postAction(null,SignInActions.TwitterClicked) }
+        binding.btnSignup.setOnClickListener { authenticationViewModel.postAction(null,SignInActions.SignupClicked) }
+        binding.btnSignInWithPassword.setOnClickListener { authenticationViewModel.postAction(null,SignInActions.SignInClicked) }
 
+        authenticationViewModel.result.observe(viewLifecycleOwner){ onResultReceived(it) }
+
+    }
+/*
     private suspend fun startGoogleAuthenticationFlow(){
         googleSignInService.login(null)
     }
@@ -116,22 +131,29 @@ class AuthenticationFragment :
     private suspend fun startTwitterAuthenticationFlow(){
             twitterSignInService.login(null)
     }
-
+*/
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest){
         authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
     }
 
+    private fun onResultReceived(signInStatus: SignInStatus){
+        when(signInStatus){
+            is SignInStatus.SignInFailed    -> showAppropriateDialog(signInStatus.throwable)
+            else                            -> { /*Do Nothing*/ }
+        }
+    }
+/*
     private fun navigateToHomeFragment() {
         lifecycleScope.launch {
             coordinator.postAction(AuthenticationActions.ToHomeScreen)
         }
     }
-
+*
     private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
         userManager.authenticateUser(firebaseUser)
         navigateToHomeFragment()
     }
-
+*/
     private fun showAppropriateDialog(throwable: Throwable?){
         if(throwable is ApiException) showDialog(throwable.statusCode)
         else showDialog(throwable?.message)
@@ -177,6 +199,7 @@ class AuthenticationFragment :
 
     override fun onDestroy() {
         super.onDestroy()
+        authenticationViewModel.unregister()
         //authenticationHelper.disposeAuthenticationResult(disposable)
     }
 }

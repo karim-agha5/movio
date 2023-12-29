@@ -12,19 +12,16 @@ import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.util.FormUtils
 import com.example.movio.core.util.Utils
 import com.example.movio.databinding.FragmentSignInBinding
-import com.example.movio.feature.authentication.FederatedAuthenticationBaseViewModel
-import com.example.movio.feature.authentication.helpers.AuthenticationHelper
+import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.LoginCredentials
 import com.example.movio.feature.authentication.services.GoogleSignInService
-import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
