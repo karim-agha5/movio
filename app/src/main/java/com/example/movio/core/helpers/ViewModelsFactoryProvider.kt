@@ -11,10 +11,10 @@ object ViewModelsFactoryProvider {
 
     fun provideAuthenticationViewModelsFactory(
         application: Application,
-        firebaseAuth: FirebaseAuth,
-        authenticationHelper: AuthenticationHelper,
-        userManager: UserManager
+        //firebaseAuth: FirebaseAuth,
+        //authenticationHelper: AuthenticationHelper,
+        //userManager: UserManager
     ) : AuthenticationViewModelsFactory{
-        return AuthenticationViewModelsFactory(application,firebaseAuth, authenticationHelper, userManager)
+        return AuthenticationViewModelsFactory(application)
     }
 }

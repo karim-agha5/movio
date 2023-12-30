@@ -52,7 +52,7 @@ class RootCoordinator(
         state = AuthenticationFlowState(
             this,
             viewModelsFactoryProvider
-                .provideAuthenticationViewModelsFactory(application,firebaseAuth,authenticationHelper,userManager)
+                .provideAuthenticationViewModelsFactory(application)
         )
     }
 

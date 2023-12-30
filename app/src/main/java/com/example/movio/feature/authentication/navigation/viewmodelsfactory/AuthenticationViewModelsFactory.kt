@@ -28,19 +28,20 @@ import com.google.firebase.auth.FirebaseAuth
 // TODO refactor this class to inherit AndroidViewModelFactory
 class AuthenticationViewModelsFactory(
     private val application: Application,
-    private val firebaseAuth: FirebaseAuth,
-    private val authenticationHelper: AuthenticationHelper,
-    private val userManager: UserManager
+    //private val firebaseAuth: FirebaseAuth,
+    //private val authenticationHelper: AuthenticationHelper,
+    //private val userManager: UserManager
 ) {
 
+    private val movioContainer = (application as MovioApplication).movioContainer
     private fun createSplashViewModel() : SplashViewModel{
-        val factory = SplashViewModelFactory(userManager,application)
+        val factory = SplashViewModelFactory(movioContainer.userManager,application)
         return factory.create(SplashViewModel::class.java)
     }
      private fun createSignupViewModel() : SignupViewModel {
         val service =
             EmailAndPasswordAuthenticationService
-                .getInstance(firebaseAuth)
+                .getInstance(movioContainer.firebaseAuth)
 
         val factory = SignupViewModelFactory(
             service,
@@ -55,7 +56,7 @@ class AuthenticationViewModelsFactory(
     private fun createSignInViewModel() : SignInViewModel {
         val service =
             EmailAndPasswordAuthenticationService
-                .getInstance(firebaseAuth)
+                .getInstance(movioContainer.firebaseAuth)
 
         val factory = SignInViewModelFactory(
             service,
