@@ -64,10 +64,12 @@ class SignInViewModel(
 
     override fun postAction(data: LoginCredentials?, action: SignInActions) {
         when(action){
-            is SignInActions.SignInClicked -> login(data)
-            is SignInActions.FacebookClicked -> {/* Do Nothing */}
-            is SignInActions.GoogleClicked -> signInWithGoogle(data)
-            else -> signInWithTwitter(data)
+            is SignInActions.SignInClicked      -> login(data)
+            is SignInActions.GoogleClicked      -> signInWithGoogle(data)
+            is SignInActions.SignupClicked      -> navigateToSignup()
+            is SignInActions.TwitterClicked     -> signInWithTwitter(data)
+            is SignInActions.FacebookClicked    -> {/* Do Nothing */}
+            else                                -> {/*Do Nothing*/}
         }
     }
 
@@ -192,6 +194,12 @@ class SignInViewModel(
         // Consider using the lifecycle of the view because config change might happen before navigation
         // May cause unexpected behaviors
         viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
+    }
+
+    private fun navigateToSignup(){
+        // Consider using the lifecycle of the view because config change might happen before navigation
+        // May cause unexpected behaviors
+        viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToSignupScreen) }
     }
 
     override fun onCleared() {

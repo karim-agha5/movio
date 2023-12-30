@@ -37,6 +37,6 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
     * Navigates to either the AuthenticationFragment or to the HomeFragment
     * */
     private fun navigateFromSplash(){
-        splashViewModel.postAction(null,AuthenticationActions.SplashScreenTo)
+        splashViewModel.postAction(null,AuthenticationActions.ToSplashScreen)
     }
 }

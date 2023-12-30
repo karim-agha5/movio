@@ -3,29 +3,18 @@ package com.example.movio.feature.authentication.viewmodels
 import android.app.Application
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movio.core.MovioApplication
-import com.example.movio.core.MovioContainer
-import com.example.movio.core.navigation.Coordinator
-import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.helpers.LoginCredentials
-import com.example.movio.feature.authentication.helpers.SignupCredentials
-import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
 import com.example.movio.feature.authentication.services.GoogleSignInService
-import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.example.movio.feature.authentication.signin.actions.SignInActions
-import com.example.movio.feature.authentication.signup.actions.SignupActions
-import com.example.movio.feature.authentication.signup.status.SignupStatus
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.actions.AuthenticationActions
-import com.example.movio.feature.common.helpers.UserManager
-import com.google.android.gms.auth.api.identity.SignInCredential
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
@@ -159,5 +148,5 @@ class AuthenticationViewModel(
 
     private fun navigateToSignIn() = viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToSignInScreen) }
 
-    private fun navigateToSignup() = viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToEmailAndPasswordScreen) }
+    private fun navigateToSignup() = viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToSignupScreen) }
 }

@@ -71,7 +71,8 @@ class SignupViewModel(
             is SignupActions.GoogleClicked  -> signupWithGoogle()
             is SignupActions.TwitterClicked -> signupWithTwitter()
             is SignupActions.SignupClicked  -> signup(data)
-            else                            -> navigateToSignInScreen()
+            is SignupActions.SignInClicked  -> navigateToSignInScreen()
+            else                            -> {/*Do Nothing*/}
         }
     }
 

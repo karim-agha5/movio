@@ -102,6 +102,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
                 )
             }
         }
+        binding.tvSignIn.setOnClickListener { signupViewModel.postAction(null,SignupActions.SignInClicked) }
 
         signupViewModel.result.observe(viewLifecycleOwner){ onResultReceived(it) }
 

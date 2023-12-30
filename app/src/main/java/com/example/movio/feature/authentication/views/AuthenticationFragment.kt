@@ -83,7 +83,7 @@ class AuthenticationFragment :
 
         binding.btnSignup.setOnClickListener {
             lifecycleScope.launch {
-                coordinator.postAction(AuthenticationActions.ToEmailAndPasswordScreen)
+                coordinator.postAction(AuthenticationActions.ToSignupScreen)
             }
         }
 

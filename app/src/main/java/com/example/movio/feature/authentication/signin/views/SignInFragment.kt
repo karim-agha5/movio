@@ -77,7 +77,7 @@ class SignInFragment :
         binding.btnTwitter.setOnClickListener { lifecycleScope.launch { startTwitterAuthenticationFlow() } }
         binding.tvSignUp.setOnClickListener {
             lifecycleScope.launch {
-               // coordinator.postAction(AuthenticationActions.ToEmailAndPasswordScreen)
+               // coordinator.postAction(AuthenticationActions.ToSignupScreen)
             }
         }
         binding.btnSignIn.setOnClickListener {
@@ -132,6 +132,9 @@ class SignInFragment :
             else{
                 setTextInputLayoutErrorStyling()
             }
+        }
+        binding.tvSignUp.setOnClickListener {
+            signInViewModel.postAction(null,SignInActions.SignupClicked)
         }
 
         signInViewModel.result.observe(viewLifecycleOwner){ onResultReceived(it) }

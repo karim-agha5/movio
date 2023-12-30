@@ -36,7 +36,7 @@ class AuthenticationCoordinator(
         when(action){
             is AuthenticationActions.ToAuthenticationScreen     -> navigateToAuthenticationScreen()
             is AuthenticationActions.ToSignInScreen             -> navigateToSignInScreen()
-            is AuthenticationActions.ToEmailAndPasswordScreen   -> navigateToEmailAndPasswordScreen()
+            is AuthenticationActions.ToSignupScreen             -> navigateToSignupScreen()
             is AuthenticationActions.ToHomeScreen               -> navigateToHomeScreen()
             is StateActions.ToAuthenticated                     -> switchState()
         }
@@ -89,7 +89,7 @@ class AuthenticationCoordinator(
         }
     }
 
-    private fun buildEmailAndPasswordSignupNavOptions() : NavOptions{
+    private fun buildSignupNavOptions() : NavOptions{
         return navOptions {
             anim {
                 enter = R.anim.from_right_to_current
@@ -127,9 +127,9 @@ class AuthenticationCoordinator(
         }
     }
 
-    private suspend fun navigateToEmailAndPasswordScreen(){
+    private suspend fun navigateToSignupScreen(){
         withContext(Dispatchers.Main){
-             flowNavigator.navigateToEmailAndPasswordScreen(buildEmailAndPasswordSignupNavOptions())
+             flowNavigator.navigateToSignupScreen(buildSignupNavOptions())
         }
     }
 
