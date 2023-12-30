@@ -48,6 +48,8 @@ class SignInViewModel(
 
 
     init {
+        googleSignInService             = getApplication<MovioApplication>().movioContainer.googleSignInService
+        twitterAuthenticationService    = getApplication<MovioApplication>().movioContainer.twitterAuthenticationService
         disposable = authenticationHelper
             .getAuthenticationResultObservableSource()
             .subscribe {
@@ -56,11 +58,6 @@ class SignInViewModel(
                     is AuthenticationResult.Failure -> _result.postValue(SignInStatus.SignInFailed(it.throwable))
                 }
             }
-        googleSignInService             = GoogleSignInService.getInstance()
-        twitterAuthenticationService    = TwitterAuthenticationService.getInstance(
-            getApplication<MovioApplication>().movioContainer.firebaseAuth,
-            authenticationHelper
-        )
     }
 
 

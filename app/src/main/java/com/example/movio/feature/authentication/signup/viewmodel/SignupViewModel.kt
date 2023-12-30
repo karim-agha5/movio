@@ -46,11 +46,8 @@ class SignupViewModel(
     private var disposable: Disposable
 
     init {
-        googleSignInService             = GoogleSignInService.getInstance()
-        twitterAuthenticationService    = TwitterAuthenticationService.getInstance(
-            getApplication<MovioApplication>().movioContainer.firebaseAuth,
-            authenticationHelper
-        )
+        googleSignInService             = getApplication<MovioApplication>().movioContainer.googleSignInService
+        twitterAuthenticationService    = getApplication<MovioApplication>().movioContainer.twitterAuthenticationService
         disposable = authenticationHelper
             .getAuthenticationResultObservableSource()
             .subscribe {

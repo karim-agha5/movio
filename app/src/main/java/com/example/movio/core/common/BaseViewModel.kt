@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.example.movio.core.MovioApplication
 import com.example.movio.core.interfaces.auth.AuthenticationResultCallbackLauncherRegistrar
 import com.example.movio.core.interfaces.auth.ComponentActivityRegistrar
 import com.example.movio.core.navigation.Coordinator
