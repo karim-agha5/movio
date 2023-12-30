@@ -27,11 +27,11 @@ import java.lang.IllegalStateException
 import kotlin.jvm.Throws
 
 class SignInViewModel(
-    private val emailAndPasswordAuthenticationService: EmailAndPasswordAuthenticationService,
+    //private val emailAndPasswordAuthenticationService: EmailAndPasswordAuthenticationService,
     //private val googleSignInService: GoogleSignInService,
     //private val twitterAuthenticationService: TwitterAuthenticationService,
-    private val authenticationHelper: AuthenticationHelper,
-    private val application: Application
+    //private val authenticationHelper: AuthenticationHelper,
+     application: Application
 ) : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, SignInStatus>(application) {
 
     override var coordinator: Coordinator =
@@ -42,15 +42,15 @@ class SignInViewModel(
 
     private var firebaseUser: FirebaseUser? = null
 
-    private val movioContainer                  = getApplication<MovioApplication>().movioContainer
-    private var googleSignInService             = movioContainer.googleSignInService
-    private var twitterAuthenticationService    = movioContainer.twitterAuthenticationService
+    private val movioContainer                          = getApplication<MovioApplication>().movioContainer
+    private val googleSignInService                     = movioContainer.googleSignInService
+    private val twitterAuthenticationService            = movioContainer.twitterAuthenticationService
+    private val emailAndPasswordAuthenticationService   = movioContainer.emailAndPasswordAuthenticationService
+    private val authenticationHelper                    = movioContainer.authenticationHelper
     private var disposable: Disposable
 
 
     init {
-        googleSignInService             = getApplication<MovioApplication>().movioContainer.googleSignInService
-        twitterAuthenticationService    = getApplication<MovioApplication>().movioContainer.twitterAuthenticationService
         disposable = authenticationHelper
             .getAuthenticationResultObservableSource()
             .subscribe {

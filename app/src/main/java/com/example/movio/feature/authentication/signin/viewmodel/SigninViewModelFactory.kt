@@ -12,16 +12,16 @@ class SignInViewModelFactory(
     private val emailAndPasswordAuthenticationService: EmailAndPasswordAuthenticationService,
     //private val googleSignInService: GoogleSignInService,
     //private val twitterAuthenticationService: TwitterAuthenticationService,
-    private val authenticationHelper: AuthenticationHelper,
+    //private val authenticationHelper: AuthenticationHelper,
     private val application: Application
 ) : ViewModelProvider.Factory{
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SignInViewModel(
-            emailAndPasswordAuthenticationService,
+            //emailAndPasswordAuthenticationService,
             //googleSignInService,
             //twitterAuthenticationService,
-            authenticationHelper,
+            //authenticationHelper,
             application
         ) as T
     }

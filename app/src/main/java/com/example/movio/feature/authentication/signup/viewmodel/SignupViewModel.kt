@@ -27,10 +27,10 @@ import kotlin.UnsupportedOperationException
 import kotlin.jvm.Throws
 
 class SignupViewModel(
-    private val emailAndPasswordAuthenticationService: EmailAndPasswordAuthenticationService,
+    //private val emailAndPasswordAuthenticationService: EmailAndPasswordAuthenticationService,
     //private val googleSignInService: GoogleSignInService,
     //private val twitterAuthenticationService: TwitterAuthenticationService,
-    private val authenticationHelper: AuthenticationHelper,
+    //private val authenticationHelper: AuthenticationHelper,
     application: Application
 ) : FederatedAuthenticationBaseViewModel<SignupCredentials, SignupActions, SignupStatus>(application){
 
@@ -41,14 +41,14 @@ class SignupViewModel(
     private val _result = MutableLiveData<SignupStatus>()
     override val result: LiveData<SignupStatus> = _result
 
-    private val movioContainer                  = getApplication<MovioApplication>().movioContainer
-    private var googleSignInService             = movioContainer.googleSignInService
-    private var twitterAuthenticationService    = movioContainer.twitterAuthenticationService
+    private val movioContainer                          = getApplication<MovioApplication>().movioContainer
+    private val googleSignInService                     = movioContainer.googleSignInService
+    private val twitterAuthenticationService            = movioContainer.twitterAuthenticationService
+    private val emailAndPasswordAuthenticationService   = movioContainer.emailAndPasswordAuthenticationService
+    private val authenticationHelper                    = movioContainer.authenticationHelper
     private var disposable: Disposable
 
     init {
-        googleSignInService             = getApplication<MovioApplication>().movioContainer.googleSignInService
-        twitterAuthenticationService    = getApplication<MovioApplication>().movioContainer.twitterAuthenticationService
         disposable = authenticationHelper
             .getAuthenticationResultObservableSource()
             .subscribe {
