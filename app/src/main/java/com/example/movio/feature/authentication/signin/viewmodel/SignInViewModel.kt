@@ -145,10 +145,27 @@ class SignInViewModel(
             twitterAuthenticationService.login(credentials)
         }
 
-    private fun onUserReturned(firebaseUser: FirebaseUser?){
+    private fun providerRequiresVerification(firebaseUser: FirebaseUser?) : Boolean {
         val providerId = firebaseUser?.providerData?.get(firebaseUser.providerData.size - 1)?.providerId
+        return providerId?.equals("password") == true
+    }
+
+    private fun onUserReturned(firebaseUser: FirebaseUser?){
+        /*val providerId = firebaseUser?.providerData?.get(firebaseUser.providerData.size - 1)?.providerId
         if(providerId?.equals("password") == true){
             if(firebaseUser.isEmailVerified) {
+                postActionOnSuccess()
+            }
+            else{
+                postActionOnFailure(null)
+            }
+        }
+        else{
+            postActionOnSuccess()
+        }*/
+
+        if(providerRequiresVerification(firebaseUser)){
+            if(firebaseUser?.isEmailVerified == true) {
                 postActionOnSuccess()
             }
             else{
