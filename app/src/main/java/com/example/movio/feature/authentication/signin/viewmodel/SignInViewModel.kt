@@ -42,8 +42,9 @@ class SignInViewModel(
 
     private var firebaseUser: FirebaseUser? = null
 
-    private var googleSignInService: GoogleSignInService
-    private var twitterAuthenticationService: TwitterAuthenticationService
+    private val movioContainer                  = getApplication<MovioApplication>().movioContainer
+    private var googleSignInService             = movioContainer.googleSignInService
+    private var twitterAuthenticationService    = movioContainer.twitterAuthenticationService
     private var disposable: Disposable
 
 
@@ -165,8 +166,9 @@ class SignInViewModel(
     }
 
     private fun authenticateUser(firebaseUser: FirebaseUser?){
-        val userManager = UserManager.getInstance((application as MovioApplication).movioContainer.firebaseAuth)
-        userManager.authenticateUser(firebaseUser)
+        movioContainer
+            .userManager
+            .authenticateUser(firebaseUser)
     }
 
     private fun navigateToHome(){

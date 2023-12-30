@@ -41,8 +41,9 @@ class SignupViewModel(
     private val _result = MutableLiveData<SignupStatus>()
     override val result: LiveData<SignupStatus> = _result
 
-    private var googleSignInService: GoogleSignInService
-    private var twitterAuthenticationService: TwitterAuthenticationService
+    private val movioContainer                  = getApplication<MovioApplication>().movioContainer
+    private var googleSignInService             = movioContainer.googleSignInService
+    private var twitterAuthenticationService    = movioContainer.twitterAuthenticationService
     private var disposable: Disposable
 
     init {
@@ -143,11 +144,10 @@ class SignupViewModel(
         navigateToHome()
     }
 
-    private fun authenticateUser(user: FirebaseUser?){
-        getApplication<MovioApplication>()
-            .movioContainer
+    private fun authenticateUser(firebaseUser: FirebaseUser?){
+        movioContainer
             .userManager
-            .authenticateUser(user)
+            .authenticateUser(firebaseUser)
     }
 
     private fun navigateToHome(){

@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movio.core.MovioApplication
+import com.example.movio.core.MovioContainer
 import com.example.movio.core.navigation.Coordinator
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
@@ -42,15 +43,14 @@ class AuthenticationViewModel(
     private val _result: MutableLiveData<SignInStatus> = MutableLiveData()
     override val result: LiveData<SignInStatus> = _result
 
-    private var googleSignInService: GoogleSignInService
-    private var twitterAuthenticationService: TwitterAuthenticationService
-    private var authenticationHelper = getApplication<MovioApplication>().movioContainer.authenticationHelper
+    private val movioContainer                  = getApplication<MovioApplication>().movioContainer
+    private var googleSignInService             = movioContainer.googleSignInService
+    private var twitterAuthenticationService    = movioContainer.twitterAuthenticationService
+    private var authenticationHelper            = movioContainer.authenticationHelper
     private var firebaseUser: FirebaseUser? = null
     private var disposable: Disposable
 
     init {
-        googleSignInService             = getApplication<MovioApplication>().movioContainer.googleSignInService
-        twitterAuthenticationService    = getApplication<MovioApplication>().movioContainer.twitterAuthenticationService
         disposable = authenticationHelper
             .getAuthenticationResultObservableSource()
             .subscribe {
@@ -146,8 +146,9 @@ class AuthenticationViewModel(
     }
 
     private fun authenticateUser(firebaseUser: FirebaseUser?){
-        val userManager = UserManager.getInstance(getApplication<MovioApplication>().movioContainer.firebaseAuth)
-        userManager.authenticateUser(firebaseUser)
+        movioContainer
+            .userManager
+            .authenticateUser(firebaseUser)
     }
 
     private fun navigateToHome(){
