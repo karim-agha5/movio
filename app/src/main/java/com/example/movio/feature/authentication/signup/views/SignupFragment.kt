@@ -59,6 +59,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         signupViewModel.register(this)
         authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(
+                this::class.java.simpleName,
                 requireActivity().activityResultRegistry,
                 signupViewModel.getGoogleSignInService()
             )
@@ -114,6 +115,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
         Log.i("MainActivity", "inside launchAuthenticationResultCallbackLauncher")
         authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
+        //(requireActivity() as AuthenticationResultCallbackLauncher).launchAuthenticationResultCallbackLauncher(intentSenderRequest)
     }
 
     private fun onResultReceived(signupStatus: SignupStatus){

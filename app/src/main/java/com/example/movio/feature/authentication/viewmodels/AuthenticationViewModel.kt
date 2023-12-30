@@ -49,6 +49,11 @@ class AuthenticationViewModel(
     private var disposable: Disposable
 
     init {
+        googleSignInService             = GoogleSignInService.getInstance()
+        twitterAuthenticationService    = TwitterAuthenticationService.getInstance(
+            getApplication<MovioApplication>().movioContainer.firebaseAuth,
+            authenticationHelper
+        )
         disposable = authenticationHelper
             .getAuthenticationResultObservableSource()
             .subscribe {
@@ -65,11 +70,7 @@ class AuthenticationViewModel(
                     }
                 }
             }
-        googleSignInService             = GoogleSignInService.getInstance()
-        twitterAuthenticationService    = TwitterAuthenticationService.getInstance(
-            getApplication<MovioApplication>().movioContainer.firebaseAuth,
-            authenticationHelper
-        )
+
     }
 
     override fun postActionOnSuccess() = _result.postValue(SignInStatus.EmailVerified)

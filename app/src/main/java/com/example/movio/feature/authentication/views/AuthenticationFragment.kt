@@ -1,6 +1,7 @@
 package com.example.movio.feature.authentication.views
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,7 +61,7 @@ class AuthenticationFragment :
         // Register the authentication lifecycle observer
         // to unregister the launcher when the Lifecycle is destroyed.
         authenticationLifecycleObserver =
-            AuthenticationLifecycleObserver(requireActivity().activityResultRegistry,authenticationViewModel.getGoogleSignInService())
+            AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,authenticationViewModel.getGoogleSignInService())
         lifecycle.addObserver(authenticationLifecycleObserver)
     }
 
@@ -200,6 +201,16 @@ class AuthenticationFragment :
     override fun onDestroy() {
         super.onDestroy()
         authenticationViewModel.unregister()
+        Log.i("MainActivity", "onDestroy: ")
         //authenticationHelper.disposeAuthenticationResult(disposable)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        //authenticationLifecycleObserver.launcher.unregister()
+    }
+    override fun onPause() {
+        super.onPause()
+        //authenticationLifecycleObserver.launcher.unregister()
     }
 }

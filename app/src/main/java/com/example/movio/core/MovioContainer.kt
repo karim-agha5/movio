@@ -23,8 +23,8 @@ class MovioContainer(private val application: Application){
     val authenticationHelper = AuthenticationHelper
     val userManager = UserManager.getInstance(firebaseAuth)
     val emailAndPasswordAuthenticationService = EmailAndPasswordAuthenticationService.getInstance(firebaseAuth)
-    lateinit var googleSignInService: GoogleSignInService
-    lateinit var twitterAuthenticationService: TwitterAuthenticationService
+    val googleSignInService: GoogleSignInService = GoogleSignInService.getInstance()
+    val twitterAuthenticationService: TwitterAuthenticationService = TwitterAuthenticationService.getInstance(firebaseAuth,authenticationHelper)
     val rootCoordinator =
         RootCoordinator(application,viewModelsFactoryProvider,firebaseAuth, authenticationHelper,userManager)
 

@@ -21,6 +21,14 @@ class MainActivity : AppCompatActivity()/*, AuthenticationResultCallbackLauncher
         //(application as MovioApplication).movioContainer.initDependenciesOnActivityInstance(this,this)
         initRootCoordinator()
         //initAuthenticationObserver()
+/*
+        authenticationLifecycleObserver = AuthenticationLifecycleObserver(
+            this.activityResultRegistry,
+            (application as MovioApplication).movioContainer.googleSignInService
+        )
+        lifecycle.addObserver(authenticationLifecycleObserver)
+
+ */
     }
 
 
