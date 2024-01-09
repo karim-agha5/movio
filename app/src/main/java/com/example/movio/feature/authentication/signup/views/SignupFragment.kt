@@ -94,6 +94,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/}
         binding.btnGoogle.setOnClickListener { signupViewModel.postAction(null,SignupActions.GoogleClicked) }
         binding.btnTwitter.setOnClickListener { signupViewModel.postAction(null,SignupActions.TwitterClicked) }
+        binding.tvSignIn.setOnClickListener { signupViewModel.postAction(null,SignupActions.SignInClicked) }
         binding.btnSignup.setOnClickListener {
             if(areFieldsValid()){
                 signupViewModel.postAction(
@@ -102,7 +103,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
                 )
             }
         }
-        binding.tvSignIn.setOnClickListener { signupViewModel.postAction(null,SignupActions.SignInClicked) }
+
 
         signupViewModel.result.observe(viewLifecycleOwner){ onResultReceived(it) }
 

@@ -33,7 +33,7 @@ class AuthenticationLifecycleObserver(
             ActivityResultContracts.StartIntentSenderForResult()
         ){
             owner.lifecycleScope.launch(Dispatchers.Main) {
-                Log.i("MainActivity", "inside lifecycle observer")
+                //Log.i("MainActivity", "inside lifecycle observer")
                 googleSignInService.authenticateWithFirebase(it.data)
             }
         }

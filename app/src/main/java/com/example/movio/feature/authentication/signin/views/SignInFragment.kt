@@ -72,7 +72,7 @@ class SignInFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/}
+
        /* binding.btnGoogle.setOnClickListener { lifecycleScope.launch { startGoogleAuthenticationFlow() } }
         binding.btnTwitter.setOnClickListener { lifecycleScope.launch { startTwitterAuthenticationFlow() } }
         binding.tvSignUp.setOnClickListener {
@@ -114,11 +114,10 @@ class SignInFragment :
 
         */
 
-
+        binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/}
         binding.btnGoogle.setOnClickListener { signInViewModel.postAction(null,SignInActions.GoogleClicked) }
-
         binding.btnTwitter.setOnClickListener { signInViewModel.postAction(null,SignInActions.TwitterClicked) }
-
+        binding.tvSignUp.setOnClickListener { signInViewModel.postAction(null,SignInActions.SignupClicked) }
         binding.btnSignIn.setOnClickListener {
             if(areFieldsValid()){
                 Utils.hideKeyboard(requireActivity())
@@ -132,9 +131,6 @@ class SignInFragment :
             else{
                 setTextInputLayoutErrorStyling()
             }
-        }
-        binding.tvSignUp.setOnClickListener {
-            signInViewModel.postAction(null,SignInActions.SignupClicked)
         }
 
         signInViewModel.result.observe(viewLifecycleOwner){ onResultReceived(it) }
