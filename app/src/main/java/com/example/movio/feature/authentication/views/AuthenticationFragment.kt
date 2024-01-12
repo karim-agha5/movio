@@ -57,6 +57,8 @@ class AuthenticationFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //authenticationViewModel.register(requireActivity())
+        //authenticationViewModel.register(this)
         // Register the authentication lifecycle observer
         // to unregister the launcher when the Lifecycle is destroyed.
         authenticationLifecycleObserver =
@@ -288,7 +290,7 @@ class AuthenticationFragment :
 
     override fun onDestroy() {
         super.onDestroy()
-        authenticationViewModel.unregister()
+        //authenticationViewModel.unregister()
         Log.i("MainActivity", "onDestroy: ")
         //authenticationHelper.disposeAuthenticationResult(disposable)
     }

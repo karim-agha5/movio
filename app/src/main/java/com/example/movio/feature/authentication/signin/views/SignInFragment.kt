@@ -1,6 +1,7 @@
 package com.example.movio.feature.authentication.signin.views
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,11 +56,19 @@ class SignInFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
-        signInViewModel.register(requireActivity())
-        signInViewModel.register(this)
+        //signInViewModel.register(requireActivity())
+        //signInViewModel.register(this)
         authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,signInViewModel.getGoogleSignInService())
         lifecycle.addObserver(authenticationLifecycleObserver)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("MainActivity", "onResume: ")
+        //authenticationViewModel.register(requireActivity())
+        signInViewModel.register(requireActivity())
+        signInViewModel.register(this)
     }
 
     override fun inflateBinding(
@@ -288,9 +297,14 @@ class SignInFragment :
         Toast.makeText(requireContext(), resources.getString(R.string.email_not_verified), Toast.LENGTH_LONG).show()
     }
 
+    override fun onPause() {
+        super.onPause()
+        //signInViewModel.unregister()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        signInViewModel.unregister()
+        //signInViewModel.unregister()
         // AuthenticationHelper.disposeAuthenticationResult(disposable)
     }
 }

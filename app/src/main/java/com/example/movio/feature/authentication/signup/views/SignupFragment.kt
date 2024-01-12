@@ -55,8 +55,8 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
-        signupViewModel.register(requireActivity())
-        signupViewModel.register(this)
+        //signupViewModel.register(requireActivity())
+        //signupViewModel.register(this)
         authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(
                 this::class.java.simpleName,
@@ -64,6 +64,13 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
                 signupViewModel.getGoogleSignInService()
             )
         lifecycle.addObserver(authenticationLifecycleObserver)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i("MainActivity", "onResume: ")
+        signupViewModel.register(requireActivity())
+        signupViewModel.register(this)
     }
 
     override fun inflateBinding(
@@ -290,6 +297,6 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         //AuthenticationHelper.disposeAuthenticationResult(disposable)
         // TODO maybe change the state when the user is actually authenticated, not when the fragment is destroyed
         //lifecycleScope.launch { coordinator.postAction(StateActions.ToAuthenticated) }
-        signupViewModel.unregister()
+        //signupViewModel.unregister()
     }
 }
