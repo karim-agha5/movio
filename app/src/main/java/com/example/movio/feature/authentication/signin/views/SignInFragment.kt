@@ -157,6 +157,7 @@ class SignInFragment :
         when(result){
             is SignInStatus.EmailVerified       ->  signInViewModel.onPostResultActionExecuted(SignInActions.SuccessAction)
             is SignInStatus.EmailNotVerified    ->  onUnverifiedEmailLoginAttempt()
+            is SignInStatus.SignInFailed        -> showAppropriateDialog(result.throwable)
             else -> {/*Do Nothing*/}
         }
     }
