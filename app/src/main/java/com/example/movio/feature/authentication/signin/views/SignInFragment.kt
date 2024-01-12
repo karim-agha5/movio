@@ -56,7 +56,7 @@ class SignInFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
-        //signInViewModel.register(requireActivity())
+        signInViewModel.register(requireActivity())
         //signInViewModel.register(this)
         authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,signInViewModel.getGoogleSignInService())
@@ -67,7 +67,7 @@ class SignInFragment :
         super.onResume()
         Log.i("MainActivity", "onResume: ")
         //authenticationViewModel.register(requireActivity())
-        signInViewModel.register(requireActivity())
+        //signInViewModel.register(requireActivity())
         signInViewModel.register(this)
     }
 

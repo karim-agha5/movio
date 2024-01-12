@@ -57,7 +57,7 @@ class AuthenticationFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //authenticationViewModel.register(requireActivity())
+        authenticationViewModel.register(requireActivity())
         //authenticationViewModel.register(this)
         // Register the authentication lifecycle observer
         // to unregister the launcher when the Lifecycle is destroyed.
@@ -70,7 +70,7 @@ class AuthenticationFragment :
     override fun onResume() {
         super.onResume()
         Log.i("MainActivity", "onResume: ")
-        authenticationViewModel.register(requireActivity())
+        //authenticationViewModel.register(requireActivity())
         authenticationViewModel.register(this)
     }
 
