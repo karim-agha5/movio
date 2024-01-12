@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movio.core.MovioApplication
+import com.example.movio.core.helpers.Event
 import com.example.movio.core.navigation.Coordinator
 import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
@@ -32,13 +33,13 @@ class SignInViewModel(
     //private val twitterAuthenticationService: TwitterAuthenticationService,
     //private val authenticationHelper: AuthenticationHelper,
      application: Application
-) : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, SignInStatus>(application) {
+) : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application) {
 
     override var coordinator: Coordinator =
         (application as MovioApplication).movioContainer.rootCoordinator.requireCoordinator()
 
-    private val _result = MutableLiveData<SignInStatus>()
-    override val result: LiveData<SignInStatus> = _result
+    private val _result = MutableLiveData<Event<SignInStatus>>()
+    override val result: LiveData<Event<SignInStatus>> = _result
 
     private var firebaseUser: FirebaseUser? = null
 
@@ -56,7 +57,7 @@ class SignInViewModel(
             .subscribe {
                 when(it){
                     is AuthenticationResult.Success -> viewModelScope.launch { onUserReturned(it.user) }
-                    is AuthenticationResult.Failure -> _result.postValue(SignInStatus.SignInFailed(it.throwable))
+                    is AuthenticationResult.Failure -> _result.postValue(Event(SignInStatus.SignInFailed(it.throwable)))
                 }
             }
     }
@@ -73,10 +74,10 @@ class SignInViewModel(
         }
     }
 
-    override fun postActionOnSuccess() = _result.postValue(SignInStatus.EmailVerified)
+    override fun postActionOnSuccess() = _result.postValue(Event(SignInStatus.EmailVerified))
 
 
-    override fun postActionOnFailure(throwable: Throwable?) = _result.postValue(SignInStatus.EmailNotVerified)
+    override fun postActionOnFailure(throwable: Throwable?) = _result.postValue(Event(SignInStatus.EmailNotVerified))
 
 
     override fun onPostResultActionExecuted(action: SignInActions) {
@@ -126,7 +127,7 @@ class SignInViewModel(
                 onUserReturned(user)
             }catch(e: Exception){
                 //authenticationHelper.onFailure(e)
-                _result.postValue(SignInStatus.SignInFailed(e))
+                _result.postValue(Event(SignInStatus.SignInFailed(e)))
             }
         }
 

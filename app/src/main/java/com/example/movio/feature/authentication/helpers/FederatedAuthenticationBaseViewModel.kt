@@ -6,6 +6,7 @@ import com.example.movio.core.common.Action
 import com.example.movio.core.common.BaseViewModel
 import com.example.movio.core.common.Data
 import com.example.movio.core.common.Status
+import com.example.movio.core.helpers.Event
 import com.example.movio.feature.authentication.services.GoogleSignInService
 
 abstract class FederatedAuthenticationBaseViewModel<D: Data, A: Action, S : Status>

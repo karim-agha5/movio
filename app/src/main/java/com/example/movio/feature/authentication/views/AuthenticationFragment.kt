@@ -11,6 +11,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
+import com.example.movio.core.helpers.Event
 import com.example.movio.core.navigation.CoordinatorHost
 import com.example.movio.databinding.FragmentAuthenticationBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
@@ -46,7 +47,7 @@ class AuthenticationFragment :
 
     private val authenticationViewModel by lazy {
         coordinator
-            .requireViewModel<LoginCredentials,SignInActions,SignInStatus>(this::class.java)
+            .requireViewModel<LoginCredentials,SignInActions, Event<SignInStatus>>(this::class.java)
         as FederatedAuthenticationBaseViewModel
     }
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
@@ -143,7 +144,9 @@ class AuthenticationFragment :
         binding.btnSignup.setOnClickListener { authenticationViewModel.postAction(null,SignInActions.SignupClicked) }
         binding.btnSignInWithPassword.setOnClickListener { authenticationViewModel.postAction(null,SignInActions.SignInClicked) }
 
-        authenticationViewModel.result.observe(viewLifecycleOwner){ onResultReceived(it) }
+        authenticationViewModel.result.observe(viewLifecycleOwner){
+            it.getContentIfNotHandled()?.let { status -> onResultReceived(status) }
+        }
 
 
     }

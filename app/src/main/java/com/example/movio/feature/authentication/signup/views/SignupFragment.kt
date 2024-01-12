@@ -10,6 +10,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
+import com.example.movio.core.helpers.Event
 import com.example.movio.core.util.FormUtils
 import com.example.movio.databinding.FragmentSignupBinding
 import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
@@ -45,7 +46,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
    * */
     private val signupViewModel by lazy {
         coordinator
-            .requireViewModel<SignupCredentials, SignupActions, SignupStatus>(this::class.java)
+            .requireViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>(this::class.java)
         as FederatedAuthenticationBaseViewModel
     }
     private lateinit var googleSignInService: GoogleSignInService
@@ -112,7 +113,9 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         }
 
 
-        signupViewModel.result.observe(viewLifecycleOwner){ onResultReceived(it) }
+        signupViewModel.result.observe(viewLifecycleOwner){
+            it.getContentIfNotHandled()?.let{ status -> onResultReceived(status)}
+        }
 
 /*
         val source = authenticationHelper.getAuthenticationResultObservableSource()

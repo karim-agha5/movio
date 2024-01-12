@@ -10,6 +10,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
+import com.example.movio.core.helpers.Event
 import com.example.movio.core.util.FormUtils
 import com.example.movio.core.util.Utils
 import com.example.movio.databinding.FragmentSignInBinding
@@ -44,7 +45,7 @@ class SignInFragment :
    * */
     private val signInViewModel by lazy {
         coordinator
-            .requireViewModel<LoginCredentials, SignInActions, SignInStatus>(this@SignInFragment::class.java)
+            .requireViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(this@SignInFragment::class.java)
         as FederatedAuthenticationBaseViewModel
     }
 
@@ -142,7 +143,9 @@ class SignInFragment :
             }
         }
 
-        signInViewModel.result.observe(viewLifecycleOwner){ onResultReceived(it) }
+        signInViewModel.result.observe(viewLifecycleOwner){
+            it.getContentIfNotHandled()?.let { status -> onResultReceived(status) }
+        }
 
     }
 

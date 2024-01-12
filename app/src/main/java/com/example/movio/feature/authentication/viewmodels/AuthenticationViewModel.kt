@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movio.core.MovioApplication
-import com.example.movio.feature.authentication.helpers.AuthenticationHelper
+import com.example.movio.core.helpers.Event
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
@@ -19,20 +19,17 @@ import com.example.movio.feature.common.actions.AuthenticationActions
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.lang.IllegalStateException
-import kotlin.jvm.Throws
 
 class AuthenticationViewModel(
     application: Application
-)  : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, SignInStatus>(application){
+)  : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application){
 
 
     override var coordinator = getApplication<MovioApplication>().movioContainer.rootCoordinator.requireCoordinator()
 
-    private val _result: MutableLiveData<SignInStatus> = MutableLiveData()
-    override val result: LiveData<SignInStatus> = _result
+    private val _result: MutableLiveData<Event<SignInStatus>> = MutableLiveData()
+    override val result: LiveData<Event<SignInStatus>> = _result
 
     private val movioContainer                  = getApplication<MovioApplication>().movioContainer
     private var googleSignInService             = movioContainer.googleSignInService
@@ -61,9 +58,9 @@ class AuthenticationViewModel(
 
     }
 
-    override fun postActionOnSuccess() = _result.postValue(SignInStatus.EmailVerified)
+    override fun postActionOnSuccess() = _result.postValue(Event(SignInStatus.EmailVerified))
 
-    override fun postActionOnFailure(throwable: Throwable?) = _result.postValue(SignInStatus.SignInFailed(throwable))
+    override fun postActionOnFailure(throwable: Throwable?) = _result.postValue(Event(SignInStatus.SignInFailed(throwable)))
 
     override fun onPostResultActionExecuted(action: SignInActions) {
         if(action is SignInActions.SuccessAction){
@@ -85,7 +82,7 @@ class AuthenticationViewModel(
     /**
      * The view corresponding to this view model has to register as a [AuthenticationResultCallbackLauncher].
      * Each view that uses [GoogleSignInService] has to implement the [AuthenticationResultCallbackLauncher]
-     * interface so it starts the [IntentSenderRequest] and authenticate the user.
+     * interface so it starts the [androidx.activity.result.IntentSenderRequest] and authenticate the user.
      * */
     override fun register(launcher: AuthenticationResultCallbackLauncher) = googleSignInService.register(launcher)
 
@@ -104,7 +101,7 @@ class AuthenticationViewModel(
      * The view corresponding to this view model has to unregister itself in the case there are other
      * [AuthenticationResultCallbackLauncher] implementors.
      * Each view that uses [GoogleSignInService] has to implement the [AuthenticationResultCallbackLauncher]
-     * interface so it starts the [IntentSenderRequest] and authenticate the user.
+     * interface so it starts the [IntentSenderRequest]  and authenticate the user. [KDoc](<www.google.com>)
      * */
     override fun unregister() = googleSignInService.unregister()
 
