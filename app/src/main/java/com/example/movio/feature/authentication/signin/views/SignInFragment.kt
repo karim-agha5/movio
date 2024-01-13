@@ -62,6 +62,7 @@ class SignInFragment :
         authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,signInViewModel.getGoogleSignInService())
         lifecycle.addObserver(authenticationLifecycleObserver)
+        lifecycle.addObserver(signInViewModel)
     }
 
     override fun onResume() {

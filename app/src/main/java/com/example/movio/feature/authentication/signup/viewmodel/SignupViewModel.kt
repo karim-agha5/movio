@@ -3,6 +3,8 @@ package com.example.movio.feature.authentication.signup.viewmodel
 import android.app.Application
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -48,20 +50,24 @@ class SignupViewModel(
     private val emailAndPasswordAuthenticationService   = movioContainer.emailAndPasswordAuthenticationService
     private val authenticationHelper                    = movioContainer.authenticationHelper
     private var disposable: Disposable
+    private var isObserverActive = true
 
     init {
         disposable = authenticationHelper
             .getAuthenticationResultObservableSource()
             .subscribe {
                 when(it){
-                    is AuthenticationResult.Success -> {
-                        Log.i("MainActivity", "inside init | AuthenticationHelper -> ${authenticationHelper.hashCode()} \n Observable -> ${authenticationHelper.getAuthenticationResultObservableSource().hashCode()}")
-                        //navigateToSignInScreen()
-                        //navigateToHome()
-                        onUserReturned(it.user)
-                    }
-                    is AuthenticationResult.Failure -> viewModelScope.launch {
-                        postActionOnFailure(it.throwable)
+                    is AuthenticationResult.Success -> if(isObserverActive){
+                            Log.i("MainActivity", "inside init | AuthenticationHelper -> ${authenticationHelper.hashCode()} \n Observable -> ${authenticationHelper.getAuthenticationResultObservableSource().hashCode()}")
+                            //navigateToSignInScreen()
+                            //navigateToHome()
+                            onUserReturned(it.user)
+                        }
+
+                    is AuthenticationResult.Failure -> if(isObserverActive){
+                        viewModelScope.launch {
+                            postActionOnFailure(it.throwable)
+                        }
                     }
                 }
             }
@@ -83,11 +89,16 @@ class SignupViewModel(
         _result.value = Event(SignupStatus.SignupFailed(throwable))
     }
 
-
-
     @Throws(UnsupportedOperationException::class)
     override fun onPostResultActionExecuted(action: SignupActions) =
         throw UnsupportedOperationException()
+
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) =
+        when(event) {
+            Lifecycle.Event.ON_RESUME   -> isObserverActive = true
+            Lifecycle.Event.ON_STOP     -> isObserverActive = false
+            else                        -> {/* Do Nothing */}
+        }
 
 
     /**

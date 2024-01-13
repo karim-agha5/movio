@@ -3,8 +3,12 @@ package com.example.movio.feature.authentication.viewmodels
 import android.app.Application
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.viewModelScope
 import com.example.movio.core.MovioApplication
 import com.example.movio.core.helpers.Event
@@ -37,6 +41,7 @@ class AuthenticationViewModel(
     private var authenticationHelper            = movioContainer.authenticationHelper
     private var firebaseUser: FirebaseUser? = null
     private var disposable: Disposable
+    private var isObserverActive = true
 
     init {
         disposable = authenticationHelper
@@ -44,14 +49,19 @@ class AuthenticationViewModel(
             .subscribe {
                 when(it){
                     is AuthenticationResult.Success -> {
-                        Log.i("MainActivity", "inside init | AuthenticationHelper -> ${authenticationHelper.hashCode()} \n Observable -> ${authenticationHelper.getAuthenticationResultObservableSource().hashCode()}")
-                        //navigateToSignInScreen()
-                        //navigateToHome()
-                        onUserReturned(it.user)
-                        onSuccessfulAuthentication()
+                        if(isObserverActive){
+                            Log.i("MainActivity", "inside init | AuthenticationHelper -> ${authenticationHelper.hashCode()} \n Observable -> ${authenticationHelper.getAuthenticationResultObservableSource().hashCode()}")
+                            //navigateToSignInScreen()
+                            //navigateToHome()
+                            onUserReturned(it.user)
+                            onSuccessfulAuthentication()
+                        }
                     }
                     is AuthenticationResult.Failure -> viewModelScope.launch {
-                        postActionOnFailure(it.throwable)
+                        if (isObserverActive){
+                            Log.i("MainActivity", "called.....")
+                            postActionOnFailure(it.throwable)
+                        }
                     }
                 }
             }
@@ -61,6 +71,14 @@ class AuthenticationViewModel(
     override fun postActionOnSuccess() = _result.postValue(Event(SignInStatus.EmailVerified))
 
     override fun postActionOnFailure(throwable: Throwable?) = _result.postValue(Event(SignInStatus.SignInFailed(throwable)))
+
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) =
+        when(event) {
+            Lifecycle.Event.ON_RESUME   -> isObserverActive = true
+            Lifecycle.Event.ON_STOP     -> isObserverActive = false
+            else                        -> {/* Do Nothing */}
+        }
+
 
     override fun onPostResultActionExecuted(action: SignInActions) {
         if(action is SignInActions.SuccessAction){

@@ -65,6 +65,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
                 signupViewModel.getGoogleSignInService()
             )
         lifecycle.addObserver(authenticationLifecycleObserver)
+        lifecycle.addObserver(signupViewModel)
     }
 
     override fun onResume() {

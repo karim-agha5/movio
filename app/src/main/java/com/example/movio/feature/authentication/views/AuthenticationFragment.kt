@@ -65,6 +65,7 @@ class AuthenticationFragment :
         authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,authenticationViewModel.getGoogleSignInService())
         lifecycle.addObserver(authenticationLifecycleObserver)
+        lifecycle.addObserver(authenticationViewModel)
         prepareAuthenticationLoading()
     }
 

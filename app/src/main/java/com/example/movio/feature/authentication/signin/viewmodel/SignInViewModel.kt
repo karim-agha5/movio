@@ -2,6 +2,8 @@ package com.example.movio.feature.authentication.signin.viewmodel
 
 import android.app.Application
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -49,6 +51,7 @@ class SignInViewModel(
     private val emailAndPasswordAuthenticationService   = movioContainer.emailAndPasswordAuthenticationService
     private val authenticationHelper                    = movioContainer.authenticationHelper
     private var disposable: Disposable
+    private var isObserverActive = true
 
 
     init {
@@ -56,8 +59,12 @@ class SignInViewModel(
             .getAuthenticationResultObservableSource()
             .subscribe {
                 when(it){
-                    is AuthenticationResult.Success -> viewModelScope.launch { onUserReturned(it.user) }
-                    is AuthenticationResult.Failure -> _result.postValue(Event(SignInStatus.SignInFailed(it.throwable)))
+                    is AuthenticationResult.Success -> if(isObserverActive){
+                        viewModelScope.launch { onUserReturned(it.user) }
+                    }
+                    is AuthenticationResult.Failure -> if(isObserverActive){
+                        _result.postValue(Event(SignInStatus.SignInFailed(it.throwable)))
+                    }
                 }
             }
     }
@@ -87,6 +94,12 @@ class SignInViewModel(
     }
 
 
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) =
+        when(event) {
+            Lifecycle.Event.ON_RESUME   -> isObserverActive = true
+            Lifecycle.Event.ON_STOP     -> isObserverActive = false
+            else                        -> {/* Do Nothing */}
+        }
 
 
     /**
