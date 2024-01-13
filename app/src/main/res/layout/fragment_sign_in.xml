@@ -164,7 +164,7 @@
                 app:iconTint="@null" is necessary, otherwise
                 the icon tint will be white
             -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             style="@style/Widget.Material3.Button.IconButton.Filled"
             android:id="@+id/btn_facebook"
             android:layout_width="wrap_content"
@@ -185,7 +185,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             style="@style/Widget.Material3.Button.IconButton.Filled"
             android:id="@+id/btn_google"
             android:layout_width="wrap_content"
@@ -205,7 +205,7 @@
             app:layout_constraintBottom_toBottomOf="@id/btn_facebook" />
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             style="@style/Widget.Material3.Button.IconButton.Filled"
             android:id="@+id/btn_twitter"
             android:layout_width="wrap_content"

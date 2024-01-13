@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.IntentSenderRequest
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
@@ -25,7 +26,10 @@ import com.example.movio.feature.authentication.signup.status.SignupStatus
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
+import com.google.android.material.progressindicator.IndeterminateDrawable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -51,6 +55,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     }
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
+    private lateinit var progressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
     //private lateinit var disposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +71,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             )
         lifecycle.addObserver(authenticationLifecycleObserver)
         lifecycle.addObserver(signupViewModel)
+        prepareAuthenticationLoading()
     }
 
     override fun onResume() {
@@ -101,8 +107,14 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
 */
 
         binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/}
-        binding.btnGoogle.setOnClickListener { signupViewModel.postAction(null,SignupActions.GoogleClicked) }
-        binding.btnTwitter.setOnClickListener { signupViewModel.postAction(null,SignupActions.TwitterClicked) }
+        binding.btnGoogle.setOnClickListener {
+            startGoogleAuthenticationLoading()
+            signupViewModel.postAction(null,SignupActions.GoogleClicked)
+        }
+        binding.btnTwitter.setOnClickListener {
+            startTwitterAuthenticationLoading()
+            signupViewModel.postAction(null,SignupActions.TwitterClicked)
+        }
         binding.tvSignIn.setOnClickListener { signupViewModel.postAction(null,SignupActions.SignInClicked) }
         binding.btnSignup.setOnClickListener {
             if(areFieldsValid()){
@@ -134,9 +146,41 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     private fun onResultReceived(signupStatus: SignupStatus){
         when(signupStatus){
             is SignupStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
-            is SignupStatus.SignupFailed -> showAppropriateDialog(signupStatus.throwable)
+            is SignupStatus.SignupFailed -> onSignUpFailure(signupStatus.throwable)
             else -> {/*Do Nothing*/ }
         }
+    }
+
+    private fun prepareAuthenticationLoading(){
+        val spec = CircularProgressIndicatorSpec(
+            requireContext(),
+            null,
+            0,
+            com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
+        )
+        progressIndicatorDrawable = IndeterminateDrawable.createCircularDrawable(requireContext(), spec)
+    }
+
+    private fun startGoogleAuthenticationLoading(){
+        binding.btnGoogle.icon = progressIndicatorDrawable
+    }
+
+    private fun startTwitterAuthenticationLoading(){
+        binding.btnTwitter.icon = progressIndicatorDrawable
+    }
+
+    private fun stopGoogleAuthenticationLoading(){
+        binding.btnGoogle.icon = ResourcesCompat.getDrawable(resources,R.drawable.google_circular_icon,context?.theme)
+    }
+
+    private fun stopTwitterAuthenticationLoading(){
+        binding.btnTwitter.icon = ResourcesCompat.getDrawable(resources,R.drawable.twitter_icon,context?.theme)
+    }
+
+    private fun onSignUpFailure(throwable: Throwable?){
+        showAppropriateDialog(throwable)
+        stopGoogleAuthenticationLoading()
+        stopTwitterAuthenticationLoading()
     }
 /*
     private suspend fun startGoogleAuthenticationFlow(){
