@@ -14,10 +14,10 @@ import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.helpers.Event
 import com.example.movio.core.util.FormUtils
 import com.example.movio.databinding.FragmentSignupBinding
-import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
+import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.helpers.SignupCredentials
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
@@ -56,6 +56,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var progressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
+    private lateinit var credentialsProgressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
     //private lateinit var disposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +73,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         lifecycle.addObserver(authenticationLifecycleObserver)
         lifecycle.addObserver(signupViewModel)
         prepareAuthenticationLoading()
+        prepareCredentialsAuthenticationLoading()
     }
 
     override fun onResume() {
@@ -118,6 +120,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         binding.tvSignIn.setOnClickListener { signupViewModel.postAction(null,SignupActions.SignInClicked) }
         binding.btnSignup.setOnClickListener {
             if(areFieldsValid()){
+                startCredentialsAuthenticationLoading()
                 signupViewModel.postAction(
                     SignupCredentials(binding.etEmail.text.toString(),binding.etPassword.text.toString()),
                     SignupActions.SignupClicked
@@ -145,7 +148,10 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
 
     private fun onResultReceived(signupStatus: SignupStatus){
         when(signupStatus){
-            is SignupStatus.ShouldVerifyEmail -> showShouldVerifyEmailToast()
+            is SignupStatus.ShouldVerifyEmail -> {
+                stopCredentialsAuthenticationLoading()
+                showShouldVerifyEmailToast()
+            }
             is SignupStatus.SignupFailed -> onSignUpFailure(signupStatus.throwable)
             else -> {/*Do Nothing*/ }
         }
@@ -159,6 +165,28 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
         )
         progressIndicatorDrawable = IndeterminateDrawable.createCircularDrawable(requireContext(), spec)
+    }
+
+    private fun prepareCredentialsAuthenticationLoading(){
+        val spec = CircularProgressIndicatorSpec(
+            requireContext(),
+            null,
+            0,
+            com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
+        )
+        spec.indicatorColors = intArrayOf(resources.getColor(R.color.white,context?.theme))
+        credentialsProgressIndicatorDrawable = IndeterminateDrawable.createCircularDrawable(requireContext(), spec)
+    }
+
+    private fun startCredentialsAuthenticationLoading(){
+        binding.btnSignup.icon = credentialsProgressIndicatorDrawable
+        binding.btnSignup.iconGravity = MaterialButton.ICON_GRAVITY_TEXT_START
+        binding.btnSignup.text = getString(R.string.attempting_to_sign_in_message)
+    }
+
+    private fun stopCredentialsAuthenticationLoading(){
+        binding.btnSignup.text = getString(R.string.btn_sign_up_text)
+        binding.btnSignup.icon = null
     }
 
     private fun startGoogleAuthenticationLoading(){
@@ -181,6 +209,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         showAppropriateDialog(throwable)
         stopGoogleAuthenticationLoading()
         stopTwitterAuthenticationLoading()
+        stopCredentialsAuthenticationLoading()
     }
 /*
     private suspend fun startGoogleAuthenticationFlow(){

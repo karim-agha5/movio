@@ -56,6 +56,7 @@ class SignInFragment :
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var progressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
+    private lateinit var credentialsProgressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
     //private lateinit var disposable: Disposable
 
 
@@ -69,6 +70,7 @@ class SignInFragment :
         lifecycle.addObserver(authenticationLifecycleObserver)
         lifecycle.addObserver(signInViewModel)
         prepareAuthenticationLoading()
+        prepareCredentialsAuthenticationLoading()
     }
 
     override fun onResume() {
@@ -149,6 +151,7 @@ class SignInFragment :
                     binding.etEmail.text.toString(),
                     binding.etPassword.text.toString()
                 )
+                startCredentialsAuthenticationLoading()
                 signInViewModel.postAction(loginCredentials,SignInActions.SignInClicked)
             }
             else{
@@ -170,6 +173,7 @@ class SignInFragment :
         when(result){
             is SignInStatus.EmailVerified       ->  signInViewModel.onPostResultActionExecuted(SignInActions.SuccessAction)
             is SignInStatus.EmailNotVerified    ->  onUnverifiedEmailLoginAttempt()
+
             is SignInStatus.SignInFailed        -> onSignInFailure(result.throwable)
             else -> {/*Do Nothing*/}
         }
@@ -183,6 +187,28 @@ class SignInFragment :
             com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
         )
         progressIndicatorDrawable = IndeterminateDrawable.createCircularDrawable(requireContext(), spec)
+    }
+
+    private fun prepareCredentialsAuthenticationLoading(){
+        val spec = CircularProgressIndicatorSpec(
+            requireContext(),
+            null,
+            0,
+            com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall
+        )
+        spec.indicatorColors = intArrayOf(resources.getColor(R.color.white,context?.theme))
+        credentialsProgressIndicatorDrawable = IndeterminateDrawable.createCircularDrawable(requireContext(), spec)
+    }
+
+    private fun startCredentialsAuthenticationLoading(){
+        binding.btnSignIn.icon = credentialsProgressIndicatorDrawable
+        binding.btnSignIn.iconGravity = MaterialButton.ICON_GRAVITY_TEXT_START
+        binding.btnSignIn.text = getString(R.string.attempting_to_sign_in_message)
+    }
+
+    private fun stopCredentialsAuthenticationLoading(){
+        binding.btnSignIn.text = getString(R.string.btn_sign_up_text)
+        binding.btnSignIn.icon = null
     }
 
     private fun startGoogleAuthenticationLoading(){
@@ -202,6 +228,7 @@ class SignInFragment :
     }
 
     private fun onUnverifiedEmailLoginAttempt(){
+        stopCredentialsAuthenticationLoading()
         showEmailNotVerifiedToast()
         signInViewModel.onPostResultActionExecuted(SignInActions.FailureAction)
     }
@@ -210,6 +237,7 @@ class SignInFragment :
         showAppropriateDialog(throwable)
         stopGoogleAuthenticationLoading()
         stopTwitterAuthenticationLoading()
+        stopCredentialsAuthenticationLoading()
     }
 /*
     private suspend fun startGoogleAuthenticationFlow(){
