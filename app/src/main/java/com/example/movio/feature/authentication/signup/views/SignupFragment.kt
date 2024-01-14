@@ -182,7 +182,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     private fun startCredentialsAuthenticationLoading(){
         binding.btnSignup.icon = credentialsProgressIndicatorDrawable
         binding.btnSignup.iconGravity = MaterialButton.ICON_GRAVITY_TEXT_START
-        binding.btnSignup.text = getString(R.string.attempting_to_sign_in_message)
+        binding.btnSignup.text = getString(R.string.attempting_to_sign_up_message)
     }
 
     private fun stopCredentialsAuthenticationLoading(){
