@@ -30,6 +30,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -206,6 +207,8 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     }
 
     private fun onSignUpFailure(throwable: Throwable?){
+        Log.i("MainActivity", "${throwable?.message}\n\n ${throwable?.toString()}")
+        throwable?.printStackTrace()
         showAppropriateDialog(throwable)
         stopGoogleAuthenticationLoading()
         stopTwitterAuthenticationLoading()
@@ -270,11 +273,12 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         lifecycleScope.launch { coordinator.postAction(AuthenticationActions.ToSignInScreen) }
     }
 */
-    private fun showAppropriateDialog(throwable: Throwable?){
-       Log.i("MainActivity", "exception inside showAppropriateDialog-> ${throwable?.message}")
-        if(throwable is ApiException) showDialog(throwable.statusCode)
-        else showDialog(throwable?.message)
-    }
+    private fun showAppropriateDialog(throwable: Throwable?) =
+       when (throwable) {
+           is ApiException                          -> showDialog(throwable.statusCode)
+           is FirebaseAuthUserCollisionException    -> showDialog(throwable)
+           else                                     -> showDialog(throwable?.message)
+       }
 
     private fun showDialog(message: String?){
         lifecycleScope.launch(Dispatchers.Main){
@@ -284,6 +288,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             ).show()
         }
     }
+
     private fun showDialog(statusCode: Int){
         val title: String
         val message: String
@@ -304,6 +309,10 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         // Show the dialog on the main thread
         // because this function is called from an observer on a background thread
         lifecycleScope.launch(Dispatchers.Main){ buildDialog(title,message).show() }
+    }
+
+    private fun showDialog(throwable: Throwable?){
+        lifecycleScope.launch(Dispatchers.Main) { buildDialog("Error","This user has already signed up before").show() }
     }
 
     private fun buildDialog(title: String,message: String?) : MaterialAlertDialogBuilder {
