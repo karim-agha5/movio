@@ -59,7 +59,7 @@ class AuthenticationViewModel(
                     }
                     is AuthenticationResult.Failure -> viewModelScope.launch {
                         if (isObserverActive){
-                            Log.i("MainActivity", "called.....")
+                            Log.i("MainActivity", "Inside AuthenticationViewModel. The thread is ${Thread.currentThread().name}")
                             postActionOnFailure(it.throwable)
                         }
                     }
@@ -70,7 +70,9 @@ class AuthenticationViewModel(
 
     override fun postActionOnSuccess() = _result.postValue(Event(SignInStatus.EmailVerified))
 
-    override fun postActionOnFailure(throwable: Throwable?) = _result.postValue(Event(SignInStatus.SignInFailed(throwable)))
+    override fun postActionOnFailure(throwable: Throwable?) {
+        _result.value = Event(SignInStatus.SignInFailed(throwable))
+    }
 
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) =
         when(event) {

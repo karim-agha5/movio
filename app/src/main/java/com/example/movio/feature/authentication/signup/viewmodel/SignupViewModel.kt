@@ -66,6 +66,7 @@ class SignupViewModel(
 
                     is AuthenticationResult.Failure -> if(isObserverActive){
                         viewModelScope.launch {
+                            Log.i("MainActivity", "Inside SignupViewModel init. The thread is ${Thread.currentThread().name}")
                             postActionOnFailure(it.throwable)
                         }
                     }
@@ -83,11 +84,16 @@ class SignupViewModel(
         }
     }
 
-    override fun postActionOnSuccess() = _result.postValue(Event(SignupStatus.ShouldVerifyEmail))
+    override fun postActionOnSuccess() {
+        //_result.postValue(Event(SignupStatus.ShouldVerifyEmail))
+        _result.value = Event(SignupStatus.ShouldVerifyEmail)
+    }
 
     override fun postActionOnFailure(throwable: Throwable?) {
+        //_result.postValue(Event(SignupStatus.SignupFailed(throwable)))
         _result.value = Event(SignupStatus.SignupFailed(throwable))
     }
+
 
     @Throws(UnsupportedOperationException::class)
     override fun onPostResultActionExecuted(action: SignupActions) =
@@ -136,9 +142,12 @@ class SignupViewModel(
     private fun signup(credentials: SignupCredentials?) =
         viewModelScope.launch{
             try{
+                Log.i("MainActivity", "Inside SignupViewModel. The thread is ${Thread.currentThread().name}")
                 emailAndPasswordAuthenticationService.signup(credentials)
                 postActionOnSuccess()
-            }catch(e: Exception){ postActionOnFailure(e) }
+            }catch(e: Exception){ postActionOnFailure(e)
+                Log.i("MainActivity", "Inside SignupViewModel. The thread is ${Thread.currentThread().name}")
+            }
         }
 
 

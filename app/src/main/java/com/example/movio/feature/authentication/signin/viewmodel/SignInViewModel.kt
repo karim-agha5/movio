@@ -1,6 +1,7 @@
 package com.example.movio.feature.authentication.signin.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -63,6 +64,7 @@ class SignInViewModel(
                         viewModelScope.launch { onUserReturned(it.user) }
                     }
                     is AuthenticationResult.Failure -> if(isObserverActive){
+                        Log.i("MainActivity", "Inside SigninViewModel. The thread is ${Thread.currentThread().name}")
                         _result.postValue(Event(SignInStatus.SignInFailed(it.throwable)))
                     }
                 }
@@ -85,6 +87,7 @@ class SignInViewModel(
 
 
     override fun postActionOnFailure(throwable: Throwable?) = _result.postValue(Event(SignInStatus.EmailNotVerified))
+
 
 
     override fun onPostResultActionExecuted(action: SignInActions) {
