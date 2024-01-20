@@ -83,10 +83,16 @@ class SignInViewModel(
         }
     }
 
-    override fun postActionOnSuccess() = _result.postValue(Event(SignInStatus.EmailVerified))
+    override fun postActionOnSuccess(){
+        //_result.postValue(Event(SignInStatus.EmailVerified))
+        _result.value = Event(SignInStatus.EmailVerified)
+    }
 
 
-    override fun postActionOnFailure(throwable: Throwable?) = _result.postValue(Event(SignInStatus.EmailNotVerified))
+    override fun postActionOnFailure(throwable: Throwable?){
+        //_result.postValue(Event(SignInStatus.EmailNotVerified))
+        _result.value = Event(SignInStatus.EmailNotVerified)
+    }
 
 
 
