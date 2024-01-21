@@ -1,9 +1,11 @@
 package com.example.movio.feature.authentication.services
 
+import android.util.Log
 import com.example.movio.feature.authentication.helpers.LoginCredentials
 import com.example.movio.feature.authentication.helpers.SignupCredentials
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.Dispatchers
@@ -92,9 +94,16 @@ class EmailAndPasswordAuthenticationService private constructor(
                      }catch(e: Exception){e}
                  }
 
-                 firebaseUser = (deferredResult.await() as AuthResult).user
+                 /*firebaseUser = (deferredResult.await() as AuthResult).user
                  if(firebaseUser?.isEmailVerified == false){
                      firebaseAuth.signOut()
+                 }*/
+
+                 val result = deferredResult.await()
+                 if(result is FirebaseAuthInvalidUserException){
+                     throw FirebaseAuthInvalidUserException("message","Invalid username or password")
+                 }else{
+                     firebaseUser = (result as AuthResult).user
                  }
              }
          }
