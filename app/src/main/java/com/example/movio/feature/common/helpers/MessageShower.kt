@@ -10,7 +10,8 @@ import com.google.android.material.progressindicator.IndeterminateDrawable
 import java.lang.ref.WeakReference
 
 /**
- * This class is purely for experimental reasons and may be removed in the future
+ * This class is purely for experimental reasons and may be removed in the future without any further notice
+ * @TODO add an Opt-in annotation
  * */
 object MessageShower {
     private lateinit var weakProgressIndicator: WeakReference<IndeterminateDrawable<CircularProgressIndicatorSpec>>
