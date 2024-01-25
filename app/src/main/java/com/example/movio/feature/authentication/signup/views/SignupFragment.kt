@@ -24,6 +24,7 @@ import com.example.movio.feature.authentication.services.TwitterAuthenticationSe
 import com.example.movio.feature.authentication.signup.actions.SignupActions
 import com.example.movio.feature.authentication.signup.status.SignupStatus
 import com.example.movio.feature.authentication.status.SignInStatus
+import com.example.movio.feature.common.helpers.MessageShower
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.button.MaterialButton
@@ -207,7 +208,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     }
 
     private fun onSignUpFailure(throwable: Throwable?){
-        Log.i("MainActivity", "${throwable?.message}\n\n ${throwable?.toString()}")
+        Log.i("MainActivity", "Inside onSignUpFailure -> ${throwable?.message}\n\n ${throwable?.toString()}")
         throwable?.printStackTrace()
         showAppropriateDialog(throwable)
         stopGoogleAuthenticationLoading()
@@ -273,13 +274,23 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         lifecycleScope.launch { coordinator.postAction(AuthenticationActions.ToSignInScreen) }
     }
 */
+
     private fun showAppropriateDialog(throwable: Throwable?) =
        when (throwable) {
-           is ApiException                          -> showDialog(throwable.statusCode)
-           is FirebaseAuthUserCollisionException    -> showDialog(throwable)
-           else                                     -> showDialog(throwable?.message)
+           is ApiException                          -> {
+               // showDialog(throwable.statusCode)
+               MessageShower.showAppropriateErrorDialog(requireContext(),throwable)
+           }
+           is FirebaseAuthUserCollisionException    -> {
+               //showDialog(throwable)
+               MessageShower.showAppropriateErrorDialog(requireContext(),throwable)
+           }
+           else                                     -> {
+               //showDialog(throwable?.message)
+               MessageShower.showAppropriateErrorDialog(requireContext(),throwable)
+           }
        }
-
+/*
     private fun showDialog(message: String?){
         lifecycleScope.launch(Dispatchers.Main){
             buildDialog(
@@ -312,7 +323,10 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     }
 
     private fun showDialog(throwable: Throwable?){
-        lifecycleScope.launch(Dispatchers.Main) { buildDialog("Error","This user has already signed up before").show() }
+        lifecycleScope.launch(Dispatchers.Main) {
+            //buildDialog("Error","This user has already signed up before").show()
+            buildDialog("Error",throwable?.message).show()
+        }
     }
 
     private fun buildDialog(title: String,message: String?) : MaterialAlertDialogBuilder {
@@ -322,7 +336,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
             .setMessage(message ?: defaultMessage)
             .setNeutralButton(getString(R.string.ok)) { _, _ -> /* Do nothing*/ }
     }
-
+*/
     private fun areFieldsValid() : Boolean{
         return isEmailFieldValid() && isPasswordFieldValid()
     }

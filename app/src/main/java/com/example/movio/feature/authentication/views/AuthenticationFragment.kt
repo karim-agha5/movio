@@ -20,6 +20,7 @@ import com.example.movio.feature.authentication.helpers.FederatedAuthenticationB
 import com.example.movio.feature.authentication.helpers.LoginCredentials
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
+import com.example.movio.feature.common.helpers.MessageShower
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.button.MaterialButton
@@ -167,7 +168,7 @@ class AuthenticationFragment :
     private fun onResultReceived(signInStatus: SignInStatus){
         when(signInStatus){
             is SignInStatus.SignInFailed    -> {
-                showAppropriateErrorDialog(signInStatus.throwable)
+                MessageShower.showAppropriateErrorDialog(requireContext(),signInStatus.throwable)
                 stopGoogleAuthenticationLoading()
                 stopTwitterAuthenticationLoading()
             }
@@ -221,14 +222,13 @@ class AuthenticationFragment :
         binding.btnContinueWithTwitter.text = getString(R.string.btn_twitter_authentication_text)
     }
 
-    private fun showAuthenticationLoadingDialog() = buildSignInLoadingDialog().show()
+    //private fun showAuthenticationLoadingDialog() = buildSignInLoadingDialog().show()
 
-    private fun dismissAuthenticationLoadingDialog() = alertDialog.dismiss()
+    //private fun dismissAuthenticationLoadingDialog() = alertDialog.dismiss()
 
-    private fun prepareAuthenticationLoadingDialog() =
-        setAuthenticationLoadingDialogToBeDismissedLater(buildSignInLoadingDialog())
+    //private fun prepareAuthenticationLoadingDialog() = setAuthenticationLoadingDialogToBeDismissedLater(buildSignInLoadingDialog())
 
-
+/*
     private fun setAuthenticationLoadingDialogToBeDismissedLater(materialAlertDialogBuilder: MaterialAlertDialogBuilder) {
         alertDialog = materialAlertDialogBuilder.create()
     }
@@ -291,7 +291,7 @@ class AuthenticationFragment :
             .setView(R.layout.loading_dialog_layout)
             .setMessage(R.string.hold_on)
             .setCancelable(false)
-
+*/
     override fun onDestroy() {
         super.onDestroy()
         //authenticationViewModel.unregister()
