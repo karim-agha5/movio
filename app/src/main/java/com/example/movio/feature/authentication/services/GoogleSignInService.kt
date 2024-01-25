@@ -1,7 +1,6 @@
 package com.example.movio.feature.authentication.services
 
 import android.content.Intent
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.IntentSenderRequest
 import com.example.movio.R
@@ -9,8 +8,7 @@ import com.example.movio.core.interfaces.auth.AuthenticationResultCallbackLaunch
 import com.example.movio.core.interfaces.auth.ComponentActivityRegistrar
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
-import com.example.movio.feature.authentication.helpers.LoginCredentials
-import com.example.movio.feature.authentication.signup.views.SignupFragment
+import com.example.movio.feature.common.models.LoginCredentials
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.Identity

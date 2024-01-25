@@ -1,4 +1,6 @@
-package com.example.movio.feature.authentication.helpers
+package com.example.movio.feature.common.models
+
+import com.example.movio.feature.authentication.helpers.BaseCredentials
 
 data class SignupCredentials(
     override val email: String,

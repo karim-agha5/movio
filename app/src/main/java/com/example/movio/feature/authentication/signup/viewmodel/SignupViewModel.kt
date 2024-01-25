@@ -12,13 +12,10 @@ import com.example.movio.core.MovioApplication
 import com.example.movio.core.helpers.Event
 import com.example.movio.core.navigation.Coordinator
 import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
-import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
-import com.example.movio.feature.authentication.helpers.SignupCredentials
-import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
+import com.example.movio.feature.common.models.SignupCredentials
 import com.example.movio.feature.authentication.services.GoogleSignInService
-import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.example.movio.feature.authentication.signup.actions.SignupActions
 import com.example.movio.feature.authentication.signup.status.SignupStatus
 import com.example.movio.feature.common.actions.AuthenticationActions

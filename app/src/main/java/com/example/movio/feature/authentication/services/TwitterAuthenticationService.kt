@@ -3,9 +3,8 @@ package com.example.movio.feature.authentication.services
 import androidx.activity.ComponentActivity
 import com.example.movio.core.interfaces.auth.ComponentActivityRegistrar
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
-import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
-import com.example.movio.feature.authentication.helpers.LoginCredentials
-import com.example.movio.feature.authentication.helpers.SignupCredentials
+import com.example.movio.feature.common.models.LoginCredentials
+import com.example.movio.feature.common.models.SignupCredentials
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth

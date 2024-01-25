@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.Experimental
@@ -18,18 +17,13 @@ import com.example.movio.databinding.FragmentAuthenticationBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
-import com.example.movio.feature.authentication.helpers.LoginCredentials
+import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.helpers.MessageShower
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class AuthenticationFragment :
     BaseFragment<FragmentAuthenticationBinding>(),AuthenticationResultCallbackLauncher,
