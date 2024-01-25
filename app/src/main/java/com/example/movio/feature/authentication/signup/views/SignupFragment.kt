@@ -275,7 +275,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     }
 */
 
-    private fun showAppropriateDialog(throwable: Throwable?) =
+        private fun showAppropriateDialog(throwable: Throwable?) =
        when (throwable) {
            is ApiException                          -> {
                // showDialog(throwable.statusCode)

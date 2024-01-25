@@ -22,6 +22,7 @@ import com.example.movio.feature.authentication.helpers.LoginCredentials
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
+import com.example.movio.feature.common.helpers.MessageShower
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.button.MaterialButton
@@ -234,7 +235,7 @@ class SignInFragment :
     }
 
     private fun onSignInFailure(throwable: Throwable?){
-        showAppropriateDialog(throwable)
+        MessageShower.showAppropriateErrorDialog(requireContext(),throwable)
         stopGoogleAuthenticationLoading()
         stopTwitterAuthenticationLoading()
         stopCredentialsAuthenticationLoading()
@@ -275,7 +276,7 @@ class SignInFragment :
     private fun navigateToHome(){
         lifecycleScope.launch { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
     }*/
-
+/*
     private fun showAppropriateDialog(throwable: Throwable?){
         if(throwable is ApiException) showDialog(throwable.statusCode)
         else showDialog(throwable?.message)
@@ -318,7 +319,7 @@ class SignInFragment :
             .setMessage(message ?: defaultMessage)
             .setNeutralButton(getString(R.string.ok)) { _, _ -> /* Do nothing*/ }
     }
-
+*/
     private fun areFieldsValid() : Boolean{
         return isEmailFieldValid() && isPasswordFieldValid()
     }
