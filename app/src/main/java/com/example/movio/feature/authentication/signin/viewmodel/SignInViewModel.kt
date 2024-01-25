@@ -212,7 +212,11 @@ class SignInViewModel(
     private fun navigateToHome(){
         // Consider using the lifecycle of the view because config change might happen before navigation
         // May cause unexpected behaviors
-        viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
+        viewModelScope.launch(Dispatchers.Main) {
+            // TODO consider implementing a resource cleaner
+            authenticationHelper.disposeAuthenticationResult(disposable)
+            coordinator.postAction(AuthenticationActions.ToHomeScreen)
+        }
     }
 
     private fun navigateToSignup(){

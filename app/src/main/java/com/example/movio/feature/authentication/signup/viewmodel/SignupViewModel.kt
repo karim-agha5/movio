@@ -176,7 +176,11 @@ class SignupViewModel(
     }
     private fun navigateToSignInScreen(){
         Log.i("MainActivity", "navigateToSignInScreen should be executed ")
-        viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToSignInScreen) }
+        viewModelScope.launch {
+            // TODO consider implementing a resource cleaner 
+            authenticationHelper.disposeAuthenticationResult(disposable)
+            coordinator.postAction(AuthenticationActions.ToSignInScreen)
+        }
     }
 
     override fun onCleared() {
