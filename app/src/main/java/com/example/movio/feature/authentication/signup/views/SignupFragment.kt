@@ -206,7 +206,9 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     private fun onSignUpFailure(throwable: Throwable?){
         Log.i("MainActivity", "Inside onSignUpFailure -> ${throwable?.message}\n\n ${throwable?.toString()}")
         throwable?.printStackTrace()
-        showAppropriateDialog(throwable)
+        //showAppropriateDialog(throwable)
+        @OptIn(Experimental::class)
+        MessageShower.showAppropriateErrorDialog(requireContext(),throwable)
         stopGoogleAuthenticationLoading()
         stopTwitterAuthenticationLoading()
         stopCredentialsAuthenticationLoading()
@@ -239,18 +241,18 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         }
     }
 
-    private fun onAuthenticationResultReceived(authenticationResult: AuthenticationResult){
-        /**
+    /*private fun onAuthenticationResultReceived(authenticationResult: AuthenticationResult){
+        *//**
          * TODO should handle the cases were null is sent from the source observable.
          *  Look [TwitterAuthenticationService]
-         */
+         *//*
         when(authenticationResult){
             is AuthenticationResult.Success -> {
                 // onSuccessfulAuthentication(authenticationResult.user)
             }
             is AuthenticationResult.Failure -> showAppropriateDialog(authenticationResult.throwable)
         }
-    }
+    }*/
 
    /* private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
         authenticateUser(firebaseUser)
@@ -271,7 +273,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     }
 */
 
-        private fun showAppropriateDialog(throwable: Throwable?) =
+       /* private fun showAppropriateDialog(throwable: Throwable?) =
        when (throwable) {
            is ApiException                          -> {
                // showDialog(throwable.statusCode)
@@ -288,7 +290,7 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
                @OptIn(Experimental::class)
                MessageShower.showAppropriateErrorDialog(requireContext(),throwable)
            }
-       }
+       }*/
 /*
     private fun showDialog(message: String?){
         lifecycleScope.launch(Dispatchers.Main){
