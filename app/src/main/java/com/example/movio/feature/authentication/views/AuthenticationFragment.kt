@@ -11,6 +11,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
+import com.example.movio.core.common.Experimental
 import com.example.movio.core.helpers.Event
 import com.example.movio.core.navigation.CoordinatorHost
 import com.example.movio.databinding.FragmentAuthenticationBinding
@@ -165,9 +166,11 @@ class AuthenticationFragment :
         authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
     }
 
+
     private fun onResultReceived(signInStatus: SignInStatus){
         when(signInStatus){
             is SignInStatus.SignInFailed    -> {
+                @OptIn(Experimental::class)
                 MessageShower.showAppropriateErrorDialog(requireContext(),signInStatus.throwable)
                 stopGoogleAuthenticationLoading()
                 stopTwitterAuthenticationLoading()

@@ -11,6 +11,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
+import com.example.movio.core.common.Experimental
 import com.example.movio.core.helpers.Event
 import com.example.movio.core.util.FormUtils
 import com.example.movio.databinding.FragmentSignupBinding
@@ -279,14 +280,17 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
        when (throwable) {
            is ApiException                          -> {
                // showDialog(throwable.statusCode)
+               @OptIn(Experimental::class)
                MessageShower.showAppropriateErrorDialog(requireContext(),throwable)
            }
            is FirebaseAuthUserCollisionException    -> {
                //showDialog(throwable)
+               @OptIn(Experimental::class)
                MessageShower.showAppropriateErrorDialog(requireContext(),throwable)
            }
            else                                     -> {
                //showDialog(throwable?.message)
+               @OptIn(Experimental::class)
                MessageShower.showAppropriateErrorDialog(requireContext(),throwable)
            }
        }

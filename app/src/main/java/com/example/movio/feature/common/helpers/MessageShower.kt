@@ -7,6 +7,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.MovioApplication
+import com.example.movio.core.common.Experimental
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.button.MaterialButton
@@ -62,6 +63,7 @@ object MessageShower {
         btn.text = getAppContext().getText(strRes)
     }*/
 
+    @Experimental
     fun showAppropriateErrorDialog(context: Context, throwable: Throwable?){
         if(throwable is ApiException) showDialog(context,throwable.statusCode)
         else showDialog(context, throwable?.message)

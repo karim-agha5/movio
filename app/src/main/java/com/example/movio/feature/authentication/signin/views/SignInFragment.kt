@@ -11,6 +11,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
+import com.example.movio.core.common.Experimental
 import com.example.movio.core.helpers.Event
 import com.example.movio.core.util.FormUtils
 import com.example.movio.core.util.Utils
@@ -235,6 +236,7 @@ class SignInFragment :
     }
 
     private fun onSignInFailure(throwable: Throwable?){
+        @OptIn(Experimental::class)
         MessageShower.showAppropriateErrorDialog(requireContext(),throwable)
         stopGoogleAuthenticationLoading()
         stopTwitterAuthenticationLoading()
