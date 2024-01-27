@@ -12,6 +12,7 @@ import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.Experimental
 import com.example.movio.core.helpers.Event
+import com.example.movio.core.helpers.ViewModelDelegate
 import com.example.movio.core.util.FormUtils
 import com.example.movio.databinding.FragmentSignupBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
@@ -21,10 +22,12 @@ import com.example.movio.feature.authentication.helpers.FederatedAuthenticationB
 import com.example.movio.feature.common.models.SignupCredentials
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
+import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.signup.actions.SignupActions
 import com.example.movio.feature.authentication.signup.status.SignupStatus
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.helpers.MessageShower
+import com.example.movio.feature.common.models.LoginCredentials
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
@@ -46,11 +49,12 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
    *   the coordinator is supposed to be only inside the view model.
    *   the view should be agnostic of anything except its state
    * */
-    private val signupViewModel by lazy {
+    /*private val signupViewModel by lazy {
         coordinator
             .requireViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>(this::class.java)
         as FederatedAuthenticationBaseViewModel
-    }
+    }*/
+    private lateinit var signupViewModel: FederatedAuthenticationBaseViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var progressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
@@ -59,6 +63,8 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val vm by ViewModelDelegate<SignupCredentials, SignupActions, Event<SignupStatus>>(movioApplication,this::class.java)
+        signupViewModel = vm as FederatedAuthenticationBaseViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>
         //googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
         signupViewModel.register(requireActivity())
         //signupViewModel.register(this)
