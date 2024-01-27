@@ -4,16 +4,21 @@ import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleObserver
+import com.example.movio.core.MovioApplication
 import com.example.movio.core.common.Action
 import com.example.movio.core.common.BaseViewModel
 import com.example.movio.core.common.Data
 import com.example.movio.core.common.Status
+import com.example.movio.core.helpers.CoordinatorDelegate
 import com.example.movio.core.helpers.Event
+import com.example.movio.core.navigation.Coordinator
 import com.example.movio.feature.authentication.services.GoogleSignInService
 
 abstract class FederatedAuthenticationBaseViewModel<D: Data, A: Action, S : Status>
     (application: Application)
     : BaseViewModel<D,A,S>(application), LifecycleEventObserver {
+
+    override val coordinator: Coordinator by CoordinatorDelegate(application as MovioApplication)
 
      open fun register(componentActivity: ComponentActivity) : Unit =
         throw UnsupportedOperationException("Override the function in your subclass.")

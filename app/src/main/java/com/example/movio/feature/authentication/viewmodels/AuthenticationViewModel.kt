@@ -31,7 +31,7 @@ class AuthenticationViewModel(
 
 
     //override var coordinator = getApplication<MovioApplication>().movioContainer.rootCoordinator.requireCoordinator()
-    override val coordinator : Coordinator by CoordinatorDelegate(getApplication())
+    //override val coordinator : Coordinator by CoordinatorDelegate(getApplication())
 
     private val _result: MutableLiveData<Event<SignInStatus>> = MutableLiveData()
     override val result: LiveData<Event<SignInStatus>> = _result

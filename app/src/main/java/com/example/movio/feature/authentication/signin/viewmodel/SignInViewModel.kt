@@ -36,7 +36,7 @@ class SignInViewModel(
 ) : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application) {
 
     //override var coordinator: Coordinator = (application as MovioApplication).movioContainer.rootCoordinator.requireCoordinator()
-    override val coordinator : Coordinator by CoordinatorDelegate(getApplication())
+    //override val coordinator : Coordinator by CoordinatorDelegate(getApplication())
 
     private val _result = MutableLiveData<Event<SignInStatus>>()
     override val result: LiveData<Event<SignInStatus>> = _result
