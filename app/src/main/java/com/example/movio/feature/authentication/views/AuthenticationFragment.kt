@@ -8,11 +8,15 @@ import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
+import com.example.movio.core.common.BaseViewModel
 import com.example.movio.core.common.Experimental
 import com.example.movio.core.helpers.CoordinatorDelegate
 import com.example.movio.core.helpers.Event
+import com.example.movio.core.helpers.ViewModelDelegate
 import com.example.movio.core.navigation.Coordinator
 import com.example.movio.core.navigation.CoordinatorHost
 import com.example.movio.databinding.FragmentAuthenticationBinding
@@ -22,6 +26,7 @@ import com.example.movio.feature.authentication.helpers.FederatedAuthenticationB
 import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
+import com.example.movio.feature.authentication.viewmodels.AuthenticationViewModel
 import com.example.movio.feature.common.helpers.MessageShower
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
@@ -50,12 +55,13 @@ class AuthenticationFragment :
     /*override val coordinator: Coordinator by lazy {
         CoordinatorDelegate(movioApplication)
     }*/
-
-    private val authenticationViewModel by lazy {
+    /*private val authenticationViewModel by lazy {
         coordinator
             .requireViewModel<LoginCredentials,SignInActions, Event<SignInStatus>>(this::class.java)
         as FederatedAuthenticationBaseViewModel
-    }
+    }*/
+
+    private lateinit var authenticationViewModel: FederatedAuthenticationBaseViewModel<LoginCredentials,SignInActions, Event<SignInStatus>>
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
@@ -64,6 +70,8 @@ class AuthenticationFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val vm by ViewModelDelegate<LoginCredentials,SignInActions, Event<SignInStatus>>(movioApplication,this::class.java)
+        authenticationViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
         authenticationViewModel.register(requireActivity())
         //authenticationViewModel.register(this)
         // Register the authentication lifecycle observer

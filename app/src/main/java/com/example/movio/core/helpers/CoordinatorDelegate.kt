@@ -23,6 +23,13 @@ class CoordinatorDelegate(
             .requireCoordinator()
     }
 
+    operator fun getValue(thisRef: ViewModelDelegate<*, *, *>, property: KProperty<*>): Coordinator {
+        return movioApplication
+            .movioContainer
+            .rootCoordinator
+            .requireCoordinator()
+    }
+
 }
 
 /*
