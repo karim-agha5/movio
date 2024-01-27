@@ -14,7 +14,7 @@ import com.example.movio.feature.authentication.helpers.AuthenticationResultCall
 abstract class BaseViewModel<D : Data, ActionType : Action, S : Status>(application: Application)
     : AndroidViewModel(application){
 
-    abstract var coordinator: Coordinator
+    abstract val coordinator: Coordinator
 
     abstract val result: LiveData<S>
 

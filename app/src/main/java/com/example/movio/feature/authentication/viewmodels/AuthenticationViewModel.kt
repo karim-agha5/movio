@@ -9,7 +9,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movio.core.MovioApplication
+import com.example.movio.core.helpers.CoordinatorDelegate
 import com.example.movio.core.helpers.Event
+import com.example.movio.core.navigation.Coordinator
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
@@ -28,7 +30,8 @@ class AuthenticationViewModel(
 )  : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application){
 
 
-    override var coordinator = getApplication<MovioApplication>().movioContainer.rootCoordinator.requireCoordinator()
+    //override var coordinator = getApplication<MovioApplication>().movioContainer.rootCoordinator.requireCoordinator()
+    override val coordinator : Coordinator by CoordinatorDelegate(getApplication())
 
     private val _result: MutableLiveData<Event<SignInStatus>> = MutableLiveData()
     override val result: LiveData<Event<SignInStatus>> = _result

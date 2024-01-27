@@ -11,7 +11,9 @@ import androidx.core.content.res.ResourcesCompat
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.Experimental
+import com.example.movio.core.helpers.CoordinatorDelegate
 import com.example.movio.core.helpers.Event
+import com.example.movio.core.navigation.Coordinator
 import com.example.movio.core.navigation.CoordinatorHost
 import com.example.movio.databinding.FragmentAuthenticationBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
@@ -24,22 +26,30 @@ import com.example.movio.feature.common.helpers.MessageShower
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
+import kotlin.reflect.KProperty
 
 class AuthenticationFragment :
     BaseFragment<FragmentAuthenticationBinding>(),AuthenticationResultCallbackLauncher,
     CoordinatorHost {
 
-/*    private val userManager by lazy { movioApplication.movioContainer.userManager }
-    private lateinit var googleSignInService: GoogleSignInService
-    private lateinit var twitterSignInService: TwitterAuthenticationService
-    private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
-    private lateinit var disposable: Disposable
-    private val authenticationHelper by lazy  {movioApplication.movioContainer.authenticationHelper }
+    /*    private val userManager by lazy { movioApplication.movioContainer.userManager }
+        private lateinit var googleSignInService: GoogleSignInService
+        private lateinit var twitterSignInService: TwitterAuthenticationService
+        private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
+        private lateinit var disposable: Disposable
+        private val authenticationHelper by lazy  {movioApplication.movioContainer.authenticationHelper }
 
- */
-    override val coordinator by lazy {
-        movioApplication.movioContainer.rootCoordinator.requireCoordinator()
-    }
+*/
+        override val coordinator by lazy {
+            movioApplication.movioContainer.rootCoordinator.requireCoordinator()
+        }
+
+
+    //private val coordinatorDelegate by lazy { LazyCoordinatorDelegate(movioApplication) }
+
+    /*override val coordinator: Coordinator by lazy {
+        CoordinatorDelegate(movioApplication)
+    }*/
 
     private val authenticationViewModel by lazy {
         coordinator
@@ -161,17 +171,36 @@ class AuthenticationFragment :
     }
 
 
-    private fun onResultReceived(signInStatus: SignInStatus){
+    private fun onResultReceived(signInStatus: SignInStatus) =
         when(signInStatus){
             is SignInStatus.SignInFailed    -> {
                 @OptIn(Experimental::class)
                 MessageShower.showAppropriateErrorDialog(requireContext(),signInStatus.throwable)
+                Log.i("MainActivity", "The throwing class is -> ${signInStatus.throwable?.stackTrace?.get(0)?.className} \n " +
+                        " ${signInStatus.throwable?.stackTrace?.get(1)?.className} \n"
+                        +
+                        " ${signInStatus.throwable?.stackTrace?.get(2)?.className} \n"
+                        +
+                        " ${signInStatus.throwable?.stackTrace?.get(3)?.className} \n"
+                        +
+                        " ${signInStatus.throwable?.stackTrace?.get(4)?.className} \n"
+                        +
+                        " ${signInStatus.throwable?.stackTrace?.get(5)?.className} \n"
+                        +
+                        " ${signInStatus.throwable?.stackTrace?.get(6)?.className} \n"
+                        +
+                        " ${signInStatus.throwable?.stackTrace?.get(7)?.className} \n"
+                        +
+                        " ${signInStatus.throwable?.stackTrace?.get(8)?.className} \n" +
+                        " ${signInStatus.throwable?.stackTrace?.get(9)?.methodName} \n"
+
+                )
                 stopGoogleAuthenticationLoading()
                 stopTwitterAuthenticationLoading()
             }
             else                            -> { /*Do Nothing*/ }
         }
-    }
+
 /*
     private fun navigateToHomeFragment() {
         lifecycleScope.launch {
@@ -305,3 +334,8 @@ class AuthenticationFragment :
         //authenticationLifecycleObserver.launcher.unregister()
     }
 }
+
+
+
+
+//operator fun <CoordinatorDelegate> Lazy<CoordinatorDelegate>.getValue(thisRef: BaseFragment<*>, property: KProperty<*>) : CoordinatorDelegate = value
