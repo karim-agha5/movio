@@ -12,6 +12,7 @@ import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.Experimental
 import com.example.movio.core.helpers.Event
+import com.example.movio.core.helpers.ViewModelDelegate
 import com.example.movio.core.util.FormUtils
 import com.example.movio.core.util.Utils
 import com.example.movio.databinding.FragmentSignInBinding
@@ -43,11 +44,13 @@ class SignInFragment :
    *   the coordinator is supposed to be only inside the view model.
    *   the view should be agnostic of anything except its state
    * */
-    private val signInViewModel by lazy {
+    /*private val signInViewModel by lazy {
         coordinator
             .requireViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(this@SignInFragment::class.java)
         as FederatedAuthenticationBaseViewModel
-    }
+    }*/
+    private lateinit var signInViewModel: FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
+
 
     private lateinit var googleSignInService: GoogleSignInService
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
@@ -59,6 +62,8 @@ class SignInFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
+        val vm by ViewModelDelegate<LoginCredentials, SignInActions, Event<SignInStatus>>(movioApplication,this::class.java)
+        signInViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
         signInViewModel.register(requireActivity())
         //signInViewModel.register(this)
         authenticationLifecycleObserver =
