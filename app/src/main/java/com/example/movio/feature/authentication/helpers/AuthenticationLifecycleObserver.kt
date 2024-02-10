@@ -1,12 +1,16 @@
 package com.example.movio.feature.authentication.helpers
 
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.example.movio.feature.authentication.services.GoogleSignInService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * This class is added as a lifecycle observer and registers the launcher that is responsible for
@@ -14,20 +18,24 @@ import com.example.movio.feature.authentication.services.GoogleSignInService
  * when the lifecycle is destroyed
  * */
 class AuthenticationLifecycleObserver(
+    private val key: String,
     private val registry: ActivityResultRegistry,
     private val googleSignInService: GoogleSignInService
 ) : DefaultLifecycleObserver {
 
     private val AUTHENTICATION_CALLBACK_KEY = "Authentication Callback key"
-    private lateinit var launcher: ActivityResultLauncher<IntentSenderRequest>
+    lateinit var launcher: ActivityResultLauncher<IntentSenderRequest>
 
     override fun onCreate(owner: LifecycleOwner) {
         launcher = registry.register(
-            AUTHENTICATION_CALLBACK_KEY,
+            key,
             owner,
             ActivityResultContracts.StartIntentSenderForResult()
         ){
-            googleSignInService.authenticateWithFirebase(it.data)
+            owner.lifecycleScope.launch(Dispatchers.Main) {
+                //Log.i("MainActivity", "inside lifecycle observer")
+                googleSignInService.authenticateWithFirebase(it.data)
+            }
         }
     }
 

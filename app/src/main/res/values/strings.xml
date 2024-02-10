@@ -16,10 +16,49 @@
     <string name="btn_sign_in_with_password_text">Sign in with password</string>
     <string name="tv_don_t_have_an_account_text">Don\'t have an account?</string>
     <string name="btn_sign_up_text">Sign up</string>
+    <string name="btn_sign_in">Sign in</string>
+    <string name="forgot_password">Forgot the password?</string>
     <string name="movio_application_logo_content_description">Movio Application Logo</string>
     <string name="ok">OK</string>
     <string name="generic_authentication_error_title">Error</string>
     <string name="generic_authentication_error_message">Unable to authenticate</string>
     <string name="canceled_authentication_title">Canceled Operation</string>
     <string name="canceled_authentication_message">Unable to authenticate due to operation cancellation.</string>
+    <string name="create_your_account">Create Your Account</string>
+    <string name="login_to_your_account">Login to Your Account</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="or_continue_with">or continue with</string>
+    <string name="already_have_an_account">Already have an account? &#160;</string>
+    <string name="sign_in">Sign in</string>
+    <string name="signup_with_facebook">Signup with Facebook</string>
+    <string name="signup_with_google">Signup with Google</string>
+    <string name="sign_up_with_twitter">Sign up with Twitter</string>
+
+
+    <!-- Start Form Error Messages -->
+
+    <string name="incorrect_email_format">Incorrect email format</string>
+    <string name="incorrect_password_format">Password must be 6 characters or more</string>
+
+    <!-- End Form Error Messages-->
+
+
+
+    <!-- Start Toast Messages -->
+
+    <string name="should_verify_email">Verification link is sent</string>
+    <string name="email_not_verified">Email Not Verified</string>
+
+    <!-- End Toast Messages-->
+
+
+    <!-- Start Authentication Loading Messages -->
+
+    <string name="hold_on">Hold on for a moment…</string>
+    <string name="attempting_to_sign_up_message">Attemping to sign up</string>
+    <string name="attempting_to_sign_in_message">Attempting to sign in</string>
+
+    <!-- End Authentication Loading Messages -->
+
 </resources>

@@ -1,13 +1,15 @@
+/*
 package com.example.movio.feature.authentication.services
 
 import android.util.Log
 import androidx.activity.ComponentActivity
-import com.example.movio.feature.authentication.helpers.LoginCredentials
+import com.example.movio.feature.common.models.LoginCredentials
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+*/
 
 
 /**
@@ -21,6 +23,7 @@ import com.facebook.login.LoginResult
  *
  * */
 
+/*
 class FacebookAuthenticationService private constructor(
     private val componentActivity: ComponentActivity
 ) : LoginServiceContract<LoginCredentials>{
@@ -67,4 +70,6 @@ class FacebookAuthenticationService private constructor(
     override suspend fun login(credentials: LoginCredentials?) {
         loginManager.logIn(componentActivity,callbackManager,permissions)
     }
+
 }
+*/

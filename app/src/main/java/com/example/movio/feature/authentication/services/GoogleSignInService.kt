@@ -4,9 +4,11 @@ import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.IntentSenderRequest
 import com.example.movio.R
+import com.example.movio.core.interfaces.auth.AuthenticationResultCallbackLauncherRegistrar
+import com.example.movio.core.interfaces.auth.ComponentActivityRegistrar
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
-import com.example.movio.feature.authentication.helpers.LoginCredentials
+import com.example.movio.feature.common.models.LoginCredentials
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.Identity
@@ -15,31 +17,61 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import java.lang.IllegalStateException
+import kotlin.jvm.Throws
 
 class GoogleSignInService private constructor(
-    private val componentActivity: ComponentActivity,
-    private val launcher: AuthenticationResultCallbackLauncher
-) : LoginServiceContract<LoginCredentials> {
+   // private val componentActivity: ComponentActivity,
+    // private val launcher: AuthenticationResultCallbackLauncher
+) : LoginServiceContract<LoginCredentials>,
+    ComponentActivityRegistrar,
+    AuthenticationResultCallbackLauncherRegistrar{
 
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
+    private lateinit var componentActivity: ComponentActivity
+    private var launcher: AuthenticationResultCallbackLauncher? = null
     private val auth by lazy { Firebase.auth }
-    private val tag = this.javaClass.simpleName
 
     companion object{
         @Volatile private var instance: GoogleSignInService? = null
 
         fun getInstance(
-            componentActivity: ComponentActivity,
-            launcher: AuthenticationResultCallbackLauncher
+            //componentActivity: ComponentActivity,
+            //launcher: AuthenticationResultCallbackLauncher
         ): GoogleSignInService =
             instance ?: synchronized(this) {
-                instance ?: GoogleSignInService(componentActivity,launcher).also { instance = it }
+                instance ?: GoogleSignInService().also { instance = it }
             }
     }
 
-
+/*
     init {
+        initOneTapClient()
+        buildSignInRequest()
+    }
+*/
+    override fun register(launcher: AuthenticationResultCallbackLauncher) {
+        this.launcher = launcher
+    }
+
+    override fun unregister() {
+        this.launcher = null
+    }
+
+    override fun register(componentActivity: ComponentActivity) {
+        this.componentActivity = componentActivity
+    }
+
+    @Throws(IllegalStateException::class)
+    fun init(){
+        if(launcher == null || !this::componentActivity.isInitialized){
+            throw IllegalStateException("AuthenticationResultCallbackLauncher or ComponentActivity isn't registered")
+        }
         initOneTapClient()
         buildSignInRequest()
     }
@@ -62,6 +94,7 @@ class GoogleSignInService private constructor(
             .build()
     }
 
+    // Used for building the one tap client configurations
     private fun buildGoogleIdTokenRequestOptions() : GoogleIdTokenRequestOptions{
         return GoogleIdTokenRequestOptions
             .builder()
@@ -72,8 +105,10 @@ class GoogleSignInService private constructor(
             .build()
     }
 
-
-    fun authenticateWithFirebase(data: Intent?){
+    /**
+     * Main-safe
+     * */
+    suspend fun authenticateWithFirebase(data: Intent?){
          try{
              val credential = oneTapClient.getSignInCredentialFromIntent(data)
              val googleIdToken = credential.googleIdToken
@@ -91,39 +126,52 @@ class GoogleSignInService private constructor(
          }
     }
 
-    private fun getFirebaseUser(googleIdToken: String?) {
+    /**
+     * Main-safe
+     * */
+    private suspend fun getFirebaseUser(googleIdToken: String?) {
         val firebaseCredential = GoogleAuthProvider.getCredential(googleIdToken,null)
-        auth.signInWithCredential(firebaseCredential)
-            .addOnCompleteListener(componentActivity){
-                if(it.isSuccessful){
-                    // Signing in is successful
-                    val user = auth.currentUser
-                    AuthenticationHelper.onSuccess(user)
-                }
-                else{
-                    // Signing in has failed
-                    AuthenticationHelper.onFailure(it.exception)
-                }
+        withContext(Dispatchers.IO){
+            // TODO a cancellation exception may be thrown from within the async builder. Handle it.
+            val deferredResult = async { auth.signInWithCredential(firebaseCredential).await() }
+            try {
+                val user = deferredResult.await().user
+                // Signing in is successful
+                AuthenticationHelper.onSuccess(user)
+            }catch (e: Exception){
+                // Signing in has failed
+                AuthenticationHelper.onFailure(e)
             }
+        }
     }
 
-
     override suspend fun login(credentials: LoginCredentials?) {
-        oneTapClient.beginSignIn(signInRequest)
-            .addOnSuccessListener {
+        withContext(Dispatchers.IO) {
+            // TODO a cancellation exception may be thrown from within the async builder. Handle it.
+            val resultDeferred = async {
+                // call the .await() method to wait for the task to be completed
+                oneTapClient.beginSignIn(signInRequest).await()
+            }
+
+            try {
                 // The Activity Result callback launcher requires an IntentSenderRequest
                 // The One Tap client returns an Intent Sender which you use
                 // to build an Intent Sender Request and pass it to the launcher
-                val intentSenderRequest = IntentSenderRequest.Builder(it.pendingIntent.intentSender).build()
+                val intentSender = resultDeferred.await().pendingIntent.intentSender
+                val intentSenderRequest = IntentSenderRequest.Builder(intentSender).build()
                 // TODO add the callback to a continuation coroutine
-                launcher.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
-            }
-            .addOnFailureListener(componentActivity) {
+                /*Log.i("MainActivity", "inside google sign in service | AuthenticationHelper -> ${AuthenticationHelper.hashCode()} \n Observable -> ${AuthenticationHelper.getAuthenticationResultObservableSource().hashCode()}" +
+                        "\n is launcher signupfragment ? -> ${launcher is SignupFragment}")*/
+                launcher?.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
+            } catch (e: Exception) {
                 // The Caller has been temporarily blocked due to too many canceled sign-in prompts
                 // or
                 // The user doesn't have any saved credentials on the device
                 // also deal with generic errors
-                AuthenticationHelper.onFailure(it)
+                AuthenticationHelper.onFailure(e)
             }
+
+
+        }
     }
 }
