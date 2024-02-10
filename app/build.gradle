@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs.kotlin'
     id 'com.google.gms.google-services'
+    id 'org.jetbrains.kotlin.kapt'
 }
 
 android {
@@ -26,6 +27,7 @@ android {
         }
     }
     buildFeatures{
+        viewBinding true
         dataBinding true
     }
     compileOptions {
@@ -38,12 +40,12 @@ android {
 }
 
 dependencies {
-    def nav_version = "2.7.3"
+    def nav_version = "2.7.7"
 
 
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // Firebase BoM

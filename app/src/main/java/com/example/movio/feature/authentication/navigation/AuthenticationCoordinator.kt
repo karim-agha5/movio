@@ -21,13 +21,12 @@ import kotlinx.coroutines.withContext
  * This class is main-safe as navigation requires to be on the main thread.
  *  It contains all the logic necessary for the navigation in the authentication flow.
  * */
-class AuthenticationCoordinator constructor(
+class AuthenticationCoordinator(
     private val flowNavigator: AuthenticationFlowNavigator,
     private val authenticationViewModelsFactory: AuthenticationViewModelsFactory,
     private val flowState: FlowState
     ) : Coordinator {
 
-    //private var currentAction: AuthenticationActions = AuthenticationActions.ToAuthenticationScreen
 
     /**
      * An action is passed when an event takes place on the UI.
@@ -36,14 +35,8 @@ class AuthenticationCoordinator constructor(
     override suspend fun postAction(action: Action) {
         when(action){
             is AuthenticationActions.ToAuthenticationScreen     -> navigateToAuthenticationScreen()
-            is AuthenticationActions.ToSignInScreen             -> {
-                navigateToSignInScreen()
-                //currentAction = AuthenticationActions.ToSignInScreen
-            }
-            is AuthenticationActions.ToEmailAndPasswordScreen   -> {
-                navigateToEmailAndPasswordScreen()
-                //currentAction = AuthenticationActions.ToEmailAndPasswordScreen
-            }
+            is AuthenticationActions.ToSignInScreen             -> navigateToSignInScreen()
+            is AuthenticationActions.ToSignupScreen             -> navigateToSignupScreen()
             is AuthenticationActions.ToHomeScreen               -> navigateToHomeScreen()
             is StateActions.ToAuthenticated                     -> switchState()
         }
@@ -96,7 +89,7 @@ class AuthenticationCoordinator constructor(
         }
     }
 
-    private fun buildEmailAndPasswordSignupNavOptions() : NavOptions{
+    private fun buildSignupNavOptions() : NavOptions{
         return navOptions {
             anim {
                 enter = R.anim.from_right_to_current
@@ -134,14 +127,15 @@ class AuthenticationCoordinator constructor(
         }
     }
 
-    private suspend fun navigateToEmailAndPasswordScreen(){
+    private suspend fun navigateToSignupScreen(){
         withContext(Dispatchers.Main){
-             flowNavigator.navigateToEmailAndPasswordScreen(buildEmailAndPasswordSignupNavOptions())
+             flowNavigator.navigateToSignupScreen(buildSignupNavOptions())
         }
     }
 
     private suspend fun navigateToHomeScreen() {
         withContext(Dispatchers.Main){
+            switchState()
             flowNavigator.navigateToHomeScreen(buildHomeFragmentNavOptions())
         }
     }

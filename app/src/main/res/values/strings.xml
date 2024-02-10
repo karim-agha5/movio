@@ -52,4 +52,13 @@
 
     <!-- End Toast Messages-->
 
+
+    <!-- Start Authentication Loading Messages -->
+
+    <string name="hold_on">Hold on for a moment…</string>
+    <string name="attempting_to_sign_up_message">Attemping to sign up</string>
+    <string name="attempting_to_sign_in_message">Attempting to sign in</string>
+
+    <!-- End Authentication Loading Messages -->
+
 </resources>

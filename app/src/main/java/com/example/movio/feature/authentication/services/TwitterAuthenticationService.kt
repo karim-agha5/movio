@@ -1,9 +1,10 @@
 package com.example.movio.feature.authentication.services
 
 import androidx.activity.ComponentActivity
+import com.example.movio.core.interfaces.auth.ComponentActivityRegistrar
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
-import com.example.movio.feature.authentication.helpers.LoginCredentials
-import com.example.movio.feature.authentication.helpers.SignupCredentials
+import com.example.movio.feature.common.models.LoginCredentials
+import com.example.movio.feature.common.models.SignupCredentials
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -12,35 +13,48 @@ import com.google.firebase.auth.OAuthProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlin.IllegalStateException
+import kotlin.jvm.Throws
 
 class TwitterAuthenticationService private constructor(
-    private val componentActivity: ComponentActivity,
+    //private val componentActivity: ComponentActivity,
     private val firebaseAuth: FirebaseAuth,
     private val authenticationHelper: AuthenticationHelper
-)
-    : LoginServiceContract<LoginCredentials>,SignupServiceContract<SignupCredentials> {
+) : LoginServiceContract<LoginCredentials>,SignupServiceContract<SignupCredentials>,
+    ComponentActivityRegistrar{
 
 
     private val provider = OAuthProvider.newBuilder("twitter.com")
+    private lateinit var componentActivity: ComponentActivity
 
     companion object{
         @Volatile
         private var instance: TwitterAuthenticationService? = null
 
         fun getInstance(
-            componentActivity: ComponentActivity,
+            //componentActivity: ComponentActivity,
             firebaseAuth: FirebaseAuth,
             authenticationHelper: AuthenticationHelper
         ): TwitterAuthenticationService =
              instance ?: synchronized(this){
-                instance ?: TwitterAuthenticationService(componentActivity,firebaseAuth,authenticationHelper)
+                instance ?: TwitterAuthenticationService(firebaseAuth,authenticationHelper)
             }
     }
+
+    /**
+     * The view that uses this service has to register itself if it's a [ComponentActivity]
+     * or register its container [ComponentActivity] if it's a [Fragment].
+     * */
+    override fun register(componentActivity: ComponentActivity) {
+        this.componentActivity = componentActivity
+    }
+
 
     /**
      * Main-Safe suspend function that either sends the result of a pending result
      * from a previous login/signup attempt or starts a regular login/signup flow.
      * */
+    @Throws(IllegalStateException::class)
     private suspend fun authenticate(){
         val pendingResultTask = firebaseAuth.pendingAuthResult
         if(pendingResultTask != null ){
@@ -58,7 +72,11 @@ class TwitterAuthenticationService private constructor(
      * Main-Safe suspend function that starts the regular login/signup flow and sends the result through
      * the authentication result observable.
      * */
+    @Throws(IllegalStateException::class)
     private suspend fun twitterSigningFlow(){
+        if(!this::componentActivity.isInitialized){
+            throw IllegalStateException("ComponentActivity isn't registered")
+        }
         val pendingResultTask = firebaseAuth
             .startActivityForSignInWithProvider(componentActivity,provider.build())
 

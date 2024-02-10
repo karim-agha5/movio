@@ -3,7 +3,7 @@ package com.example.movio.feature.authentication.services
 
 import android.util.Log
 import androidx.activity.ComponentActivity
-import com.example.movio.feature.authentication.helpers.LoginCredentials
+import com.example.movio.feature.common.models.LoginCredentials
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException

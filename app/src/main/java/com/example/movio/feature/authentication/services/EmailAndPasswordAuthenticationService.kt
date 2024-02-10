@@ -1,15 +1,18 @@
 package com.example.movio.feature.authentication.services
 
-import com.example.movio.feature.authentication.helpers.LoginCredentials
-import com.example.movio.feature.authentication.helpers.SignupCredentials
+import com.example.movio.feature.common.models.LoginCredentials
+import com.example.movio.feature.common.models.SignupCredentials
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import kotlin.Exception
+import kotlin.Throws
 
 // TODO refactor the suspend functions as they're unreadable
 class EmailAndPasswordAuthenticationService private constructor(
@@ -46,6 +49,7 @@ class EmailAndPasswordAuthenticationService private constructor(
      * Sends the email in the credentials a verification link, and then signs out the user because
      * once a user is returned, they're automatically signed in even if their email isn't verified.
      * */
+    @Throws(FirebaseAuthUserCollisionException::class)
     private suspend fun launchSignupWithEmailAndPassword(
         credentials: SignupCredentials
     ) : FirebaseUser?{
@@ -60,13 +64,22 @@ class EmailAndPasswordAuthenticationService private constructor(
                         .await()
                 }catch (e: Exception){ e}
             }
-            firebaseUser = (deferredResult.await() as AuthResult).user
+            /*firebaseUser = (deferredResult.await() as AuthResult).user
             firebaseAuth.signOut()
-            firebaseUser?.sendEmailVerification()
+            firebaseUser?.sendEmailVerification()*/
+            val result = deferredResult.await()
+            if(result is FirebaseAuthUserCollisionException){
+                throw result
+            }else{
+                firebaseUser = (result as AuthResult).user
+                firebaseAuth.signOut()
+                firebaseUser?.sendEmailVerification()
+            }
         }
 
         return firebaseUser
     }
+    @Throws(Exception::class)
      suspend fun login(credentials: LoginCredentials?) : FirebaseUser?{
          var firebaseUser: FirebaseUser? = null
 
@@ -80,9 +93,16 @@ class EmailAndPasswordAuthenticationService private constructor(
                      }catch(e: Exception){e}
                  }
 
-                 firebaseUser = (deferredResult.await() as AuthResult).user
+                 /*firebaseUser = (deferredResult.await() as AuthResult).user
                  if(firebaseUser?.isEmailVerified == false){
                      firebaseAuth.signOut()
+                 }*/
+
+                 val result = deferredResult.await()
+                 if(result is FirebaseAuthInvalidUserException){
+                     throw FirebaseAuthInvalidUserException("message","Invalid username or password")
+                 }else{
+                     firebaseUser = (result as AuthResult).user
                  }
              }
          }
