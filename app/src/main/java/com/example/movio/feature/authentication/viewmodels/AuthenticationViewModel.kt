@@ -170,7 +170,7 @@ class AuthenticationViewModel(
         }
     }
 
-    private fun navigateToSignIn() = viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToSignInScreen) }
+    private fun navigateToSignIn() = viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToSignInScreen) }
 
-    private fun navigateToSignup() = viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToSignupScreen) }
+    private fun navigateToSignup() = viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToSignupScreen) }
 }
