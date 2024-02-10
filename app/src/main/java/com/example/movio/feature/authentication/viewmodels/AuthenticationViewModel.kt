@@ -163,7 +163,7 @@ class AuthenticationViewModel(
     private fun navigateToHome(){
         // Consider using the lifecycle of the view because config change might happen before navigation
         // May cause unexpected behaviors
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             // TODO consider implementing a resource cleaner
             authenticationHelper.disposeAuthenticationResult(disposable)
             coordinator.postAction(AuthenticationActions.ToHomeScreen)
