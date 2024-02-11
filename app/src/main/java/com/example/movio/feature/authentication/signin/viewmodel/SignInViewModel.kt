@@ -213,7 +213,7 @@ class SignInViewModel(
     private fun navigateToHome(){
         // Consider using the lifecycle of the view because config change might happen before navigation
         // May cause unexpected behaviors
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             // TODO consider implementing a resource cleaner
             authenticationHelper.disposeAuthenticationResult(disposable)
             coordinator.postAction(AuthenticationActions.ToHomeScreen)
@@ -223,7 +223,7 @@ class SignInViewModel(
     private fun navigateToSignup(){
         // Consider using the lifecycle of the view because config change might happen before navigation
         // May cause unexpected behaviors
-        viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToSignupScreen) }
+        viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToSignupScreen) }
     }
 
     override fun onCleared() {
