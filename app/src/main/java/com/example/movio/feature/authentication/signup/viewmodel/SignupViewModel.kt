@@ -173,7 +173,7 @@ class SignupViewModel(
     private fun navigateToHome(){
         // Consider using the lifecycle of the view because config change might happen before navigation
         // May cause unexpected behaviors
-        viewModelScope.launch(Dispatchers.Main) { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
+        viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
     }
     private fun navigateToSignInScreen(){
         Log.i("MainActivity", "navigateToSignInScreen should be executed ")
