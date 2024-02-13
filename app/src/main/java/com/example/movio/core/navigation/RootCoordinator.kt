@@ -1,6 +1,7 @@
 package com.example.movio.core.navigation
 
 import android.app.Application
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -49,6 +50,7 @@ class RootCoordinator(
         // , or should the flor start as if the app is newly installed.
 
         // TODO find a way to retrieve both singletons from the container
+        Log.i("MainActivity", "root coordinator ")
         state = AuthenticationFlowState(
             this,
             viewModelsFactoryProvider

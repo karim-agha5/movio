@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity()/*, AuthenticationResultCallbackLauncher
         lifecycle.addObserver(authenticationLifecycleObserver)
 
  */
+        Log.i("MainActivity", "onCreate in activity : ")
     }
 
 
