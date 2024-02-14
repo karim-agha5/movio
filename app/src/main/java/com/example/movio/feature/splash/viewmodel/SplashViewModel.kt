@@ -32,7 +32,7 @@ class SplashViewModel(
 
 
     override fun postAction(data: Nothing?, action: AuthenticationActions) {
-        if(action is AuthenticationActions.ToSplashScreen){
+        if(action is AuthenticationActions.FromSplashScreen){
             viewModelScope.launch(Dispatchers.Main) { navigateFromSplash() }
         }
         else{

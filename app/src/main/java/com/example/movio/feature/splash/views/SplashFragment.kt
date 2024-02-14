@@ -47,7 +47,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(),LifecycleEventObser
     * Navigates to either the AuthenticationFragment or to the HomeFragment
     * */
     private fun navigateFromSplash(){
-        splashViewModel.postAction(null,AuthenticationActions.ToSplashScreen)
+        splashViewModel.postAction(null,AuthenticationActions.FromSplashScreen)
     }
 
     /**
