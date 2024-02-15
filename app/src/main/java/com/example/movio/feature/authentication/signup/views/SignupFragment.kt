@@ -12,11 +12,13 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import com.example.movio.MainActivity
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.Experimental
 import com.example.movio.core.helpers.Event
 import com.example.movio.core.helpers.ViewModelDelegate
+import com.example.movio.core.navigation.RootCoordinator
 import com.example.movio.core.util.FormUtils
 import com.example.movio.databinding.FragmentSignupBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
@@ -29,9 +31,11 @@ import com.example.movio.feature.authentication.services.TwitterAuthenticationSe
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.signup.actions.SignupActions
 import com.example.movio.feature.authentication.signup.status.SignupStatus
+import com.example.movio.feature.authentication.signup.viewmodel.SignupViewModel
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.helpers.MessageShower
 import com.example.movio.feature.common.models.LoginCredentials
+import com.example.movio.feature.splash.viewmodel.SplashViewModel
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
@@ -420,6 +424,13 @@ class SignupFragment :
         //signupViewModel.unregister()
     }
 
+    /**
+     * Necessary for the [SignupViewModel] instantiation.
+     * The instantiation of the [SignupViewModel] requires the [MainActivity] onCreate() lifecycle
+     * callback to be called first so that it initializes the [RootCoordinator] state correctly.
+     * Therefore, an observation on the [MainActivity] lifecycle is necessary.
+     * The observation on the [MainActivity] lifecycle is registered in the [onAttach] lifecycle callback.
+     * */
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         if(event == Lifecycle.Event.ON_CREATE){
             val vm by ViewModelDelegate<SignupCredentials, SignupActions, Event<SignupStatus>>(movioApplication,this::class.java)
