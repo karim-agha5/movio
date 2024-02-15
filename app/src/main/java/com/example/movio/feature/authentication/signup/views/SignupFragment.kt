@@ -1,5 +1,6 @@
 package com.example.movio.feature.authentication.signup.views
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.IntentSenderRequest
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.Experimental
@@ -34,7 +38,10 @@ import com.google.android.material.progressindicator.CircularProgressIndicatorSp
 import com.google.android.material.progressindicator.IndeterminateDrawable
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 
-class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResultCallbackLauncher {
+class SignupFragment :
+    BaseFragment<FragmentSignupBinding>(),
+    AuthenticationResultCallbackLauncher,
+    LifecycleEventObserver {
 
 
     private val coordinator by lazy {
@@ -61,12 +68,18 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
     private lateinit var credentialsProgressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
     //private lateinit var disposable: Disposable
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.lifecycle?.addObserver(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val vm by ViewModelDelegate<SignupCredentials, SignupActions, Event<SignupStatus>>(movioApplication,this::class.java)
-        signupViewModel = vm as FederatedAuthenticationBaseViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>
+        //val vm by ViewModelDelegate<SignupCredentials, SignupActions, Event<SignupStatus>>(movioApplication,this::class.java)
+        //signupViewModel = vm as FederatedAuthenticationBaseViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>
         //googleSignInService = GoogleSignInService.getInstance(requireActivity(),this)
-        signupViewModel.register(requireActivity())
+        //signupViewModel.register(requireActivity())
         //signupViewModel.register(this)
         authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(
@@ -405,5 +418,13 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>(),AuthenticationResul
         // TODO maybe change the state when the user is actually authenticated, not when the fragment is destroyed
         //lifecycleScope.launch { coordinator.postAction(StateActions.ToAuthenticated) }
         //signupViewModel.unregister()
+    }
+
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        if(event == Lifecycle.Event.ON_CREATE){
+            val vm by ViewModelDelegate<SignupCredentials, SignupActions, Event<SignupStatus>>(movioApplication,this::class.java)
+            signupViewModel = vm as FederatedAuthenticationBaseViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>
+            signupViewModel.register(requireActivity())
+        }
     }
 }
