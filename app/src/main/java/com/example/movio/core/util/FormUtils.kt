@@ -66,5 +66,7 @@ class FormUtils{
                     && textField.text?.isNotEmpty() == true
                     && textField.text?.length!! >= 6
         }
+
+        fun emailMatches(email: String) = Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }
