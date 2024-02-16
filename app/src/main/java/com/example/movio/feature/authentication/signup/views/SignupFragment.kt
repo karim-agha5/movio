@@ -120,6 +120,9 @@ class SignupFragment :
                     SignupActions.SignupClicked
                 )
             }
+            else{
+                setTextInputLayoutErrorStyling()
+            }
         }
 
 
@@ -244,6 +247,11 @@ class SignupFragment :
             )
         }
 
+    }
+
+    private fun setTextInputLayoutErrorStyling(){
+        setEmailFieldStyling()
+        setPasswordFieldStyling()
     }
 
     private fun showShouldVerifyEmailToast(){
