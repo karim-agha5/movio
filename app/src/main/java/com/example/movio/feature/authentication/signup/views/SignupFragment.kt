@@ -126,7 +126,7 @@ class SignupFragment :
             )
         }
         binding.btnSignup.setOnClickListener {
-            if (areFieldsValid()) {
+            /*if (areFieldsValid()) {
                 startCredentialsAuthenticationLoading()
                 signupViewModel.postAction(
                     SignupCredentials(
@@ -137,12 +137,36 @@ class SignupFragment :
                 )
             } else {
                 setTextInputLayoutErrorStyling()
-            }
+            }*/
+            fieldValidationViewModel.validate(binding.etEmail.text.toString())
         }
 
 
         signupViewModel.result.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { status -> onResultReceived(status) }
+        }
+
+        lifecycleScope.launch {
+            fieldValidationViewModel.fieldsState.collect {
+                when (it) {
+                    is ValidationResultState.Success -> {
+                        signupViewModel.postAction(
+                            SignupCredentials(
+                                binding.etEmail.text.toString(),
+                                binding.etPassword.text.toString()
+                            ),
+                            SignupActions.SignupClicked
+                        )
+                    }
+
+                    is ValidationResultState.Failure -> {
+                        setEmailFieldStyling(it.type.errorMessage)
+                    }
+
+                    else -> {/* Do Nothing */
+                    }
+                }
+            }
         }
     }
 
@@ -230,7 +254,7 @@ class SignupFragment :
         return FormUtils.isPasswordFieldValid(binding.etPassword)
     }
 
-    private fun setEmailFieldStyling(){
+    private fun setEmailFieldStyling(errorMessage: String){
         val context = requireContext()
         val tilEmail = binding.tilEmail
 
@@ -241,7 +265,8 @@ class SignupFragment :
             FormUtils.setTextInputLayoutErrorStyling(
                 context,
                 tilEmail,
-                resources.getString(R.string.incorrect_email_format)
+                errorMessage
+                //resources.getString(R.string.incorrect_email_format)
             )
         }
 
@@ -264,8 +289,8 @@ class SignupFragment :
 
     }
 
-    private fun setTextInputLayoutErrorStyling(){
-        setEmailFieldStyling()
+    private fun setTextInputLayoutErrorStyling(emailErrorMessage: String){
+        setEmailFieldStyling(emailErrorMessage)
         setPasswordFieldStyling()
     }
 
