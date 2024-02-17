@@ -119,18 +119,6 @@ class SignupFragment :
             )
         }
         binding.btnSignup.setOnClickListener {
-            /*if (areFieldsValid()) {
-                startCredentialsAuthenticationLoading()
-                signupViewModel.postAction(
-                    SignupCredentials(
-                        binding.etEmail.text.toString(),
-                        binding.etPassword.text.toString()
-                    ),
-                    SignupActions.SignupClicked
-                )
-            } else {
-                setTextInputLayoutErrorStyling()
-            }*/
             fieldValidationViewModel.validate(
                 binding.etEmail.text.toString(),
                 binding.etPassword.text.toString()
@@ -142,32 +130,25 @@ class SignupFragment :
             it.getContentIfNotHandled()?.let { status -> onResultReceived(status) }
         }
 
-        /*lifecycleScope.launch {
-            fieldValidationViewModel.emailFieldsState.collect {
-                when (it) {
-                    is ValidationResultState.Success -> {
-                        signupViewModel.postAction(
-                            SignupCredentials(
-                                binding.etEmail.text.toString(),
-                                binding.etPassword.text.toString()
-                            ),
-                            SignupActions.SignupClicked
-                        )
-                    }
-
-                    is ValidationResultState.Failure -> {
-                        setEmailFieldStyling(it.type.errorMessage)
-                    }
-
-                    else -> {*//* Do Nothing *//*
-                    }
-                }
-            }
-        }*/
         lifecycleScope.launch {
             fieldValidationViewModel.fieldsState.collect{
                 onFieldValidationResultReceived(it)
             }
+        }
+    }
+
+    override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
+        authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
+    }
+
+    private fun onResultReceived(signupStatus: SignupStatus){
+        when(signupStatus){
+            is SignupStatus.ShouldVerifyEmail -> {
+                stopCredentialsAuthenticationLoading()
+                showShouldVerifyEmailToast()
+            }
+            is SignupStatus.SignupFailed -> onSignUpFailure(signupStatus.throwable)
+            else -> {/*Do Nothing*/ }
         }
     }
 
@@ -192,20 +173,6 @@ class SignupFragment :
         }
         if(result.second is ValidationResultState.Failure){
             setPasswordFieldStyling((result.second as ValidationResultState.Failure).type.errorMessage)
-        }
-    }
-    override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
-        authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
-    }
-
-    private fun onResultReceived(signupStatus: SignupStatus){
-        when(signupStatus){
-            is SignupStatus.ShouldVerifyEmail -> {
-                stopCredentialsAuthenticationLoading()
-                showShouldVerifyEmailToast()
-            }
-            is SignupStatus.SignupFailed -> onSignUpFailure(signupStatus.throwable)
-            else -> {/*Do Nothing*/ }
         }
     }
 
@@ -266,10 +233,6 @@ class SignupFragment :
         stopCredentialsAuthenticationLoading()
     }
 
-    private fun areFieldsValid() : Boolean{
-        return isEmailFieldValid() && isPasswordFieldValid()
-    }
-
     private fun isEmailFieldValid() : Boolean {
         return FormUtils.isEmailFieldValid(binding.etEmail.text.toString())
     }
@@ -290,7 +253,6 @@ class SignupFragment :
                 context,
                 tilEmail,
                 errorMessage
-                //resources.getString(R.string.incorrect_email_format)
             )
         }
 
@@ -308,15 +270,9 @@ class SignupFragment :
                 context,
                 tilPassword,
                 errorMessage
-                //resources.getString(R.string.incorrect_password_format)
             )
         }
 
-    }
-
-    private fun setTextInputLayoutErrorStyling(emailErrorMessage: String,passwordErrorMessage: String){
-        setEmailFieldStyling(emailErrorMessage)
-        setPasswordFieldStyling(passwordErrorMessage)
     }
 
     private fun showShouldVerifyEmailToast(){
