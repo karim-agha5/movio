@@ -154,6 +154,7 @@ class SignupFragment :
 
     private fun onFieldValidationResultReceived(result: Triple<ValidationResultState,ValidationResultState,Boolean>){
         if(result.third){
+            startCredentialsAuthenticationLoading()
             signupViewModel.postAction(
                 SignupCredentials(
                     binding.etEmail.text.toString(),
