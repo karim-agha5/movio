@@ -234,47 +234,27 @@ class SignupFragment :
         stopTwitterAuthenticationLoading()
         stopCredentialsAuthenticationLoading()
     }
-/*
-    private fun isEmailFieldValid() : Boolean {
-        return FormUtils.isEmailFieldValid(binding.etEmail.text.toString())
-    }
 
-    private fun isPasswordFieldValid() : Boolean {
-        return FormUtils.isPasswordFieldValid(binding.etPassword)
-    }
-*/
-    private fun setEmailFieldStyling(errorMessage: String){
+    private fun setEmailFieldStyling(errorMessage: String) {
         val context = requireContext()
         val tilEmail = binding.tilEmail
 
-       /* if(isEmailFieldValid()){
-            FormUtils.resetTextInputLayoutStyling(tilEmail)
-        }*/
-        //else{
-            FormUtils.setTextInputLayoutErrorStyling(
-                context,
-                tilEmail,
-                errorMessage
-            )
-        //}
-
+        FormUtils.setTextInputLayoutErrorStyling(
+            context,
+            tilEmail,
+            errorMessage
+        )
     }
 
     private fun setPasswordFieldStyling(errorMessage: String) {
         val context = requireContext()
         val tilPassword = binding.tilPassword
 
-        /*if (isPasswordFieldValid()) {
-            FormUtils.resetTextInputLayoutStyling(tilPassword)
-        }*/
-        //else {
-            FormUtils.setTextInputLayoutErrorStyling(
-                context,
-                tilPassword,
-                errorMessage
-            )
-        //}
-
+        FormUtils.setTextInputLayoutErrorStyling(
+            context,
+            tilPassword,
+            errorMessage
+        )
     }
 
     private fun resetFormTextInputLayoutErrorStyling(){
