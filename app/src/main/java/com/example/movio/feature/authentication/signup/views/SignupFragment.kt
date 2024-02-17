@@ -12,6 +12,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.example.movio.MainActivity
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
@@ -35,12 +36,16 @@ import com.example.movio.feature.authentication.signup.viewmodel.SignupViewModel
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.helpers.MessageShower
 import com.example.movio.feature.common.models.LoginCredentials
+import com.example.movio.feature.common.status.ValidationResultState
+import com.example.movio.feature.common.viewmodels.FieldValidationViewModel
+import com.example.movio.feature.common.viewmodels.FieldValidationViewModelFactory
 import com.example.movio.feature.splash.viewmodel.SplashViewModel
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import kotlinx.coroutines.launch
 
 class SignupFragment :
     BaseFragment<FragmentSignupBinding>(),
@@ -51,7 +56,10 @@ class SignupFragment :
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var progressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
     private lateinit var credentialsProgressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
-
+    private val fieldValidationViewModel by lazy{
+        FieldValidationViewModelFactory(movioApplication.movioContainer.validateEmail)
+            .create(FieldValidationViewModel::class.java)
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -102,32 +110,39 @@ class SignupFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/}
+        binding.btnFacebook.setOnClickListener {/*TODO implement when the app is published*/ }
         binding.btnGoogle.setOnClickListener {
             startGoogleAuthenticationLoading()
-            signupViewModel.postAction(null,SignupActions.GoogleClicked)
+            signupViewModel.postAction(null, SignupActions.GoogleClicked)
         }
         binding.btnTwitter.setOnClickListener {
             startTwitterAuthenticationLoading()
-            signupViewModel.postAction(null,SignupActions.TwitterClicked)
+            signupViewModel.postAction(null, SignupActions.TwitterClicked)
         }
-        binding.tvSignIn.setOnClickListener { signupViewModel.postAction(null,SignupActions.SignInClicked) }
+        binding.tvSignIn.setOnClickListener {
+            signupViewModel.postAction(
+                null,
+                SignupActions.SignInClicked
+            )
+        }
         binding.btnSignup.setOnClickListener {
-            if(areFieldsValid()){
+            if (areFieldsValid()) {
                 startCredentialsAuthenticationLoading()
                 signupViewModel.postAction(
-                    SignupCredentials(binding.etEmail.text.toString(),binding.etPassword.text.toString()),
+                    SignupCredentials(
+                        binding.etEmail.text.toString(),
+                        binding.etPassword.text.toString()
+                    ),
                     SignupActions.SignupClicked
                 )
-            }
-            else{
+            } else {
                 setTextInputLayoutErrorStyling()
             }
         }
 
 
-        signupViewModel.result.observe(viewLifecycleOwner){
-            it.getContentIfNotHandled()?.let{ status -> onResultReceived(status)}
+        signupViewModel.result.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { status -> onResultReceived(status) }
         }
     }
 

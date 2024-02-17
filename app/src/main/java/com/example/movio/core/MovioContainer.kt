@@ -10,6 +10,7 @@ import com.example.movio.feature.authentication.services.EmailAndPasswordAuthent
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.example.movio.feature.common.helpers.UserManager
+import com.example.movio.feature.common.use_cases.ValidateEmail
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -27,6 +28,7 @@ class MovioContainer(private val application: Application){
     val twitterAuthenticationService: TwitterAuthenticationService = TwitterAuthenticationService.getInstance(firebaseAuth,authenticationHelper)
     val rootCoordinator =
         RootCoordinator(application,viewModelsFactoryProvider,firebaseAuth, authenticationHelper,userManager)
+    val validateEmail = ValidateEmail()
 
     // Should be called by the start destination
  /*   fun initDependenciesOnActivityInstance(
