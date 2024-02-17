@@ -47,7 +47,10 @@ class SignupFragment :
     private lateinit var progressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
     private lateinit var credentialsProgressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
     private val fieldValidationViewModel by lazy{
-        FieldValidationViewModelFactory(movioApplication.movioContainer.validateEmail)
+        FieldValidationViewModelFactory(
+            movioApplication.movioContainer.validateEmail,
+            movioApplication.movioContainer.validatePassword
+        )
             .create(FieldValidationViewModel::class.java)
     }
 
@@ -128,7 +131,10 @@ class SignupFragment :
             } else {
                 setTextInputLayoutErrorStyling()
             }*/
-            fieldValidationViewModel.validate(binding.etEmail.text.toString())
+            fieldValidationViewModel.validate(
+                binding.etEmail.text.toString(),
+                binding.etPassword.text.toString()
+            )
         }
 
 
@@ -136,7 +142,7 @@ class SignupFragment :
             it.getContentIfNotHandled()?.let { status -> onResultReceived(status) }
         }
 
-        lifecycleScope.launch {
+        /*lifecycleScope.launch {
             fieldValidationViewModel.emailFieldsState.collect {
                 when (it) {
                     is ValidationResultState.Success -> {
@@ -153,13 +159,41 @@ class SignupFragment :
                         setEmailFieldStyling(it.type.errorMessage)
                     }
 
-                    else -> {/* Do Nothing */
+                    else -> {*//* Do Nothing *//*
                     }
                 }
+            }
+        }*/
+        lifecycleScope.launch {
+            fieldValidationViewModel.fieldsState.collect{
+                onFieldValidationResultReceived(it)
             }
         }
     }
 
+    private fun onFieldValidationResultReceived(result: Triple<ValidationResultState,ValidationResultState,Boolean>){
+        if(result.third){
+            signupViewModel.postAction(
+                SignupCredentials(
+                    binding.etEmail.text.toString(),
+                    binding.etPassword.text.toString()
+                ),
+                SignupActions.SignupClicked
+            )
+        }
+        else{
+            displayFieldErrorStylingAppropriately(result)
+        }
+    }
+
+    private fun displayFieldErrorStylingAppropriately(result: Triple<ValidationResultState,ValidationResultState,Boolean>){
+        if(result.first is ValidationResultState.Failure){
+            setEmailFieldStyling((result.first as ValidationResultState.Failure).type.errorMessage)
+        }
+        if(result.second is ValidationResultState.Failure){
+            setPasswordFieldStyling((result.second as ValidationResultState.Failure).type.errorMessage)
+        }
+    }
     override fun launchAuthenticationResultCallbackLauncher(intentSenderRequest: IntentSenderRequest) {
         authenticationLifecycleObserver.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
     }
@@ -262,7 +296,7 @@ class SignupFragment :
 
     }
 
-    private fun setPasswordFieldStyling() {
+    private fun setPasswordFieldStyling(errorMessage: String) {
         val context = requireContext()
         val tilPassword = binding.tilPassword
 
@@ -273,15 +307,16 @@ class SignupFragment :
             FormUtils.setTextInputLayoutErrorStyling(
                 context,
                 tilPassword,
-                resources.getString(R.string.incorrect_password_format)
+                errorMessage
+                //resources.getString(R.string.incorrect_password_format)
             )
         }
 
     }
 
-    private fun setTextInputLayoutErrorStyling(emailErrorMessage: String){
+    private fun setTextInputLayoutErrorStyling(emailErrorMessage: String,passwordErrorMessage: String){
         setEmailFieldStyling(emailErrorMessage)
-        setPasswordFieldStyling()
+        setPasswordFieldStyling(passwordErrorMessage)
     }
 
     private fun showShouldVerifyEmailToast(){
