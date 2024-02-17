@@ -11,10 +11,10 @@ class FieldValidationViewModel(
     private val validatePassword: ValidatePassword
 ) : ViewModel(){
 
-    private val _fieldsState = MutableStateFlow<ValidationResultState>(ValidationResultState.Neutral)
-    val fieldsState = _fieldsState
+    private val _emailFieldState = MutableStateFlow<ValidationResultState>(ValidationResultState.Neutral)
+    val emailFieldsState = _emailFieldState
 
     fun validate(email: String){
-        _fieldsState.value = validateEmail.execute(email)
+        _emailFieldState.value = validateEmail.execute(email)
     }
 }

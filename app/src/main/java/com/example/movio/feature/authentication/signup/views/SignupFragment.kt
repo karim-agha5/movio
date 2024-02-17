@@ -2,7 +2,6 @@ package com.example.movio.feature.authentication.signup.views
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,28 +22,19 @@ import com.example.movio.core.navigation.RootCoordinator
 import com.example.movio.core.util.FormUtils
 import com.example.movio.databinding.FragmentSignupBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
-import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.common.models.SignupCredentials
-import com.example.movio.feature.authentication.services.GoogleSignInService
-import com.example.movio.feature.authentication.services.TwitterAuthenticationService
-import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.signup.actions.SignupActions
 import com.example.movio.feature.authentication.signup.status.SignupStatus
 import com.example.movio.feature.authentication.signup.viewmodel.SignupViewModel
-import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.helpers.MessageShower
-import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.common.status.ValidationResultState
 import com.example.movio.feature.common.viewmodels.FieldValidationViewModel
 import com.example.movio.feature.common.viewmodels.FieldValidationViewModelFactory
-import com.example.movio.feature.splash.viewmodel.SplashViewModel
-import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import kotlinx.coroutines.launch
 
 class SignupFragment :
@@ -147,7 +137,7 @@ class SignupFragment :
         }
 
         lifecycleScope.launch {
-            fieldValidationViewModel.fieldsState.collect {
+            fieldValidationViewModel.emailFieldsState.collect {
                 when (it) {
                     is ValidationResultState.Success -> {
                         signupViewModel.postAction(
