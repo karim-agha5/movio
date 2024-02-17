@@ -14,7 +14,6 @@ class FieldValidationViewModel(
 
     private val _emailFieldState = MutableStateFlow<ValidationResultState>(ValidationResultState.Neutral)
     val emailFieldsState = _emailFieldState.asStateFlow()
-
     fun validate(email: String){
         _emailFieldState.value = validateEmail.execute(email)
     }
