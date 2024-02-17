@@ -154,6 +154,7 @@ class SignupFragment :
 
     private fun onFieldValidationResultReceived(result: Triple<ValidationResultState,ValidationResultState,Boolean>){
         if(result.third){
+            resetFormTextInputLayoutErrorStyling()
             startCredentialsAuthenticationLoading()
             signupViewModel.postAction(
                 SignupCredentials(
@@ -233,7 +234,7 @@ class SignupFragment :
         stopTwitterAuthenticationLoading()
         stopCredentialsAuthenticationLoading()
     }
-
+/*
     private fun isEmailFieldValid() : Boolean {
         return FormUtils.isEmailFieldValid(binding.etEmail.text.toString())
     }
@@ -241,21 +242,21 @@ class SignupFragment :
     private fun isPasswordFieldValid() : Boolean {
         return FormUtils.isPasswordFieldValid(binding.etPassword)
     }
-
+*/
     private fun setEmailFieldStyling(errorMessage: String){
         val context = requireContext()
         val tilEmail = binding.tilEmail
 
-        if(isEmailFieldValid()){
+       /* if(isEmailFieldValid()){
             FormUtils.resetTextInputLayoutStyling(tilEmail)
-        }
-        else{
+        }*/
+        //else{
             FormUtils.setTextInputLayoutErrorStyling(
                 context,
                 tilEmail,
                 errorMessage
             )
-        }
+        //}
 
     }
 
@@ -263,18 +264,30 @@ class SignupFragment :
         val context = requireContext()
         val tilPassword = binding.tilPassword
 
-        if (isPasswordFieldValid()) {
+        /*if (isPasswordFieldValid()) {
             FormUtils.resetTextInputLayoutStyling(tilPassword)
-        }
-        else {
+        }*/
+        //else {
             FormUtils.setTextInputLayoutErrorStyling(
                 context,
                 tilPassword,
                 errorMessage
             )
-        }
+        //}
 
     }
+
+    private fun resetFormTextInputLayoutErrorStyling(){
+        resetEmailTextInputLayoutErrorStyling()
+        resetPasswordTextInputLayoutErrorStyling()
+    }
+
+    private fun resetEmailTextInputLayoutErrorStyling() =
+        FormUtils.resetTextInputLayoutStyling(binding.tilEmail)
+
+
+    private fun resetPasswordTextInputLayoutErrorStyling() =
+        FormUtils.resetTextInputLayoutStyling(binding.tilPassword)
 
     private fun showShouldVerifyEmailToast(){
         Toast.makeText(requireContext(), resources.getString(R.string.should_verify_email), Toast.LENGTH_LONG).show()
