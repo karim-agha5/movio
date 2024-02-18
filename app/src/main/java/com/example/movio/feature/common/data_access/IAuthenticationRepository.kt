@@ -4,13 +4,13 @@ import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.common.models.SignupCredentials
 
 interface IAuthenticationRepository {
-    fun signup(credentials: SignupCredentials)
+    suspend fun signup(credentials: SignupCredentials)
 
-    fun login(credentials: LoginCredentials)
+    suspend fun login(credentials: LoginCredentials)
 
-    fun signupWithGoogle()
+    suspend fun signupWithGoogle()
 
-    fun signupWithTwitter()
+    suspend fun signupWithTwitter()
 
-    fun signupWithFacebook()
+    suspend fun signupWithFacebook()
 }
