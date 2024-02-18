@@ -5,11 +5,12 @@ import com.example.movio.feature.authentication.helpers.AuthenticationResultCall
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.common.models.SignupCredentials
+import com.google.firebase.auth.FirebaseUser
 
 interface IAuthenticationRepository {
-    suspend fun signup(credentials: SignupCredentials)
+    suspend fun signup(credentials: SignupCredentials) : FirebaseUser?
 
-    suspend fun login(credentials: LoginCredentials)
+    suspend fun login(credentials: LoginCredentials) : FirebaseUser?
 
     suspend fun signupWithGoogle()
 
