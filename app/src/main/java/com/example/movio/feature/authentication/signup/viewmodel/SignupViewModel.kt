@@ -28,16 +28,8 @@ import kotlin.UnsupportedOperationException
 import kotlin.jvm.Throws
 
 class SignupViewModel(
-    //private val emailAndPasswordAuthenticationService: EmailAndPasswordAuthenticationService,
-    //private val googleSignInService: GoogleSignInService,
-    //private val twitterAuthenticationService: TwitterAuthenticationService,
-    //private val authenticationHelper: AuthenticationHelper,
     application: Application
 ) : FederatedAuthenticationBaseViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>(application){
-
-
-    //override var coordinator: Coordinator = (application as MovioApplication).movioContainer.rootCoordinator.requireCoordinator()
-    //override val coordinator : Coordinator by CoordinatorDelegate(getApplication())
 
     private val _result = MutableLiveData<Event<SignupStatus>>()
     override val result: LiveData<Event<SignupStatus>> = _result
@@ -55,18 +47,10 @@ class SignupViewModel(
             .getAuthenticationResultObservableSource()
             .subscribe {
                 when(it){
-                    is AuthenticationResult.Success -> if(isObserverActive){
-                            Log.i("MainActivity", "inside init | AuthenticationHelper -> ${authenticationHelper.hashCode()} \n Observable -> ${authenticationHelper.getAuthenticationResultObservableSource().hashCode()}")
-                            //navigateToSignInScreen()
-                            //navigateToHome()
-                            onUserReturned(it.user)
-                        }
+                    is AuthenticationResult.Success -> if(isObserverActive){ onUserReturned(it.user) }
 
                     is AuthenticationResult.Failure -> if(isObserverActive){
-                        viewModelScope.launch {
-                            Log.i("MainActivity", "Inside SignupViewModel init. The thread is ${Thread.currentThread().name}")
-                            postActionOnFailure(it.throwable)
-                        }
+                        viewModelScope.launch { postActionOnFailure(it.throwable) }
                     }
                 }
             }
@@ -83,12 +67,10 @@ class SignupViewModel(
     }
 
     override fun postActionOnSuccess() {
-        //_result.postValue(Event(SignupStatus.ShouldVerifyEmail))
         _result.value = Event(SignupStatus.ShouldVerifyEmail)
     }
 
     override fun postActionOnFailure(throwable: Throwable?) {
-        //_result.postValue(Event(SignupStatus.SignupFailed(throwable)))
         _result.value = Event(SignupStatus.SignupFailed(throwable))
     }
 
@@ -140,12 +122,9 @@ class SignupViewModel(
     private fun signup(credentials: SignupCredentials?) =
         viewModelScope.launch{
             try{
-                Log.i("MainActivity", "Inside SignupViewModel. The thread is ${Thread.currentThread().name}")
                 emailAndPasswordAuthenticationService.signup(credentials)
                 postActionOnSuccess()
-            }catch(e: Exception){ postActionOnFailure(e)
-                Log.i("MainActivity", "Inside SignupViewModel. The thread is ${Thread.currentThread().name}")
-            }
+            }catch(e: Exception){ postActionOnFailure(e) }
         }
 
 
@@ -176,16 +155,10 @@ class SignupViewModel(
         viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToHomeScreen) }
     }
     private fun navigateToSignInScreen(){
-        Log.i("MainActivity", "navigateToSignInScreen should be executed ")
         viewModelScope.launch {
             // TODO consider implementing a resource cleaner 
             authenticationHelper.disposeAuthenticationResult(disposable)
             coordinator.postAction(AuthenticationActions.ToSignInScreen)
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        //disposable.dispose()
     }
 }
