@@ -1,6 +1,5 @@
 package com.example.movio.feature.authentication.helpers
 
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.IntentSenderRequest
