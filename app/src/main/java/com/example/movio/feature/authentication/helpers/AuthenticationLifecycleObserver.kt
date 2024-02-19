@@ -23,7 +23,6 @@ class AuthenticationLifecycleObserver(
     private val googleSignInService: GoogleSignInService
 ) : DefaultLifecycleObserver {
 
-    private val AUTHENTICATION_CALLBACK_KEY = "Authentication Callback key"
     lateinit var launcher: ActivityResultLauncher<IntentSenderRequest>
 
     override fun onCreate(owner: LifecycleOwner) {
@@ -33,7 +32,6 @@ class AuthenticationLifecycleObserver(
             ActivityResultContracts.StartIntentSenderForResult()
         ){
             owner.lifecycleScope.launch(Dispatchers.Main) {
-                //Log.i("MainActivity", "inside lifecycle observer")
                 googleSignInService.authenticateWithFirebase(it.data)
             }
         }
