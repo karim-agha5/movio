@@ -1,7 +1,6 @@
 package com.example.movio.feature.authentication.signin.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -9,34 +8,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movio.core.MovioApplication
-import com.example.movio.core.helpers.CoordinatorDelegate
 import com.example.movio.core.helpers.Event
-import com.example.movio.core.navigation.Coordinator
-import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
-import com.example.movio.feature.common.models.LoginCredentials
-import com.example.movio.feature.common.actions.AuthenticationActions
+import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
+import com.example.movio.feature.common.actions.AuthenticationActions
+import com.example.movio.feature.common.models.LoginCredentials
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.IllegalStateException
-import kotlin.jvm.Throws
 
 class SignInViewModel(
-    //private val emailAndPasswordAuthenticationService: EmailAndPasswordAuthenticationService,
-    //private val googleSignInService: GoogleSignInService,
-    //private val twitterAuthenticationService: TwitterAuthenticationService,
-    //private val authenticationHelper: AuthenticationHelper,
      application: Application
 ) : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application) {
-
-    //override var coordinator: Coordinator = (application as MovioApplication).movioContainer.rootCoordinator.requireCoordinator()
-    //override val coordinator : Coordinator by CoordinatorDelegate(getApplication())
 
     private val _result = MutableLiveData<Event<SignInStatus>>()
     override val result: LiveData<Event<SignInStatus>> = _result
@@ -61,7 +48,6 @@ class SignInViewModel(
                         viewModelScope.launch { onUserReturned(it.user) }
                     }
                     is AuthenticationResult.Failure -> if(isObserverActive){
-                        Log.i("MainActivity", "Inside SigninViewModel. The thread is ${Thread.currentThread().name}")
                         _result.postValue(Event(SignInStatus.SignInFailed(it.throwable)))
                     }
                 }
@@ -81,13 +67,11 @@ class SignInViewModel(
     }
 
     override fun postActionOnSuccess(){
-        //_result.postValue(Event(SignInStatus.EmailVerified))
         _result.value = Event(SignInStatus.EmailVerified)
     }
 
 
     override fun postActionOnFailure(throwable: Throwable?){
-        //_result.postValue(Event(SignInStatus.EmailNotVerified))
         _result.value = Event(SignInStatus.EmailNotVerified)
     }
 
@@ -145,7 +129,6 @@ class SignInViewModel(
                 val user = emailAndPasswordAuthenticationService.login(credentials)
                 onUserReturned(user)
             }catch(e: Exception){
-                //authenticationHelper.onFailure(e)
                 _result.postValue(Event(SignInStatus.SignInFailed(e)))
             }
         }
@@ -173,30 +156,11 @@ class SignInViewModel(
     }
 
     private fun onUserReturned(firebaseUser: FirebaseUser?){
-        /*val providerId = firebaseUser?.providerData?.get(firebaseUser.providerData.size - 1)?.providerId
-        if(providerId?.equals("password") == true){
-            if(firebaseUser.isEmailVerified) {
-                postActionOnSuccess()
-            }
-            else{
-                postActionOnFailure(null)
-            }
-        }
-        else{
-            postActionOnSuccess()
-        }*/
-
         if(providerRequiresVerification(firebaseUser)){
-            if(firebaseUser?.isEmailVerified == true) {
-                postActionOnSuccess()
-            }
-            else{
-                postActionOnFailure(null)
-            }
+            if(firebaseUser?.isEmailVerified == true) { postActionOnSuccess() }
+            else{ postActionOnFailure(null) }
         }
-        else{
-            postActionOnSuccess()
-        }
+        else{ postActionOnSuccess() }
     }
 
     private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
@@ -224,10 +188,5 @@ class SignInViewModel(
         // Consider using the lifecycle of the view because config change might happen before navigation
         // May cause unexpected behaviors
         viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToSignupScreen) }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        //disposable.dispose()
     }
 }
