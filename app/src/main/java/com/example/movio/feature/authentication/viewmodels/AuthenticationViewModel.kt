@@ -29,10 +29,6 @@ class AuthenticationViewModel(
     application: Application
 )  : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application){
 
-
-    //override var coordinator = getApplication<MovioApplication>().movioContainer.rootCoordinator.requireCoordinator()
-    //override val coordinator : Coordinator by CoordinatorDelegate(getApplication())
-
     private val _result: MutableLiveData<Event<SignInStatus>> = MutableLiveData()
     override val result: LiveData<Event<SignInStatus>> = _result
 
@@ -51,18 +47,12 @@ class AuthenticationViewModel(
                 when(it){
                     is AuthenticationResult.Success -> {
                         if(isObserverActive){
-                            Log.i("MainActivity", "inside init | AuthenticationHelper -> ${authenticationHelper.hashCode()} \n Observable -> ${authenticationHelper.getAuthenticationResultObservableSource().hashCode()}")
-                            //navigateToSignInScreen()
-                            //navigateToHome()
                             onUserReturned(it.user)
                             onSuccessfulAuthentication()
                         }
                     }
                     is AuthenticationResult.Failure -> viewModelScope.launch {
-                        if (isObserverActive){
-                            Log.i("MainActivity", "Inside AuthenticationViewModel. The thread is ${Thread.currentThread().name}")
-                            postActionOnFailure(it.throwable)
-                        }
+                        if (isObserverActive){ postActionOnFailure(it.throwable) }
                     }
                 }
             }
