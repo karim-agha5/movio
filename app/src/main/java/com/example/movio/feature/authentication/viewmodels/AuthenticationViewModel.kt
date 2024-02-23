@@ -111,14 +111,14 @@ class AuthenticationViewModel(
      * Each view that uses [GoogleSignInService] has to implement the [AuthenticationResultCallbackLauncher]
      * interface so it starts the [androidx.activity.result.IntentSenderRequest] and authenticate the user.
      * */
-    override fun register(launcher: AuthenticationResultCallbackLauncher) = googleSignInService.register(launcher)
+    override fun register(launcher: AuthenticationResultCallbackLauncher) = authenticationRepository.register(launcher)
 
 
 
 
     override fun register(componentActivity: ComponentActivity) {
-        googleSignInService.register(componentActivity)
-        twitterAuthenticationService.register(componentActivity)
+        authenticationRepository.register(componentActivity)
+        authenticationRepository.register(componentActivity)
     }
 
 
@@ -130,18 +130,19 @@ class AuthenticationViewModel(
      * Each view that uses [GoogleSignInService] has to implement the [AuthenticationResultCallbackLauncher]
      * interface so it starts the [IntentSenderRequest]  and authenticate the user. [KDoc](<www.google.com>)
      * */
-    override fun unregister() = googleSignInService.unregister()
+    override fun unregister() = authenticationRepository.unregister()
 
 
-    override fun getGoogleSignInService() = googleSignInService
+    override fun getGoogleSignInService() = authenticationRepository.getGoogleSignInService()
 
 
     @Throws(IllegalStateException::class)
     private fun signInWithGoogle(credentials: LoginCredentials?){
-        googleSignInService.init()
+        //googleSignInService.init()
         viewModelScope.launch {
             // Result in [AuthenticationHelper]
-            googleSignInService.login(credentials)
+            //authenticationRepository.login(credentials)
+            authenticationRepository.signupWithGoogle()
         }
     }
 
@@ -149,7 +150,7 @@ class AuthenticationViewModel(
     private fun signInWithTwitter(credentials: LoginCredentials?) =
         viewModelScope.launch {
             // Result in [AuthenticationHelper]
-            twitterAuthenticationService.login(credentials)
+            authenticationRepository.signupWithTwitter()
         }
 
     private fun onUserReturned(firebaseUser: FirebaseUser?){
