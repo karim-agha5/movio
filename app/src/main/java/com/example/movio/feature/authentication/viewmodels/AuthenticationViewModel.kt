@@ -3,6 +3,7 @@ package com.example.movio.feature.authentication.viewmodels
 import android.app.Application
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -118,7 +119,7 @@ class AuthenticationViewModel(
      * The view corresponding to this view model has to unregister itself in the case there are other
      * [AuthenticationResultCallbackLauncher] implementors.
      * Each view that uses [GoogleSignInService] has to implement the [AuthenticationResultCallbackLauncher]
-     * interface so it starts the [IntentSenderRequest]  and authenticate the user. [KDoc](<www.google.com>)
+     * interface so it starts the [IntentSenderRequest]  and authenticate the user.
      * */
     override fun unregister() = authenticationRepository.unregister()
 

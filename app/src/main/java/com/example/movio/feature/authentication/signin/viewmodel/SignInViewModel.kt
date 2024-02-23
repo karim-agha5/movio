@@ -2,6 +2,7 @@ package com.example.movio.feature.authentication.signin.viewmodel
 
 import android.app.Application
 import androidx.activity.ComponentActivity
+import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData

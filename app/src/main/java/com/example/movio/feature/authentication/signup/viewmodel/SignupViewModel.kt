@@ -3,6 +3,7 @@ package com.example.movio.feature.authentication.signup.viewmodel
 import android.app.Application
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
