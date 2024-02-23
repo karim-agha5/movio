@@ -21,11 +21,15 @@ import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.common.data_access.IAuthenticationRepository
+import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * TODO consider receiving the [AuthenticationHelper] in the constructor
+ * */
 class AuthenticationViewModel(
     application: Application,
     private val authenticationRepository: IAuthenticationRepository
@@ -39,8 +43,8 @@ class AuthenticationViewModel(
     override val result: LiveData<Event<SignInStatus>> = _result
 
     private val movioContainer                  = getApplication<MovioApplication>().movioContainer
-    private var googleSignInService             = movioContainer.googleSignInService
-    private var twitterAuthenticationService    = movioContainer.twitterAuthenticationService
+    /*private var googleSignInService             = movioContainer.googleSignInService
+    private var twitterAuthenticationService    = movioContainer.twitterAuthenticationService*/
     private var authenticationHelper            = movioContainer.authenticationHelper
     private var firebaseUser: FirebaseUser? = null
     private var disposable: Disposable

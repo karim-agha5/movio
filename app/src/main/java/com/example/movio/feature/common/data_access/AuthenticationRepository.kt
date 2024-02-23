@@ -15,9 +15,9 @@ class AuthenticationRepository(
     private val emailAndPasswordAuthenticationService: EmailAndPasswordAuthenticationService
 ) : IAuthenticationRepository{
 
-    override suspend fun signup(credentials: SignupCredentials) : FirebaseUser? = emailAndPasswordAuthenticationService.signup(credentials)
+    override suspend fun signup(credentials: SignupCredentials?) : FirebaseUser? = emailAndPasswordAuthenticationService.signup(credentials)
 
-    override suspend fun login(credentials: LoginCredentials): FirebaseUser? = emailAndPasswordAuthenticationService.login(credentials)
+    override suspend fun login(credentials: LoginCredentials?): FirebaseUser? = emailAndPasswordAuthenticationService.login(credentials)
 
     override suspend fun signupWithGoogle() {
         googleSignInService.init()
