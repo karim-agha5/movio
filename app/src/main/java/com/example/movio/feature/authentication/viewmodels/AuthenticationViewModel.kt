@@ -20,21 +20,27 @@ import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.actions.AuthenticationActions
+import com.example.movio.feature.common.data_access.IAuthenticationRepository
+import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * TODO consider receiving the [AuthenticationHelper] in the constructor
+ * */
 class AuthenticationViewModel(
-    application: Application
+    application: Application,
+    private val authenticationRepository: IAuthenticationRepository
 )  : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application){
 
     private val _result: MutableLiveData<Event<SignInStatus>> = MutableLiveData()
     override val result: LiveData<Event<SignInStatus>> = _result
 
     private val movioContainer                  = getApplication<MovioApplication>().movioContainer
-    private var googleSignInService             = movioContainer.googleSignInService
-    private var twitterAuthenticationService    = movioContainer.twitterAuthenticationService
+    /*private var googleSignInService             = movioContainer.googleSignInService
+    private var twitterAuthenticationService    = movioContainer.twitterAuthenticationService*/
     private var authenticationHelper            = movioContainer.authenticationHelper
     private var firebaseUser: FirebaseUser? = null
     private var disposable: Disposable
@@ -95,14 +101,14 @@ class AuthenticationViewModel(
      * Each view that uses [GoogleSignInService] has to implement the [AuthenticationResultCallbackLauncher]
      * interface so it starts the [androidx.activity.result.IntentSenderRequest] and authenticate the user.
      * */
-    override fun register(launcher: AuthenticationResultCallbackLauncher) = googleSignInService.register(launcher)
+    override fun register(launcher: AuthenticationResultCallbackLauncher) = authenticationRepository.register(launcher)
 
 
 
 
     override fun register(componentActivity: ComponentActivity) {
-        googleSignInService.register(componentActivity)
-        twitterAuthenticationService.register(componentActivity)
+        authenticationRepository.register(componentActivity)
+        authenticationRepository.register(componentActivity)
     }
 
 
@@ -114,18 +120,19 @@ class AuthenticationViewModel(
      * Each view that uses [GoogleSignInService] has to implement the [AuthenticationResultCallbackLauncher]
      * interface so it starts the [IntentSenderRequest]  and authenticate the user. [KDoc](<www.google.com>)
      * */
-    override fun unregister() = googleSignInService.unregister()
+    override fun unregister() = authenticationRepository.unregister()
 
 
-    override fun getGoogleSignInService() = googleSignInService
+    override fun getGoogleSignInService() = authenticationRepository.getGoogleSignInService()
 
 
     @Throws(IllegalStateException::class)
     private fun signInWithGoogle(credentials: LoginCredentials?){
-        googleSignInService.init()
+        //googleSignInService.init()
         viewModelScope.launch {
             // Result in [AuthenticationHelper]
-            googleSignInService.login(credentials)
+            //authenticationRepository.login(credentials)
+            authenticationRepository.signupWithGoogle()
         }
     }
 
@@ -133,7 +140,7 @@ class AuthenticationViewModel(
     private fun signInWithTwitter(credentials: LoginCredentials?) =
         viewModelScope.launch {
             // Result in [AuthenticationHelper]
-            twitterAuthenticationService.login(credentials)
+            authenticationRepository.signupWithTwitter()
         }
 
     private fun onUserReturned(firebaseUser: FirebaseUser?){

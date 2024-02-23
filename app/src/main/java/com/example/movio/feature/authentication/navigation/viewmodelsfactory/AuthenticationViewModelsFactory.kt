@@ -69,7 +69,7 @@ class AuthenticationViewModelsFactory(
     }
 
     private fun createAuthenticationViewModel() : AuthenticationViewModel {
-        val factory = AuthenticationViewModelFactory(application)
+        val factory = AuthenticationViewModelFactory(application,movioContainer.authenticationRepository)
         return factory.create(AuthenticationViewModel::class.java)
     }
 
