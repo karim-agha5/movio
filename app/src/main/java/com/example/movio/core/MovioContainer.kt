@@ -9,6 +9,7 @@ import com.example.movio.feature.authentication.helpers.AuthenticationResultCall
 import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
+import com.example.movio.feature.common.data_access.AuthenticationRepository
 import com.example.movio.feature.common.helpers.UserManager
 import com.example.movio.feature.common.use_cases.ValidateEmail
 import com.example.movio.feature.common.use_cases.ValidatePassword
@@ -31,6 +32,11 @@ class MovioContainer(private val application: Application){
         RootCoordinator(application,viewModelsFactoryProvider,firebaseAuth, authenticationHelper,userManager)
     val validateEmail = ValidateEmail()
     val validatePassword = ValidatePassword()
+    val authenticationRepository = AuthenticationRepository(
+        googleSignInService,
+        twitterAuthenticationService,
+        emailAndPasswordAuthenticationService
+    )
 
     // Should be called by the start destination
  /*   fun initDependenciesOnActivityInstance(

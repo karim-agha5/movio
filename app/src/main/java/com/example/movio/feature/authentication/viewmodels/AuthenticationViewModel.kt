@@ -20,13 +20,15 @@ import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.actions.AuthenticationActions
+import com.example.movio.feature.common.data_access.IAuthenticationRepository
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AuthenticationViewModel(
-    application: Application
+    application: Application,
+    private val authenticationRepository: IAuthenticationRepository
 )  : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application){
 
 
