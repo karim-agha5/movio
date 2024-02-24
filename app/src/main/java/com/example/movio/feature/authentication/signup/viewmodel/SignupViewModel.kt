@@ -20,6 +20,7 @@ import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.signup.actions.SignupActions
 import com.example.movio.feature.authentication.signup.status.SignupStatus
 import com.example.movio.feature.common.actions.AuthenticationActions
+import com.example.movio.feature.common.data_access.IAuthenticationRepository
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
@@ -28,16 +29,17 @@ import kotlin.UnsupportedOperationException
 import kotlin.jvm.Throws
 
 class SignupViewModel(
-    application: Application
+    application: Application,
+    private val authenticationRepository: IAuthenticationRepository
 ) : FederatedAuthenticationBaseViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>(application){
 
     private val _result = MutableLiveData<Event<SignupStatus>>()
     override val result: LiveData<Event<SignupStatus>> = _result
 
     private val movioContainer                          = getApplication<MovioApplication>().movioContainer
-    private val googleSignInService                     = movioContainer.googleSignInService
+    /*private val googleSignInService                     = movioContainer.googleSignInService
     private val twitterAuthenticationService            = movioContainer.twitterAuthenticationService
-    private val emailAndPasswordAuthenticationService   = movioContainer.emailAndPasswordAuthenticationService
+    private val emailAndPasswordAuthenticationService   = movioContainer.emailAndPasswordAuthenticationService*/
     private val authenticationHelper                    = movioContainer.authenticationHelper
     private var disposable: Disposable
     private var isObserverActive = true
@@ -93,14 +95,14 @@ class SignupViewModel(
      * interface so it starts the [IntentSenderRequest] and authenticate the user.
      * */
     override fun register(launcher: AuthenticationResultCallbackLauncher) =
-        googleSignInService.register(launcher)
+        authenticationRepository.register(launcher)
 
 
 
 
     override fun register(componentActivity: ComponentActivity) {
-        googleSignInService.register(componentActivity)
-        twitterAuthenticationService.register(componentActivity)
+        authenticationRepository.register(componentActivity)
+        authenticationRepository.register(componentActivity)
     }
 
 
@@ -112,17 +114,17 @@ class SignupViewModel(
      * Each view that uses [GoogleSignInService] has to implement the [AuthenticationResultCallbackLauncher]
      * interface so it starts the [IntentSenderRequest] and authenticate the user.
     * */
-    override fun unregister() = googleSignInService.unregister()
+    override fun unregister() = authenticationRepository.unregister()
 
 
 
-    override fun getGoogleSignInService() = googleSignInService
+    override fun getGoogleSignInService() = authenticationRepository.getGoogleSignInService()
 
 
     private fun signup(credentials: SignupCredentials?) =
         viewModelScope.launch{
             try{
-                emailAndPasswordAuthenticationService.signup(credentials)
+                authenticationRepository.signup(credentials)
                 postActionOnSuccess()
             }catch(e: Exception){ postActionOnFailure(e) }
         }
@@ -130,12 +132,12 @@ class SignupViewModel(
 
 
     private fun signupWithGoogle(){
-        googleSignInService.init()
-        viewModelScope.launch { googleSignInService.login(null) }
+        //googleSignInService.init()
+        viewModelScope.launch { authenticationRepository.signupWithGoogle() }
     }
 
     @Throws(IllegalStateException::class)
-    private fun signupWithTwitter() = viewModelScope.launch { twitterAuthenticationService.signup(null) }
+    private fun signupWithTwitter() = viewModelScope.launch { authenticationRepository.signupWithTwitter() }
 
 
     private fun onUserReturned(user: FirebaseUser?){
