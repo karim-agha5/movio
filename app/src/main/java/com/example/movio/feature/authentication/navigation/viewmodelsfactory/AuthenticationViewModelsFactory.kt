@@ -64,7 +64,8 @@ class AuthenticationViewModelsFactory(
             //(application as MovioApplication).movioContainer.googleSignInService,
             //application.movioContainer.twitterAuthenticationService,
             //authenticationHelper,
-            application
+            application,
+            movioContainer.authenticationRepository
         )
         return factory.create(SignInViewModel::class.java)
     }
