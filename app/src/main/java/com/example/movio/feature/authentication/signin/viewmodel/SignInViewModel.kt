@@ -18,12 +18,14 @@ import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.common.models.LoginCredentials
+import com.example.movio.feature.common.data_access.IAuthenticationRepository
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.launch
 
 class SignInViewModel(
-     application: Application
+     application: Application,
+     private val authenticationRepository: IAuthenticationRepository
 ) : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application) {
 
     private val _result = MutableLiveData<Event<SignInStatus>>()
@@ -32,9 +34,6 @@ class SignInViewModel(
     private var firebaseUser: FirebaseUser? = null
 
     private val movioContainer                          = getApplication<MovioApplication>().movioContainer
-    private val googleSignInService                     = movioContainer.googleSignInService
-    private val twitterAuthenticationService            = movioContainer.twitterAuthenticationService
-    private val emailAndPasswordAuthenticationService   = movioContainer.emailAndPasswordAuthenticationService
     private val authenticationHelper                    = movioContainer.authenticationHelper
     private var disposable: Disposable
     private var isObserverActive = true
@@ -98,14 +97,14 @@ class SignInViewModel(
      * Each view that uses [GoogleSignInService] has to implement the [AuthenticationResultCallbackLauncher]
      * interface so it starts the [IntentSenderRequest] and authenticate the user.
      * */
-    override fun register(launcher: AuthenticationResultCallbackLauncher) = googleSignInService.register(launcher)
+    override fun register(launcher: AuthenticationResultCallbackLauncher) = authenticationRepository.register(launcher)
 
 
 
 
     override fun register(componentActivity: ComponentActivity) {
-        googleSignInService.register(componentActivity)
-        twitterAuthenticationService.register(componentActivity)
+        authenticationRepository.register(componentActivity)
+        authenticationRepository.register(componentActivity)
     }
 
 
@@ -117,17 +116,17 @@ class SignInViewModel(
      * Each view that uses [GoogleSignInService] has to implement the [AuthenticationResultCallbackLauncher]
      * interface so it starts the [IntentSenderRequest] and authenticate the user.
      * */
-    override fun unregister() = googleSignInService.unregister()
+    override fun unregister() = authenticationRepository.unregister()
 
 
 
-    override fun getGoogleSignInService() = googleSignInService
+    override fun getGoogleSignInService() = authenticationRepository.getGoogleSignInService()
 
 
     private fun login(credentials: LoginCredentials?) =
         viewModelScope.launch {
             try{
-                val user = emailAndPasswordAuthenticationService.login(credentials)
+                val user = authenticationRepository.login(credentials)
                 onUserReturned(user)
             }catch(e: Exception){
                 _result.postValue(Event(SignInStatus.SignInFailed(e)))
@@ -137,10 +136,9 @@ class SignInViewModel(
 
     @Throws(IllegalStateException::class)
     private fun signInWithGoogle(credentials: LoginCredentials?){
-        googleSignInService.init()
         viewModelScope.launch {
             // Result in [AuthenticationHelper]
-            googleSignInService.login(credentials)
+            authenticationRepository.signupWithGoogle()
         }
     }
 
@@ -148,7 +146,7 @@ class SignInViewModel(
     private fun signInWithTwitter(credentials: LoginCredentials?) =
         viewModelScope.launch {
             // Result in [AuthenticationHelper]
-            twitterAuthenticationService.login(credentials)
+            authenticationRepository.signupWithTwitter()
         }
 
     private fun providerRequiresVerification(firebaseUser: FirebaseUser?) : Boolean {

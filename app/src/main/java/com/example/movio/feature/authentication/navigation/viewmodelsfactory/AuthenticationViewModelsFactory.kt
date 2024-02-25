@@ -44,11 +44,12 @@ class AuthenticationViewModelsFactory(
                 .getInstance(movioContainer.firebaseAuth)
 
         val factory = SignupViewModelFactory(
-            service,
+            //service,
             //(application as MovioApplication).movioContainer.googleSignInService,
             //application.movioContainer.twitterAuthenticationService,
             //authenticationHelper,
-            application
+            application,
+            movioContainer.authenticationRepository
         )
         return factory.create(SignupViewModel::class.java)
     }
@@ -63,7 +64,8 @@ class AuthenticationViewModelsFactory(
             //(application as MovioApplication).movioContainer.googleSignInService,
             //application.movioContainer.twitterAuthenticationService,
             //authenticationHelper,
-            application
+            application,
+            movioContainer.authenticationRepository
         )
         return factory.create(SignInViewModel::class.java)
     }
