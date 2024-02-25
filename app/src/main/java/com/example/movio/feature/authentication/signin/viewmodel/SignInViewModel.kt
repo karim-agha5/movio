@@ -29,16 +29,9 @@ import java.lang.IllegalStateException
 import kotlin.jvm.Throws
 
 class SignInViewModel(
-    //private val emailAndPasswordAuthenticationService: EmailAndPasswordAuthenticationService,
-    //private val googleSignInService: GoogleSignInService,
-    //private val twitterAuthenticationService: TwitterAuthenticationService,
-    //private val authenticationHelper: AuthenticationHelper,
      application: Application,
      private val authenticationRepository: IAuthenticationRepository
 ) : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application) {
-
-    //override var coordinator: Coordinator = (application as MovioApplication).movioContainer.rootCoordinator.requireCoordinator()
-    //override val coordinator : Coordinator by CoordinatorDelegate(getApplication())
 
     private val _result = MutableLiveData<Event<SignInStatus>>()
     override val result: LiveData<Event<SignInStatus>> = _result
@@ -46,9 +39,6 @@ class SignInViewModel(
     private var firebaseUser: FirebaseUser? = null
 
     private val movioContainer                          = getApplication<MovioApplication>().movioContainer
-   /* private val googleSignInService                     = movioContainer.googleSignInService
-    private val twitterAuthenticationService            = movioContainer.twitterAuthenticationService
-    private val emailAndPasswordAuthenticationService   = movioContainer.emailAndPasswordAuthenticationService*/
     private val authenticationHelper                    = movioContainer.authenticationHelper
     private var disposable: Disposable
     private var isObserverActive = true
@@ -63,7 +53,6 @@ class SignInViewModel(
                         viewModelScope.launch { onUserReturned(it.user) }
                     }
                     is AuthenticationResult.Failure -> if(isObserverActive){
-                        Log.i("MainActivity", "Inside SigninViewModel. The thread is ${Thread.currentThread().name}")
                         _result.postValue(Event(SignInStatus.SignInFailed(it.throwable)))
                     }
                 }
@@ -83,13 +72,11 @@ class SignInViewModel(
     }
 
     override fun postActionOnSuccess(){
-        //_result.postValue(Event(SignInStatus.EmailVerified))
         _result.value = Event(SignInStatus.EmailVerified)
     }
 
 
     override fun postActionOnFailure(throwable: Throwable?){
-        //_result.postValue(Event(SignInStatus.EmailNotVerified))
         _result.value = Event(SignInStatus.EmailNotVerified)
     }
 
@@ -147,7 +134,6 @@ class SignInViewModel(
                 val user = authenticationRepository.login(credentials)
                 onUserReturned(user)
             }catch(e: Exception){
-                //authenticationHelper.onFailure(e)
                 _result.postValue(Event(SignInStatus.SignInFailed(e)))
             }
         }
@@ -155,7 +141,6 @@ class SignInViewModel(
 
     @Throws(IllegalStateException::class)
     private fun signInWithGoogle(credentials: LoginCredentials?){
-        //googleSignInService.init()
         viewModelScope.launch {
             // Result in [AuthenticationHelper]
             authenticationRepository.signupWithGoogle()
@@ -175,30 +160,11 @@ class SignInViewModel(
     }
 
     private fun onUserReturned(firebaseUser: FirebaseUser?){
-        /*val providerId = firebaseUser?.providerData?.get(firebaseUser.providerData.size - 1)?.providerId
-        if(providerId?.equals("password") == true){
-            if(firebaseUser.isEmailVerified) {
-                postActionOnSuccess()
-            }
-            else{
-                postActionOnFailure(null)
-            }
-        }
-        else{
-            postActionOnSuccess()
-        }*/
-
         if(providerRequiresVerification(firebaseUser)){
-            if(firebaseUser?.isEmailVerified == true) {
-                postActionOnSuccess()
-            }
-            else{
-                postActionOnFailure(null)
-            }
+            if(firebaseUser?.isEmailVerified == true) { postActionOnSuccess() }
+            else{ postActionOnFailure(null) }
         }
-        else{
-            postActionOnSuccess()
-        }
+        else{ postActionOnSuccess() }
     }
 
     private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
@@ -226,10 +192,5 @@ class SignInViewModel(
         // Consider using the lifecycle of the view because config change might happen before navigation
         // May cause unexpected behaviors
         viewModelScope.launch { coordinator.postAction(AuthenticationActions.ToSignupScreen) }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        //disposable.dispose()
     }
 }
