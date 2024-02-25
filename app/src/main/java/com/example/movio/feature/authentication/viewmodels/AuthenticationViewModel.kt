@@ -28,9 +28,6 @@ import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-/**
- * TODO consider receiving the [AuthenticationHelper] in the constructor
- * */
 class AuthenticationViewModel(
     application: Application,
     private val authenticationRepository: IAuthenticationRepository
