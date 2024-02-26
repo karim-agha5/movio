@@ -7,6 +7,10 @@ import com.example.movio.feature.common.use_cases.ValidatePassword
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/**
+ * TODO the way the validation is being done is not scalable because it only takes into account
+ * two form fields only
+ * */
 class FieldValidationViewModel(
     private val validateEmail: ValidateEmail,
     private val validatePassword: ValidatePassword
