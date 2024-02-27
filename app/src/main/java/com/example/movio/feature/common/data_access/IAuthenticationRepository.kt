@@ -6,7 +6,12 @@ import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.common.models.SignupCredentials
 import com.google.firebase.auth.FirebaseUser
+import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 
+/**
+ * TODO methods that authenticate the user should return a [FirebaseUser] instead of relying
+ * on [AuthenticationHelper] because it's a confusing contract to have.
+ * */
 interface IAuthenticationRepository {
     suspend fun signup(credentials: SignupCredentials?) : FirebaseUser?
 
