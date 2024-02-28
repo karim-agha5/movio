@@ -33,6 +33,7 @@ class FieldValidationViewModel(
             canSignup = true
         }
 
+        // TODO consider using updateValue() instead of setValue()
         _fieldsState.value = Triple(emailValidationResult,passwordValidationResult,canSignup)
     }
 }
