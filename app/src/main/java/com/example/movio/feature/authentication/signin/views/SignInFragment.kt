@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.IntentSenderRequest
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.Experimental
@@ -22,15 +23,26 @@ import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.helpers.MessageShower
+import com.example.movio.feature.common.status.ValidationResultState
+import com.example.movio.feature.common.viewmodels.FieldValidationViewModel
+import com.example.movio.feature.common.viewmodels.FieldValidationViewModelFactory
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 class SignInFragment :
     BaseFragment<FragmentSignInBinding>(), AuthenticationResultCallbackLauncher {
 
     private lateinit var signInViewModel: FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
+    private val fieldValidationViewModel by lazy {
+        FieldValidationViewModelFactory(
+            movioApplication.movioContainer.validateEmail,
+            movioApplication.movioContainer.validatePassword
+        ).create(FieldValidationViewModel::class.java)
+    }
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var progressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
     private lateinit var credentialsProgressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
@@ -75,7 +87,7 @@ class SignInFragment :
         }
         binding.tvSignUp.setOnClickListener { signInViewModel.postAction(null,SignInActions.SignupClicked) }
         binding.btnSignIn.setOnClickListener {
-            if(areFieldsValid()){
+            /*if(areFieldsValid()){
                 Utils.hideKeyboard(requireActivity())
 
                 val loginCredentials = LoginCredentials(
@@ -87,11 +99,22 @@ class SignInFragment :
             }
             else{
                 setTextInputLayoutErrorStyling()
-            }
+            }*/
+
+            fieldValidationViewModel.validate(
+                binding.etEmail.text.toString()
+                ,binding.etPassword.text.toString()
+            )
         }
 
         signInViewModel.result.observe(viewLifecycleOwner){
             it.getContentIfNotHandled()?.let { status -> onResultReceived(status) }
+        }
+
+        lifecycleScope.launch {
+            fieldValidationViewModel.fieldsState.collect{
+                onValidationResultReceived(it)
+            }
         }
 
     }
@@ -107,6 +130,31 @@ class SignInFragment :
 
             is SignInStatus.SignInFailed        -> onSignInFailure(result.throwable)
             else -> {/*Do Nothing*/}
+        }
+    }
+
+    private fun onValidationResultReceived(result: Triple<ValidationResultState,ValidationResultState,Boolean>){
+        if(result.third){
+            resetFormTextInputLayoutErrorStyling()
+            startCredentialsAuthenticationLoading()
+            signInViewModel.postAction(
+                LoginCredentials(
+                    binding.etEmail.text.toString(),
+                    binding.etPassword.text.toString()
+                ),
+                SignInActions.SignInClicked
+            )
+        }else{
+            displayFieldErrorStylingAppropriately(result)
+        }
+    }
+
+    private fun displayFieldErrorStylingAppropriately(result: Triple<ValidationResultState,ValidationResultState,Boolean>){
+        if(result.first is ValidationResultState.Failure){
+            setEmailFieldStyling((result.first as ValidationResultState.Failure).type.errorMessage)
+        }
+        if(result.second is ValidationResultState.Failure){
+            setPasswordFieldStyling((result.second as ValidationResultState.Failure).type.errorMessage)
         }
     }
 
@@ -184,7 +232,7 @@ class SignInFragment :
         return FormUtils.isPasswordFieldValid(binding.etPassword)
     }
 
-    private fun setEmailFieldStyling(){
+    private fun setEmailFieldStyling(errorMessage: String){
         val context = requireContext()
         val tilEmail = binding.tilEmail
 
@@ -195,13 +243,13 @@ class SignInFragment :
             FormUtils.setTextInputLayoutErrorStyling(
                 context,
                 tilEmail,
-                resources.getString(R.string.incorrect_email_format)
+                errorMessage
             )
         }
 
     }
 
-    private fun setPasswordFieldStyling() {
+    private fun setPasswordFieldStyling(errorMessage: String) {
         val context = requireContext()
         val tilPassword = binding.tilPassword
 
@@ -212,16 +260,28 @@ class SignInFragment :
             FormUtils.setTextInputLayoutErrorStyling(
                 context,
                 tilPassword,
-                resources.getString(R.string.PASSWORD_LENGTH)
+                errorMessage
             )
         }
 
     }
 
-    private fun setTextInputLayoutErrorStyling(){
+    private fun resetFormTextInputLayoutErrorStyling(){
+        resetEmailTextInputLayoutErrorStyling()
+        resetPasswordTextInputLayoutErrorStyling()
+    }
+
+    private fun resetEmailTextInputLayoutErrorStyling() =
+        FormUtils.resetTextInputLayoutStyling(binding.tilEmail)
+
+
+    private fun resetPasswordTextInputLayoutErrorStyling() =
+        FormUtils.resetTextInputLayoutStyling(binding.tilPassword)
+
+   /* private fun setTextInputLayoutErrorStyling(){
         setEmailFieldStyling()
         setPasswordFieldStyling()
-    }
+    }*/
 
     private fun showEmailNotVerifiedToast(){
         Toast.makeText(requireContext(), resources.getString(R.string.email_not_verified), Toast.LENGTH_LONG).show()
