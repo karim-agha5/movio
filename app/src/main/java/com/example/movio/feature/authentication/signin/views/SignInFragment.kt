@@ -1,5 +1,6 @@
 package com.example.movio.feature.authentication.signin.views
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,12 +8,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.IntentSenderRequest
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.example.movio.MainActivity
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.Experimental
 import com.example.movio.core.helpers.Event
 import com.example.movio.core.helpers.ViewModelDelegate
+import com.example.movio.core.navigation.RootCoordinator
 import com.example.movio.core.util.FormUtils
 import com.example.movio.core.util.Utils
 import com.example.movio.databinding.FragmentSignInBinding
@@ -22,10 +28,13 @@ import com.example.movio.feature.authentication.helpers.AuthenticationResultCall
 import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
+import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.common.helpers.MessageShower
+import com.example.movio.feature.common.status.UserAuthenticationStatus
 import com.example.movio.feature.common.status.ValidationResultState
 import com.example.movio.feature.common.viewmodels.FieldValidationViewModel
 import com.example.movio.feature.common.viewmodels.FieldValidationViewModelFactory
+import com.example.movio.feature.splash.viewmodel.SplashViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
@@ -34,7 +43,9 @@ import kotlinx.coroutines.launch
 
 
 class SignInFragment :
-    BaseFragment<FragmentSignInBinding>(), AuthenticationResultCallbackLauncher {
+    BaseFragment<FragmentSignInBinding>(),
+    AuthenticationResultCallbackLauncher,
+    LifecycleEventObserver{
 
     private lateinit var signInViewModel: FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
     private val fieldValidationViewModel by lazy {
@@ -48,9 +59,14 @@ class SignInFragment :
     private lateinit var credentialsProgressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
 
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.lifecycle?.addObserver(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val vm by ViewModelDelegate<LoginCredentials, SignInActions, Event<SignInStatus>>(movioApplication,this::class.java)
+        /*val vm by ViewModelDelegate<LoginCredentials, SignInActions, Event<SignInStatus>>(movioApplication,this::class.java)
         signInViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
         signInViewModel.register(requireActivity())
         authenticationLifecycleObserver =
@@ -58,12 +74,37 @@ class SignInFragment :
         lifecycle.addObserver(authenticationLifecycleObserver)
         lifecycle.addObserver(signInViewModel)
         prepareAuthenticationLoading()
-        prepareCredentialsAuthenticationLoading()
+        prepareCredentialsAuthenticationLoading()*/
     }
 
     override fun onResume() {
         super.onResume()
         signInViewModel.register(this)
+    }
+
+    /**
+     * Necessary for the [SplashViewModel] instantiation.
+     * The instantiation of the [SplashViewModel] requires the [MainActivity] onCreate() lifecycle
+     * callback to be called first so that it initializes the [RootCoordinator] state correctly.
+     * Therefore, an observation on the [MainActivity] lifecycle is necessary.
+     * The observation on the [MainActivity] lifecycle is registered in the [onAttach] lifecycle callback.
+     * */
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        if (event == Lifecycle.Event.ON_CREATE) {
+            val vm by ViewModelDelegate<LoginCredentials, SignInActions, Event<SignInStatus>>(
+                movioApplication,
+                this::class.java
+            )
+            signInViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
+
+            signInViewModel.register(requireActivity())
+            authenticationLifecycleObserver =
+                AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,signInViewModel.getGoogleSignInService())
+            lifecycle.addObserver(authenticationLifecycleObserver)
+            lifecycle.addObserver(signInViewModel)
+            prepareAuthenticationLoading()
+            prepareCredentialsAuthenticationLoading()
+        }
     }
 
     override fun inflateBinding(
