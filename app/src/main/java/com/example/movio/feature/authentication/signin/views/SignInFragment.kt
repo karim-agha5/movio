@@ -66,15 +66,9 @@ class SignInFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*val vm by ViewModelDelegate<LoginCredentials, SignInActions, Event<SignInStatus>>(movioApplication,this::class.java)
-        signInViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
-        signInViewModel.register(requireActivity())
-        authenticationLifecycleObserver =
-            AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,signInViewModel.getGoogleSignInService())
-        lifecycle.addObserver(authenticationLifecycleObserver)
-        lifecycle.addObserver(signInViewModel)
         prepareAuthenticationLoading()
-        prepareCredentialsAuthenticationLoading()*/
+        prepareCredentialsAuthenticationLoading()
+
     }
 
     override fun onResume() {
@@ -102,9 +96,6 @@ class SignInFragment :
                 AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,signInViewModel.getGoogleSignInService())
             lifecycle.addObserver(authenticationLifecycleObserver)
             lifecycle.addObserver(signInViewModel)
-            // TODO consider adding those 2 methods in the appropriate callback to make sure the context is initialized
-            prepareAuthenticationLoading()
-            prepareCredentialsAuthenticationLoading()
         }
     }
 
