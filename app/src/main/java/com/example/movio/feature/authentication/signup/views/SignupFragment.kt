@@ -61,15 +61,6 @@ class SignupFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*authenticationLifecycleObserver =
-            AuthenticationLifecycleObserver(
-                this::class.java.simpleName,
-                requireActivity().activityResultRegistry,
-                signupViewModel.getGoogleSignInService()
-            )
-        lifecycle.addObserver(authenticationLifecycleObserver)
-        lifecycle.addObserver(signupViewModel)*/
-        // TODO consider adding those 2 methods in a callback that guarantees the initialization of the context
         prepareAuthenticationLoading()
         prepareCredentialsAuthenticationLoading()
     }

@@ -68,7 +68,6 @@ class SignInFragment :
         super.onCreate(savedInstanceState)
         prepareAuthenticationLoading()
         prepareCredentialsAuthenticationLoading()
-
     }
 
     override fun onResume() {
