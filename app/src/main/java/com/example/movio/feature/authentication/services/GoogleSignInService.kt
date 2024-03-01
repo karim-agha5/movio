@@ -146,7 +146,7 @@ class GoogleSignInService private constructor(
     }
 
     override suspend fun login(credentials: LoginCredentials?) {
-        withContext(Dispatchers.IO) {
+       /* withContext(Dispatchers.IO) {
             // TODO a cancellation exception may be thrown from within the async builder. Handle it.
             val resultDeferred = async {
                 // call the .await() method to wait for the task to be completed
@@ -160,8 +160,8 @@ class GoogleSignInService private constructor(
                 val intentSender = resultDeferred.await().pendingIntent.intentSender
                 val intentSenderRequest = IntentSenderRequest.Builder(intentSender).build()
                 // TODO add the callback to a continuation coroutine
-                /*Log.i("MainActivity", "inside google sign in service | AuthenticationHelper -> ${AuthenticationHelper.hashCode()} \n Observable -> ${AuthenticationHelper.getAuthenticationResultObservableSource().hashCode()}" +
-                        "\n is launcher signupfragment ? -> ${launcher is SignupFragment}")*/
+                *//*Log.i("MainActivity", "inside google sign in service | AuthenticationHelper -> ${AuthenticationHelper.hashCode()} \n Observable -> ${AuthenticationHelper.getAuthenticationResultObservableSource().hashCode()}" +
+                        "\n is launcher signupfragment ? -> ${launcher is SignupFragment}")*//*
                 launcher?.launchAuthenticationResultCallbackLauncher(intentSenderRequest)
             } catch (e: Exception) {
                 // The Caller has been temporarily blocked due to too many canceled sign-in prompts
@@ -172,6 +172,13 @@ class GoogleSignInService private constructor(
             }
 
 
-        }
+        }*/
+        val intentSender = oneTapClient
+            .beginSignIn(signInRequest)
+            .await()
+            .pendingIntent
+            .intentSender
+
+        launcher?.launchAuthenticationResultCallbackLauncher(IntentSenderRequest.Builder(intentSender).build())
     }
 }

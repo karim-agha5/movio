@@ -1,6 +1,7 @@
 package com.example.movio.feature.common.data_access
 
 import androidx.activity.ComponentActivity
+import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
 import com.example.movio.feature.authentication.services.GoogleSignInService
@@ -8,6 +9,8 @@ import com.example.movio.feature.authentication.services.TwitterAuthenticationSe
 import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.common.models.SignupCredentials
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class AuthenticationRepository(
     private val googleSignInService: GoogleSignInService,
@@ -21,7 +24,10 @@ class AuthenticationRepository(
 
     override suspend fun signupWithGoogle() {
         googleSignInService.init()
-        googleSignInService.login(null)
+        withContext(Dispatchers.IO){
+            try                     { googleSignInService.login(null) }
+            catch (ex: Exception)   { AuthenticationHelper.onFailure(ex) }
+        }
     }
 
     override fun register(launcher: AuthenticationResultCallbackLauncher) = googleSignInService.register(launcher)
