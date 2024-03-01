@@ -1,5 +1,6 @@
 package com.example.movio.feature.authentication.views
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import com.example.movio.MainActivity
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.BaseViewModel
@@ -19,12 +24,14 @@ import com.example.movio.core.helpers.Event
 import com.example.movio.core.helpers.ViewModelDelegate
 import com.example.movio.core.navigation.Coordinator
 import com.example.movio.core.navigation.CoordinatorHost
+import com.example.movio.core.navigation.RootCoordinator
 import com.example.movio.databinding.FragmentAuthenticationBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.authentication.signin.actions.SignInActions
+import com.example.movio.feature.authentication.signin.views.SignInFragment
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.authentication.viewmodels.AuthenticationViewModel
 import com.example.movio.feature.common.helpers.MessageShower
@@ -34,8 +41,10 @@ import com.google.android.material.progressindicator.IndeterminateDrawable
 import kotlin.reflect.KProperty
 
 class AuthenticationFragment :
-    BaseFragment<FragmentAuthenticationBinding>(),AuthenticationResultCallbackLauncher,
-    CoordinatorHost {
+    BaseFragment<FragmentAuthenticationBinding>(),
+    AuthenticationResultCallbackLauncher,
+    CoordinatorHost,
+    LifecycleEventObserver{
 
     /*    private val userManager by lazy { movioApplication.movioContainer.userManager }
         private lateinit var googleSignInService: GoogleSignInService
@@ -68,18 +77,23 @@ class AuthenticationFragment :
 
     private val tag = this.javaClass.simpleName
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.lifecycle?.addObserver(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val vm by ViewModelDelegate<LoginCredentials,SignInActions, Event<SignInStatus>>(movioApplication,this::class.java)
-        authenticationViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
-        authenticationViewModel.register(requireActivity())
+        //val vm by ViewModelDelegate<LoginCredentials,SignInActions, Event<SignInStatus>>(movioApplication,this::class.java)
+       /* authenticationViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
+        authenticationViewModel.register(requireActivity())*/
         //authenticationViewModel.register(this)
         // Register the authentication lifecycle observer
         // to unregister the launcher when the Lifecycle is destroyed.
-        authenticationLifecycleObserver =
+        /*authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,authenticationViewModel.getGoogleSignInService())
         lifecycle.addObserver(authenticationLifecycleObserver)
-        lifecycle.addObserver(authenticationViewModel)
+        lifecycle.addObserver(authenticationViewModel)*/
         prepareAuthenticationLoading()
     }
 
@@ -88,6 +102,25 @@ class AuthenticationFragment :
         Log.i("MainActivity", "onResume: ")
         //authenticationViewModel.register(requireActivity())
         authenticationViewModel.register(this)
+    }
+
+    /**
+     * Necessary for the [SignInFragment] instantiation.
+     * The instantiation of the [SignInFragment] requires the [MainActivity] onCreate() lifecycle
+     * callback to be called first so that it initializes the [RootCoordinator] state correctly.
+     * Therefore, an observation on the [MainActivity] lifecycle is necessary.
+     * The observation on the [MainActivity] lifecycle is registered in the [onAttach] lifecycle callback.
+     * */
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        if (event == Lifecycle.Event.ON_CREATE) {
+            val vm by ViewModelDelegate<LoginCredentials,SignInActions, Event<SignInStatus>>(movioApplication,this::class.java)
+            authenticationViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
+            authenticationViewModel.register(requireActivity())
+            authenticationLifecycleObserver =
+                AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,authenticationViewModel.getGoogleSignInService())
+            lifecycle.addObserver(authenticationLifecycleObserver)
+            lifecycle.addObserver(authenticationViewModel)
+        }
     }
 
     override fun inflateBinding(
