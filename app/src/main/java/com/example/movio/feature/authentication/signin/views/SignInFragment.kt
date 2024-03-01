@@ -1,7 +1,6 @@
 package com.example.movio.feature.authentication.signin.views
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import com.example.movio.feature.authentication.helpers.FederatedAuthenticationB
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.common.models.LoginCredentials
-import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.helpers.MessageShower
@@ -214,7 +212,7 @@ class SignInFragment :
             FormUtils.setTextInputLayoutErrorStyling(
                 context,
                 tilPassword,
-                resources.getString(R.string.incorrect_password_format)
+                resources.getString(R.string.PASSWORD_LENGTH)
             )
         }
 
