@@ -61,14 +61,14 @@ class SignupFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authenticationLifecycleObserver =
+        /*authenticationLifecycleObserver =
             AuthenticationLifecycleObserver(
                 this::class.java.simpleName,
                 requireActivity().activityResultRegistry,
                 signupViewModel.getGoogleSignInService()
             )
         lifecycle.addObserver(authenticationLifecycleObserver)
-        lifecycle.addObserver(signupViewModel)
+        lifecycle.addObserver(signupViewModel)*/
         prepareAuthenticationLoading()
         prepareCredentialsAuthenticationLoading()
     }
@@ -97,6 +97,14 @@ class SignupFragment :
             val vm by ViewModelDelegate<SignupCredentials, SignupActions, Event<SignupStatus>>(movioApplication,this::class.java)
             signupViewModel = vm as FederatedAuthenticationBaseViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>
             signupViewModel.register(requireActivity())
+            authenticationLifecycleObserver =
+                AuthenticationLifecycleObserver(
+                    this::class.java.simpleName,
+                    requireActivity().activityResultRegistry,
+                    signupViewModel.getGoogleSignInService()
+                )
+            lifecycle.addObserver(authenticationLifecycleObserver)
+            lifecycle.addObserver(signupViewModel)
         }
     }
 
