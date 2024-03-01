@@ -69,6 +69,7 @@ class SignupFragment :
             )
         lifecycle.addObserver(authenticationLifecycleObserver)
         lifecycle.addObserver(signupViewModel)*/
+        // TODO consider adding those 2 methods in a callback that guarantees the initialization of the context
         prepareAuthenticationLoading()
         prepareCredentialsAuthenticationLoading()
     }
