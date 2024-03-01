@@ -83,8 +83,8 @@ class SignInFragment :
     }
 
     /**
-     * Necessary for the [SplashViewModel] instantiation.
-     * The instantiation of the [SplashViewModel] requires the [MainActivity] onCreate() lifecycle
+     * Necessary for the [SignInFragment] instantiation.
+     * The instantiation of the [SignInFragment] requires the [MainActivity] onCreate() lifecycle
      * callback to be called first so that it initializes the [RootCoordinator] state correctly.
      * Therefore, an observation on the [MainActivity] lifecycle is necessary.
      * The observation on the [MainActivity] lifecycle is registered in the [onAttach] lifecycle callback.
@@ -102,6 +102,7 @@ class SignInFragment :
                 AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,signInViewModel.getGoogleSignInService())
             lifecycle.addObserver(authenticationLifecycleObserver)
             lifecycle.addObserver(signInViewModel)
+            // TODO consider adding those 2 methods in the appropriate callback to make sure the context is initialized
             prepareAuthenticationLoading()
             prepareCredentialsAuthenticationLoading()
         }
