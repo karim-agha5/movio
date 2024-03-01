@@ -87,20 +87,6 @@ class SignInFragment :
         }
         binding.tvSignUp.setOnClickListener { signInViewModel.postAction(null,SignInActions.SignupClicked) }
         binding.btnSignIn.setOnClickListener {
-            /*if(areFieldsValid()){
-                Utils.hideKeyboard(requireActivity())
-
-                val loginCredentials = LoginCredentials(
-                    binding.etEmail.text.toString(),
-                    binding.etPassword.text.toString()
-                )
-                startCredentialsAuthenticationLoading()
-                signInViewModel.postAction(loginCredentials,SignInActions.SignInClicked)
-            }
-            else{
-                setTextInputLayoutErrorStyling()
-            }*/
-
             fieldValidationViewModel.validate(
                 binding.etEmail.text.toString()
                 ,binding.etPassword.text.toString()
@@ -220,10 +206,6 @@ class SignInFragment :
         stopCredentialsAuthenticationLoading()
     }
 
-    private fun areFieldsValid() : Boolean{
-        return isEmailFieldValid() && isPasswordFieldValid()
-    }
-
     private fun isEmailFieldValid() : Boolean {
         return FormUtils.isEmailFieldValid(binding.etEmail.text.toString())
     }
@@ -277,11 +259,6 @@ class SignInFragment :
 
     private fun resetPasswordTextInputLayoutErrorStyling() =
         FormUtils.resetTextInputLayoutStyling(binding.tilPassword)
-
-   /* private fun setTextInputLayoutErrorStyling(){
-        setEmailFieldStyling()
-        setPasswordFieldStyling()
-    }*/
 
     private fun showEmailNotVerifiedToast(){
         Toast.makeText(requireContext(), resources.getString(R.string.email_not_verified), Toast.LENGTH_LONG).show()
