@@ -1,6 +1,7 @@
 package com.example.movio.feature.authentication.services
 
 import androidx.activity.ComponentActivity
+import com.example.movio.core.common.IFederatedAuthentication
 import com.example.movio.core.interfaces.auth.ComponentActivityRegistrar
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.common.models.LoginCredentials
@@ -20,7 +21,7 @@ class TwitterAuthenticationService private constructor(
     //private val componentActivity: ComponentActivity,
     private val firebaseAuth: FirebaseAuth,
     private val authenticationHelper: AuthenticationHelper
-) : LoginServiceContract<LoginCredentials>,SignupServiceContract<SignupCredentials>,
+) : IFederatedAuthentication,
     ComponentActivityRegistrar{
 
 
@@ -55,17 +56,21 @@ class TwitterAuthenticationService private constructor(
      * from a previous login/signup attempt or starts a regular login/signup flow.
      * */
     @Throws(IllegalStateException::class)
-    private suspend fun authenticate(){
+    private suspend fun beginAuthentication() : FirebaseUser? {
         val pendingResultTask = firebaseAuth.pendingAuthResult
+        var firebaseUser: FirebaseUser?
+
         if(pendingResultTask != null ){
             // There's already a sign-in/up result, don't go through the authentication flow
             // and retrieve the result
-            getPendingResultTaskResult(pendingResultTask)
+            firebaseUser = getPendingResultTaskResult(pendingResultTask)
         }
         else{
             // Start the normal sign-in/up flow
-            twitterSigningFlow()
+            firebaseUser = twitterSigningFlow()
         }
+
+        return firebaseUser
     }
 
     /**
@@ -73,21 +78,21 @@ class TwitterAuthenticationService private constructor(
      * the authentication result observable.
      * */
     @Throws(IllegalStateException::class)
-    private suspend fun twitterSigningFlow(){
+    private suspend fun twitterSigningFlow() : FirebaseUser? {
         if(!this::componentActivity.isInitialized){
             throw IllegalStateException("ComponentActivity isn't registered")
         }
         val pendingResultTask = firebaseAuth
             .startActivityForSignInWithProvider(componentActivity,provider.build())
 
-        getPendingResultTaskResult(pendingResultTask)
+        return getPendingResultTaskResult(pendingResultTask)
     }
 
     /**
      * Main-safe function that sends a [FirebaseUser] or an [Exception] to the observer.
      * */
-    private suspend fun getPendingResultTaskResult(pendingResultTask: Task<AuthResult>){
-       withContext(Dispatchers.IO){
+    private suspend fun getPendingResultTaskResult(pendingResultTask: Task<AuthResult>) : FirebaseUser?{
+       /*withContext(Dispatchers.IO){
            // TODO currently experimenting with runCatching. Look for all the edge cases surrounding
            // the runCatching and async builders.
             val result = runCatching { pendingResultTask.await() }
@@ -99,18 +104,11 @@ class TwitterAuthenticationService private constructor(
                result.isFailure -> authenticationHelper.onFailure(result.exceptionOrNull())
            }
 
-        }
+        }*/
+        return pendingResultTask
+            .await()
+            .user
     }
 
-    /**
-     * Main-safe suspend function that authenticates a Twitter user
-     * */
-    override suspend fun login(credentials: LoginCredentials?) {
-        authenticate()
-    }
-
-    // Functions the same as the login() method.
-    override suspend fun signup(credentials: SignupCredentials?) {
-        authenticate()
-    }
+    override suspend fun authenticate(): FirebaseUser? = beginAuthentication()
 }

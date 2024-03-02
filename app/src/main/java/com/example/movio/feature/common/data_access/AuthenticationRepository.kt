@@ -42,7 +42,15 @@ class AuthenticationRepository(
 
     override fun getGoogleSignInService() : GoogleSignInService = googleSignInService
 
-    override suspend fun signupWithTwitter() = twitterAuthenticationService.signup(null)
+    override suspend fun signupWithTwitter() = withContext(Dispatchers.IO){
+        // TODO currently experimenting with runCatching. Look for all the edge cases surrounding the runCatching and async builders.
+        val result = runCatching { twitterAuthenticationService.authenticate() }
+        when{
+            // TODO make sure to receive the OAuth access token so you can call the Twitter API and get basic profile info by calling their REST API
+            result.isSuccess -> AuthenticationHelper.onSuccess(result.getOrNull())
+            result.isFailure -> AuthenticationHelper.onFailure(result.exceptionOrNull())
+        }
+    }
 
     override suspend fun authenticateWithFirebase(data: Intent?) : Unit = withContext(Dispatchers.IO){
         try                     { AuthenticationHelper.onSuccess(googleSignInService.authenticateWithFirebase(data)) }
