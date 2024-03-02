@@ -93,7 +93,7 @@ class SignupFragment :
                 AuthenticationLifecycleObserver(
                     this::class.java.simpleName,
                     requireActivity().activityResultRegistry,
-                    signupViewModel
+                    signupViewModel::authenticateWithFirebase
                 )
             lifecycle.addObserver(authenticationLifecycleObserver)
             lifecycle.addObserver(signupViewModel)

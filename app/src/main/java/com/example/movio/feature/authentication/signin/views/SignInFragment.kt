@@ -92,7 +92,7 @@ class SignInFragment :
 
             signInViewModel.register(requireActivity())
             authenticationLifecycleObserver =
-                AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,signInViewModel)
+                AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,signInViewModel::authenticateWithFirebase)
             lifecycle.addObserver(authenticationLifecycleObserver)
             lifecycle.addObserver(signInViewModel)
         }

@@ -117,7 +117,7 @@ class AuthenticationFragment :
             authenticationViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
             authenticationViewModel.register(requireActivity())
             authenticationLifecycleObserver =
-                AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,authenticationViewModel)
+                AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,authenticationViewModel::authenticateWithFirebase)
             lifecycle.addObserver(authenticationLifecycleObserver)
             lifecycle.addObserver(authenticationViewModel)
         }

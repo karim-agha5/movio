@@ -1,5 +1,6 @@
 package com.example.movio.feature.authentication.helpers
 
+import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.IntentSenderRequest
@@ -20,7 +21,8 @@ class AuthenticationLifecycleObserver(
     private val key: String,
     private val registry: ActivityResultRegistry,
     //private val googleSignInService: GoogleSignInService
-    private val vm: FederatedAuthenticationBaseViewModel<*,*,*>
+    //private val vm: FederatedAuthenticationBaseViewModel<*,*,*>
+    private val onResultReceived: (Intent?) -> Unit
 ) : DefaultLifecycleObserver {
 
     lateinit var launcher: ActivityResultLauncher<IntentSenderRequest>
@@ -32,7 +34,8 @@ class AuthenticationLifecycleObserver(
             ActivityResultContracts.StartIntentSenderForResult()
         ){
             owner.lifecycleScope.launch(Dispatchers.Main) {
-                vm.authenticateWithFirebase(it.data)
+                //vm.authenticateWithFirebase(it.data)
+                onResultReceived(it.data)
             }
         }
     }
