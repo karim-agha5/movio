@@ -14,6 +14,7 @@ import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdToken
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -108,30 +109,39 @@ class GoogleSignInService private constructor(
     /**
      * Main-safe
      * */
-    suspend fun authenticateWithFirebase(data: Intent?){
-         try{
+    @Throws(Exception::class)
+    suspend fun authenticateWithFirebase(data: Intent?) : FirebaseUser?{
+         /*try{
              val credential = oneTapClient.getSignInCredentialFromIntent(data)
              val googleIdToken = credential.googleIdToken
 
              when{
                  // If the user shared a Google account credential
                  // The ID token will be non-null.
-                 googleIdToken != null -> {
-                     getFirebaseUser(googleIdToken)
-                 }
+                 googleIdToken != null ->  getFirebaseUser(googleIdToken)
              }
 
          }catch (e: ApiException){
              AuthenticationHelper.onFailure(e)
-         }
+         }*/
+        val credential = oneTapClient.getSignInCredentialFromIntent(data)
+        val googleIdToken = credential.googleIdToken
+        var firebaseUser: FirebaseUser? = null
+
+        when{
+            googleIdToken != null -> firebaseUser = getFirebaseUser(googleIdToken)
+        }
+
+        return firebaseUser
     }
 
     /**
      * Main-safe
      * */
-    private suspend fun getFirebaseUser(googleIdToken: String?) {
+    @Throws(Exception::class)
+    private suspend fun getFirebaseUser(googleIdToken: String?) : FirebaseUser? {
         val firebaseCredential = GoogleAuthProvider.getCredential(googleIdToken,null)
-        withContext(Dispatchers.IO){
+        /*withContext(Dispatchers.IO){
             // TODO a cancellation exception may be thrown from within the async builder. Handle it.
             val deferredResult = async { auth.signInWithCredential(firebaseCredential).await() }
             try {
@@ -142,7 +152,11 @@ class GoogleSignInService private constructor(
                 // Signing in has failed
                 AuthenticationHelper.onFailure(e)
             }
-        }
+        }*/
+        return auth
+            .signInWithCredential(firebaseCredential)
+            .await()
+            .user
     }
 
     override suspend fun login(credentials: LoginCredentials?) {

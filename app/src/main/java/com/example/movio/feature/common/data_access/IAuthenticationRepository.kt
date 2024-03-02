@@ -1,5 +1,6 @@
 package com.example.movio.feature.common.data_access
 
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.services.GoogleSignInService
@@ -26,6 +27,8 @@ interface IAuthenticationRepository {
     fun unregister()
 
     fun getGoogleSignInService() : GoogleSignInService
+
+    suspend fun authenticateWithFirebase(data: Intent?) : Unit = throw UnsupportedOperationException()
 
     suspend fun signupWithTwitter()
 

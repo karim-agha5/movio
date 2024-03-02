@@ -32,7 +32,7 @@ import kotlin.jvm.Throws
 class SignupViewModel(
     application: Application,
     private val authenticationRepository: IAuthenticationRepository
-) : FederatedAuthenticationBaseViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>(application){
+) : FederatedAuthenticationBaseViewModel<SignupCredentials, SignupActions, Event<SignupStatus>>(application,authenticationRepository){
 
     private val _result = MutableLiveData<Event<SignupStatus>>()
     override val result: LiveData<Event<SignupStatus>> = _result

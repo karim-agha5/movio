@@ -1,5 +1,6 @@
 package com.example.movio.feature.common.data_access
 
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
@@ -42,6 +43,11 @@ class AuthenticationRepository(
     override fun getGoogleSignInService() : GoogleSignInService = googleSignInService
 
     override suspend fun signupWithTwitter() = twitterAuthenticationService.signup(null)
+
+    override suspend fun authenticateWithFirebase(data: Intent?) : Unit = withContext(Dispatchers.IO){
+        try                     { AuthenticationHelper.onSuccess(googleSignInService.authenticateWithFirebase(data)) }
+        catch (ex: Exception)   { AuthenticationHelper.onFailure(ex) }
+    }
 
     @Throws(UnsupportedOperationException::class)
     override suspend fun signupWithFacebook() = throw UnsupportedOperationException()

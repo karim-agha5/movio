@@ -19,7 +19,8 @@ import kotlinx.coroutines.launch
 class AuthenticationLifecycleObserver(
     private val key: String,
     private val registry: ActivityResultRegistry,
-    private val googleSignInService: GoogleSignInService
+    //private val googleSignInService: GoogleSignInService
+    private val vm: FederatedAuthenticationBaseViewModel<*,*,*>
 ) : DefaultLifecycleObserver {
 
     lateinit var launcher: ActivityResultLauncher<IntentSenderRequest>
@@ -31,7 +32,7 @@ class AuthenticationLifecycleObserver(
             ActivityResultContracts.StartIntentSenderForResult()
         ){
             owner.lifecycleScope.launch(Dispatchers.Main) {
-                googleSignInService.authenticateWithFirebase(it.data)
+                vm.authenticateWithFirebase(it.data)
             }
         }
     }

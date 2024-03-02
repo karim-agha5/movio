@@ -1,6 +1,7 @@
 package com.example.movio.feature.authentication.viewmodels
 
 import android.app.Application
+import android.content.Intent
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.IntentSenderRequest
@@ -31,7 +32,7 @@ import kotlinx.coroutines.launch
 class AuthenticationViewModel(
     application: Application,
     private val authenticationRepository: IAuthenticationRepository
-)  : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application){
+)  : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application,authenticationRepository){
 
     private val _result: MutableLiveData<Event<SignInStatus>> = MutableLiveData()
     override val result: LiveData<Event<SignInStatus>> = _result

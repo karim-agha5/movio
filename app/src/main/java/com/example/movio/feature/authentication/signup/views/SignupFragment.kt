@@ -93,7 +93,7 @@ class SignupFragment :
                 AuthenticationLifecycleObserver(
                     this::class.java.simpleName,
                     requireActivity().activityResultRegistry,
-                    signupViewModel.getGoogleSignInService()
+                    signupViewModel
                 )
             lifecycle.addObserver(authenticationLifecycleObserver)
             lifecycle.addObserver(signupViewModel)

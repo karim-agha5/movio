@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 class SignInViewModel(
      application: Application,
      private val authenticationRepository: IAuthenticationRepository
-) : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application) {
+) : FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>(application,authenticationRepository) {
 
     private val _result = MutableLiveData<Event<SignInStatus>>()
     override val result: LiveData<Event<SignInStatus>> = _result
