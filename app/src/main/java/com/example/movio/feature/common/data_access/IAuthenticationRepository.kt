@@ -14,9 +14,9 @@ import com.example.movio.feature.authentication.helpers.AuthenticationHelper
  * on [AuthenticationHelper] because it's a confusing contract to have.
  * */
 interface IAuthenticationRepository {
-    suspend fun signup(credentials: SignupCredentials?)
+    suspend fun signup(credentials: SignupCredentials?) : FirebaseUser?
 
-    suspend fun login(credentials: LoginCredentials?)
+    suspend fun login(credentials: LoginCredentials?) : FirebaseUser?
 
     suspend fun signupWithGoogle()
 

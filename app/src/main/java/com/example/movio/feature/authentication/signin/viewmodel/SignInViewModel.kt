@@ -126,8 +126,8 @@ class SignInViewModel(
     private fun login(credentials: LoginCredentials?) =
         viewModelScope.launch {
             try{
-                val user = authenticationRepository.login(credentials)
-                onUserReturned(user)
+                /*val user = authenticationRepository.login(credentials)
+                onUserReturned(user)*/
             }catch(e: Exception){
                 _result.postValue(Event(SignInStatus.SignInFailed(e)))
             }
