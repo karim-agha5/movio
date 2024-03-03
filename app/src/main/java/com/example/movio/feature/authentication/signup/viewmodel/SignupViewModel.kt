@@ -53,6 +53,7 @@ class SignupViewModel(
                     is AuthenticationResult.Success -> if(isObserverActive){
                         if(it.user?.isEmailVerified == true){
                             onUserReturned(it.user)
+                            postActionOnSuccess()
                         }
                     }
 
@@ -130,7 +131,6 @@ class SignupViewModel(
         viewModelScope.launch{
             try{
                 authenticationRepository.signup(credentials)
-                postActionOnSuccess()
             }catch(e: Exception){ postActionOnFailure(e) }
         }
 
