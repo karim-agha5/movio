@@ -217,25 +217,6 @@ class AuthenticationFragment :
             is SignInStatus.SignInFailed    -> {
                 @OptIn(Experimental::class)
                 MessageShower.showAppropriateErrorDialog(requireContext(),signInStatus.throwable)
-                Log.i("MainActivity", "The throwing class is -> ${signInStatus.throwable?.stackTrace?.get(0)?.className} \n " +
-                        " ${signInStatus.throwable?.stackTrace?.get(1)?.className} \n"
-                        +
-                        " ${signInStatus.throwable?.stackTrace?.get(2)?.className} \n"
-                        +
-                        " ${signInStatus.throwable?.stackTrace?.get(3)?.className} \n"
-                        +
-                        " ${signInStatus.throwable?.stackTrace?.get(4)?.className} \n"
-                        +
-                        " ${signInStatus.throwable?.stackTrace?.get(5)?.className} \n"
-                        +
-                        " ${signInStatus.throwable?.stackTrace?.get(6)?.className} \n"
-                        +
-                        " ${signInStatus.throwable?.stackTrace?.get(7)?.className} \n"
-                        +
-                        " ${signInStatus.throwable?.stackTrace?.get(8)?.className} \n" +
-                        " ${signInStatus.throwable?.stackTrace?.get(9)?.methodName} \n"
-
-                )
                 stopGoogleAuthenticationLoading()
                 stopTwitterAuthenticationLoading()
             }
