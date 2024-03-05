@@ -204,7 +204,7 @@ class SignInFragment :
     }
 
     private fun stopCredentialsAuthenticationLoading(){
-        binding.btnSignIn.text = getString(R.string.btn_sign_up_text)
+        binding.btnSignIn.text = getString(R.string.btn_sign_in)
         binding.btnSignIn.icon = null
     }
 
