@@ -50,7 +50,12 @@ class SignupViewModel(
             .getAuthenticationResultObservableSource()
             .subscribe {
                 when(it){
-                    is AuthenticationResult.Success -> if(isObserverActive){ onUserReturned(it.user) }
+                    is AuthenticationResult.Success -> if(isObserverActive){
+                        if(it.user?.isEmailVerified == true){
+                            onUserReturned(it.user)
+                            postActionOnSuccess()
+                        }
+                    }
 
                     is AuthenticationResult.Failure -> if(isObserverActive){
                         viewModelScope.launch { postActionOnFailure(it.throwable) }
@@ -126,7 +131,6 @@ class SignupViewModel(
         viewModelScope.launch{
             try{
                 authenticationRepository.signup(credentials)
-                postActionOnSuccess()
             }catch(e: Exception){ postActionOnFailure(e) }
         }
 
