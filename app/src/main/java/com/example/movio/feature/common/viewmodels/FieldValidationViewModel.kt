@@ -23,10 +23,11 @@ class FieldValidationViewModel(
     private val validatePassword: ValidatePassword
 ) : ViewModel(){
 
-    /*private val _fieldsState =
-        MutableStateFlow<Triple<ValidationResultState,ValidationResultState,Boolean>>(Triple(ValidationResultState.Neutral,ValidationResultState.Neutral,false))
-
-    val fieldsState = _fieldsState.asStateFlow()*/
+    /**
+     * A MutableSharedFlow is used because the value exposed to the fragments may not change
+     * (e.g. multiple failed authentications results in the same subclass of the [ValidationResultState] sealed class).
+     * If the value isn't changing, a StateFlow won't update the value the UI is collecting. Therefore, no updates will transmitted to the UI.
+     */
 
     private val _fieldsState =
         MutableSharedFlow<Triple<ValidationResultState,ValidationResultState,Boolean>>(
@@ -53,8 +54,5 @@ class FieldValidationViewModel(
         }
 
         _fieldsState.tryEmit(Triple(emailValidationResult,passwordValidationResult,canSignup))
-
-        // TODO consider using updateValue() instead of setValue()
-       // _fieldsState.value = Triple(emailValidationResult,passwordValidationResult,canSignup)
     }
 }
