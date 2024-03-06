@@ -2,6 +2,7 @@ package com.example.movio.feature.authentication.signin.views
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +40,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 
@@ -130,9 +132,7 @@ class SignInFragment :
         }
 
         lifecycleScope.launch {
-            fieldValidationViewModel.fieldsState.collect{
-                onValidationResultReceived(it)
-            }
+            fieldValidationViewModel.fieldsState.collect{ onValidationResultReceived(it) }
         }
 
     }
@@ -236,6 +236,7 @@ class SignInFragment :
         stopGoogleAuthenticationLoading()
         stopTwitterAuthenticationLoading()
         stopCredentialsAuthenticationLoading()
+        Log.i("MainActivity", "Inside sign in fragment")
     }
 
     private fun isEmailFieldValid() : Boolean {
