@@ -64,9 +64,7 @@ class EmailAndPasswordAuthenticationService private constructor(
                         .await()
                 }catch (e: Exception){ e}
             }
-            /*firebaseUser = (deferredResult.await() as AuthResult).user
-            firebaseAuth.signOut()
-            firebaseUser?.sendEmailVerification()*/
+
             val result = deferredResult.await()
             if(result is FirebaseAuthUserCollisionException){
                 throw result
@@ -92,11 +90,6 @@ class EmailAndPasswordAuthenticationService private constructor(
                              .await()
                      }catch(e: Exception){e}
                  }
-
-                 /*firebaseUser = (deferredResult.await() as AuthResult).user
-                 if(firebaseUser?.isEmailVerified == false){
-                     firebaseAuth.signOut()
-                 }*/
 
                  val result = deferredResult.await()
                  if(result is FirebaseAuthInvalidUserException){
