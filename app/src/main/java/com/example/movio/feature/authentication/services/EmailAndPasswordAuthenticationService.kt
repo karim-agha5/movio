@@ -100,7 +100,7 @@ class EmailAndPasswordAuthenticationService private constructor(
              }
          }
          else{
-            // TODO implement later
+            throw FirebaseAuthInvalidUserException("Invalid credentials","you must fill those empty fields")
          }
 
          return firebaseUser
