@@ -77,7 +77,7 @@ class TwitterAuthenticationService private constructor(
      * Main-Safe suspend function that starts the regular login/signup flow and sends the result through
      * the authentication result observable.
      * */
-    @Throws(IllegalStateException::class)
+    @Throws(Exception::class)
     private suspend fun twitterSigningFlow() : FirebaseUser? {
         if(!this::componentActivity.isInitialized){
             throw IllegalStateException("ComponentActivity isn't registered")
@@ -91,6 +91,7 @@ class TwitterAuthenticationService private constructor(
     /**
      * Main-safe function that sends a [FirebaseUser] or an [Exception] to the observer.
      * */
+    @Throws(Exception::class)
     private suspend fun getPendingResultTaskResult(pendingResultTask: Task<AuthResult>) : FirebaseUser?{
        /*withContext(Dispatchers.IO){
            // TODO currently experimenting with runCatching. Look for all the edge cases surrounding
