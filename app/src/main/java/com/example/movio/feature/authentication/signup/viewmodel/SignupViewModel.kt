@@ -38,9 +38,6 @@ class SignupViewModel(
     override val result: LiveData<Event<SignupStatus>> = _result
 
     private val movioContainer                          = getApplication<MovioApplication>().movioContainer
-    /*private val googleSignInService                     = movioContainer.googleSignInService
-    private val twitterAuthenticationService            = movioContainer.twitterAuthenticationService
-    private val emailAndPasswordAuthenticationService   = movioContainer.emailAndPasswordAuthenticationService*/
     private val authenticationHelper                    = movioContainer.authenticationHelper
     private var disposable: Disposable
     private var isObserverActive = true
@@ -52,10 +49,7 @@ class SignupViewModel(
                 when(it){
                     is AuthenticationResult.Success -> if(isObserverActive){
                         if(it.user?.isEmailVerified == true){ onUserReturned(it.user) }
-                        else                                {
-                            Log.i("MainActivity", "viewmodel : ${Thread.currentThread().name}")
-                            postActionOnSuccess()
-                        }
+                        else                                { postActionOnSuccess() }
                     }
 
                     is AuthenticationResult.Failure -> if(isObserverActive){
@@ -76,14 +70,10 @@ class SignupViewModel(
     }
 
     override fun postActionOnSuccess() {
-        //_result.value = Event(SignupStatus.ShouldVerifyEmail)
-        Log.i("MainActivity", "postActionOnSuccess: ${Thread.currentThread().name}")
         _result.postValue(Event(SignupStatus.ShouldVerifyEmail))
     }
 
     override fun postActionOnFailure(throwable: Throwable?) {
-        //_result.value = Event(SignupStatus.SignupFailed(throwable))
-        Log.i("MainActivity", "postActionOnFailure: ${Thread.currentThread().name}")
         _result.postValue(Event(SignupStatus.SignupFailed(throwable)))
     }
 
@@ -137,7 +127,6 @@ class SignupViewModel(
             try{
                 authenticationRepository.signup(credentials)
             }catch(e: Exception){
-                Log.i("MainActivity", "Inside catch block")
                 postActionOnFailure(e)
             }
         }
