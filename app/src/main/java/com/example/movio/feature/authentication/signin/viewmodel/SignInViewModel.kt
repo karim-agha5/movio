@@ -1,7 +1,6 @@
 package com.example.movio.feature.authentication.signin.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.Lifecycle
@@ -123,15 +122,7 @@ class SignInViewModel(
 
 
     private fun login(credentials: LoginCredentials?) =
-        viewModelScope.launch {
-            /*try{
-                val user = authenticationRepository.login(credentials)
-                //onUserReturned(user)
-            }catch(e: Exception){
-                _result.postValue(Event(SignInStatus.SignInFailed(e)))
-            }*/
-            authenticationRepository.login(credentials)
-        }
+        viewModelScope.launch { authenticationRepository.login(credentials) }
 
 
     @Throws(IllegalStateException::class)
@@ -167,11 +158,11 @@ class SignInViewModel(
         navigateToHome()
     }
 
-    private fun authenticateUser(firebaseUser: FirebaseUser?){
+    private fun authenticateUser(firebaseUser: FirebaseUser?) =
         movioContainer
             .userManager
             .authenticateUser(firebaseUser)
-    }
+
 
     private fun navigateToHome(){
         // Consider using the lifecycle of the view because config change might happen before navigation
