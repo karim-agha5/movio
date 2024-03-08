@@ -54,9 +54,7 @@ class EmailAndPasswordAuthenticationService private constructor(
         credentials: SignupCredentials
     ) : FirebaseUser?{
 
-        var firebaseUser: FirebaseUser? = null
-
-        withContext(Dispatchers.IO){
+        /*withContext(Dispatchers.IO){
             val deferredResult = async {
                 try {
                     firebaseAuth
@@ -73,7 +71,16 @@ class EmailAndPasswordAuthenticationService private constructor(
                 firebaseAuth.signOut()
                 firebaseUser?.sendEmailVerification()
             }
-        }
+        }*/
+
+
+        var firebaseUser: FirebaseUser? = firebaseAuth
+            .createUserWithEmailAndPassword(credentials.email, credentials.password)
+            .await()
+            .user
+
+        firebaseUser?.sendEmailVerification()
+        firebaseAuth.signOut()
 
         return firebaseUser
     }
