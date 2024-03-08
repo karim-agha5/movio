@@ -134,7 +134,6 @@ class SignupViewModel(
 
 
     private fun signupWithGoogle(){
-        //googleSignInService.init()
         viewModelScope.launch { authenticationRepository.signupWithGoogle() }
     }
 

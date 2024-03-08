@@ -128,10 +128,7 @@ class SignupFragment :
 
 
         signupViewModel.result.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { status ->
-                Log.i("MainActivity", "fragment: ${Thread.currentThread().name}")
-                onResultReceived(status)
-            }
+            it.getContentIfNotHandled()?.let { status -> onResultReceived(status) }
         }
 
         lifecycleScope.launch {
@@ -148,7 +145,6 @@ class SignupFragment :
     private fun onResultReceived(signupStatus: SignupStatus){
         when(signupStatus){
             is SignupStatus.ShouldVerifyEmail -> {
-                Log.i("MainActivity", "Inside should verify block")
                 stopCredentialsAuthenticationLoading()
                 showShouldVerifyEmailToast()
             }
