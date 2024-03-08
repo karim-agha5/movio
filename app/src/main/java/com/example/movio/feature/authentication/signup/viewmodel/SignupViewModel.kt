@@ -51,8 +51,9 @@ class SignupViewModel(
             .subscribe {
                 when(it){
                     is AuthenticationResult.Success -> if(isObserverActive){
-                        if(it.user?.isEmailVerified == true){
-                            onUserReturned(it.user)
+                        if(it.user?.isEmailVerified == true){ onUserReturned(it.user) }
+                        else                                {
+                            Log.i("MainActivity", "viewmodel : ${Thread.currentThread().name}")
                             postActionOnSuccess()
                         }
                     }
@@ -75,7 +76,9 @@ class SignupViewModel(
     }
 
     override fun postActionOnSuccess() {
-        _result.value = Event(SignupStatus.ShouldVerifyEmail)
+        //_result.value = Event(SignupStatus.ShouldVerifyEmail)
+        Log.i("MainActivity", "postActionOnSuccess: ${Thread.currentThread().name}")
+        _result.postValue(Event(SignupStatus.ShouldVerifyEmail))
     }
 
     override fun postActionOnFailure(throwable: Throwable?) {
@@ -131,7 +134,10 @@ class SignupViewModel(
         viewModelScope.launch{
             try{
                 authenticationRepository.signup(credentials)
-            }catch(e: Exception){ postActionOnFailure(e) }
+            }catch(e: Exception){
+                Log.i("MainActivity", "Inside catch block")
+                postActionOnFailure(e)
+            }
         }
 
 

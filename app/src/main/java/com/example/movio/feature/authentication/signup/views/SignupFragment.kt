@@ -2,6 +2,7 @@ package com.example.movio.feature.authentication.signup.views
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -127,7 +128,10 @@ class SignupFragment :
 
 
         signupViewModel.result.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { status -> onResultReceived(status) }
+            it.getContentIfNotHandled()?.let { status ->
+                Log.i("MainActivity", "fragment: ${Thread.currentThread().name}")
+                onResultReceived(status)
+            }
         }
 
         lifecycleScope.launch {
@@ -144,6 +148,7 @@ class SignupFragment :
     private fun onResultReceived(signupStatus: SignupStatus){
         when(signupStatus){
             is SignupStatus.ShouldVerifyEmail -> {
+                Log.i("MainActivity", "Inside should verify block")
                 stopCredentialsAuthenticationLoading()
                 showShouldVerifyEmailToast()
             }

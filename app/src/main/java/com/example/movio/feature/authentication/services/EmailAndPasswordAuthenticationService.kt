@@ -1,5 +1,6 @@
 package com.example.movio.feature.authentication.services
 
+import android.util.Log
 import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.common.models.SignupCredentials
 import com.google.firebase.auth.AuthResult
