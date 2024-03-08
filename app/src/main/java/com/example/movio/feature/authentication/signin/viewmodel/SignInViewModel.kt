@@ -146,11 +146,13 @@ class SignInViewModel(
     }
 
     private fun onUserReturned(firebaseUser: FirebaseUser?){
-        if(providerRequiresVerification(firebaseUser)){
-            if(firebaseUser?.isEmailVerified == true) { postActionOnSuccess() }
-            else{ postActionOnFailure(null) }
-        }
+        if(providerRequiresVerification(firebaseUser)){ handleUserVerificationStatus() }
         else{ postActionOnSuccess() }
+    }
+
+    private fun handleUserVerificationStatus(){
+        if(firebaseUser?.isEmailVerified == true) { postActionOnSuccess() }
+        else{ postActionOnFailure(null) }
     }
 
     private fun onSuccessfulAuthentication(firebaseUser: FirebaseUser?){
