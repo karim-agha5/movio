@@ -32,7 +32,7 @@ class AuthenticationRepository(
     override suspend fun signupWithGoogle() {
         googleSignInService.init()
         withContext(Dispatchers.IO){
-            try                     { googleSignInService.login(null) }
+            try                     { /*googleSignInService.login(null)*/ googleSignInService.authenticate() }
             catch (ex: Exception)   { AuthenticationHelper.onFailure(ex) }
         }
     }
