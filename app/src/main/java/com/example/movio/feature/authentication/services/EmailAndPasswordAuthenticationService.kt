@@ -82,7 +82,7 @@ class EmailAndPasswordAuthenticationService private constructor(
          var firebaseUser: FirebaseUser? = null
 
          if(credentials != null){
-             withContext(Dispatchers.IO){
+             /*withContext(Dispatchers.IO){
                  val deferredResult = async {
                      try {
                          firebaseAuth
@@ -96,6 +96,17 @@ class EmailAndPasswordAuthenticationService private constructor(
                      throw FirebaseAuthInvalidUserException("message","Invalid username or password")
                  }else{
                      firebaseUser = (result as AuthResult).user
+                 }
+             }*/
+
+             try{
+                 firebaseUser = firebaseAuth
+                     .signInWithEmailAndPassword(credentials.email,credentials.password)
+                     .await()
+                     .user
+             }catch (ex: Exception){
+                 if (ex is FirebaseAuthInvalidUserException){
+                     throw FirebaseAuthInvalidUserException("message","Invalid username or password")
                  }
              }
          }
