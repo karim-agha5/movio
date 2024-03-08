@@ -82,7 +82,9 @@ class SignupViewModel(
     }
 
     override fun postActionOnFailure(throwable: Throwable?) {
-        _result.value = Event(SignupStatus.SignupFailed(throwable))
+        //_result.value = Event(SignupStatus.SignupFailed(throwable))
+        Log.i("MainActivity", "postActionOnFailure: ${Thread.currentThread().name}")
+        _result.postValue(Event(SignupStatus.SignupFailed(throwable)))
     }
 
 

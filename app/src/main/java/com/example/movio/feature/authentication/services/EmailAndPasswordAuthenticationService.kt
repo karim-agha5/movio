@@ -80,6 +80,8 @@ class EmailAndPasswordAuthenticationService private constructor(
             .await()
             .user
 
+        Log.i("MainActivity", "inside service")
+
         firebaseUser?.sendEmailVerification()
         firebaseAuth.signOut()
 
