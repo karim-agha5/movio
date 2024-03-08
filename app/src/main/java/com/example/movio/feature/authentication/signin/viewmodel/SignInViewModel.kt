@@ -45,9 +45,7 @@ class SignInViewModel(
             .getAuthenticationResultObservableSource()
             .subscribe {
                 when(it){
-                    is AuthenticationResult.Success -> if(isObserverActive){
-                        viewModelScope.launch { onUserReturned(it.user) }
-                    }
+                    is AuthenticationResult.Success -> if(isObserverActive){ onUserReturned(it.user) }
                     is AuthenticationResult.Failure -> if(isObserverActive){
                         _result.postValue(Event(SignInStatus.SignInFailed(it.throwable)))
                     }
@@ -68,12 +66,12 @@ class SignInViewModel(
     }
 
     override fun postActionOnSuccess(){
-        _result.value = Event(SignInStatus.EmailVerified)
+        viewModelScope.launch { _result.value = Event(SignInStatus.EmailVerified) }
     }
 
 
     override fun postActionOnFailure(throwable: Throwable?){
-        _result.value = Event(SignInStatus.EmailNotVerified)
+        viewModelScope.launch { _result.value = Event(SignInStatus.EmailNotVerified) }
     }
 
 
