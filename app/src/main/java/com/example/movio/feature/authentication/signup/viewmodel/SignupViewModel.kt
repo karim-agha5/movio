@@ -52,9 +52,7 @@ class SignupViewModel(
                         else                                { postActionOnSuccess() }
                     }
 
-                    is AuthenticationResult.Failure -> if(isObserverActive){
-                        viewModelScope.launch { postActionOnFailure(it.throwable) }
-                    }
+                    is AuthenticationResult.Failure -> if(isObserverActive){ postActionOnFailure(it.throwable) }
                 }
             }
     }
@@ -70,11 +68,11 @@ class SignupViewModel(
     }
 
     override fun postActionOnSuccess() {
-        _result.postValue(Event(SignupStatus.ShouldVerifyEmail))
+        viewModelScope.launch { _result.value = Event(SignupStatus.ShouldVerifyEmail) }
     }
 
     override fun postActionOnFailure(throwable: Throwable?) {
-        _result.postValue(Event(SignupStatus.SignupFailed(throwable)))
+        viewModelScope.launch { _result.value = Event(SignupStatus.SignupFailed(throwable)) }
     }
 
 
