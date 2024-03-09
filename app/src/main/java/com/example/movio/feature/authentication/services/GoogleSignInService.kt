@@ -30,7 +30,6 @@ class GoogleSignInService private constructor(
    // private val componentActivity: ComponentActivity,
     // private val launcher: AuthenticationResultCallbackLauncher
 ) : IFederatedAuthentication,
-    ComponentActivityRegistrar,
     AuthenticationResultCallbackLauncherRegistrar{
 
     private lateinit var oneTapClient: SignInClient
