@@ -38,5 +38,5 @@ abstract class FederatedAuthenticationBaseViewModel<D: Data, A: Action, S : Stat
         authenticationRepository.authenticateWithFirebase(data)
     }
 
-    abstract fun getGoogleSignInService(): GoogleSignInService
+    //abstract fun getGoogleSignInService(): GoogleSignInService
 }

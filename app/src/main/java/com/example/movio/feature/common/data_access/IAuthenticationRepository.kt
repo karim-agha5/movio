@@ -26,8 +26,6 @@ interface IAuthenticationRepository {
 
     fun unregister()
 
-    fun getGoogleSignInService() : GoogleSignInService
-
     suspend fun authenticateWithFirebase(data: Intent?) : Unit = throw UnsupportedOperationException()
 
     suspend fun signupWithTwitter()

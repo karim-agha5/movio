@@ -6,23 +6,16 @@ import androidx.activity.result.IntentSenderRequest
 import com.example.movio.R
 import com.example.movio.core.common.IFederatedAuthentication
 import com.example.movio.core.interfaces.auth.AuthenticationResultCallbackLauncherRegistrar
-import com.example.movio.core.interfaces.auth.ComponentActivityRegistrar
-import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
-import com.example.movio.feature.common.models.LoginCredentials
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.lang.IllegalStateException
 import kotlin.jvm.Throws
 

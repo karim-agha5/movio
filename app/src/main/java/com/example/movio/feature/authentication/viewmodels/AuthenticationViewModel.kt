@@ -122,7 +122,7 @@ class AuthenticationViewModel(
     override fun unregister() = authenticationRepository.unregister()
 
 
-    override fun getGoogleSignInService() = authenticationRepository.getGoogleSignInService()
+    //override fun getGoogleSignInService() = authenticationRepository.getGoogleSignInService()
 
 
     @Throws(IllegalStateException::class)

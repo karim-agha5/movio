@@ -9,7 +9,6 @@ import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
 import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.common.models.SignupCredentials
-import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -45,8 +44,6 @@ class AuthenticationRepository(
     }
 
     override fun unregister() = googleSignInService.unregister()
-
-    override fun getGoogleSignInService() : GoogleSignInService = googleSignInService
 
     override suspend fun signupWithTwitter() = withContext(Dispatchers.IO){
         // TODO currently experimenting with runCatching. Look for all the edge cases surrounding the runCatching and async builders.
