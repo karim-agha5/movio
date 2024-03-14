@@ -1,8 +1,6 @@
 package com.example.movio.feature.authentication.viewmodels
 
 import android.app.Application
-import android.content.Intent
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.Lifecycle
@@ -11,23 +9,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movio.core.MovioApplication
-import com.example.movio.core.helpers.CoordinatorDelegate
 import com.example.movio.core.helpers.Event
-import com.example.movio.core.navigation.Coordinator
+import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
-import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
 import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.common.data_access.IAuthenticationRepository
-import com.example.movio.feature.authentication.helpers.AuthenticationHelper
+import com.example.movio.feature.common.models.LoginCredentials
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 class AuthenticationViewModel(
     application: Application,
@@ -38,8 +34,6 @@ class AuthenticationViewModel(
     override val result: LiveData<Event<SignInStatus>> = _result
 
     private val movioContainer                  = getApplication<MovioApplication>().movioContainer
-    /*private var googleSignInService             = movioContainer.googleSignInService
-    private var twitterAuthenticationService    = movioContainer.twitterAuthenticationService*/
     private var authenticationHelper            = movioContainer.authenticationHelper
     private var firebaseUser: FirebaseUser? = null
     private var disposable: Disposable
@@ -122,15 +116,12 @@ class AuthenticationViewModel(
     override fun unregister() = authenticationRepository.unregister()
 
 
-    //override fun getGoogleSignInService() = authenticationRepository.getGoogleSignInService()
-
-
     @Throws(IllegalStateException::class)
     private fun signInWithGoogle(credentials: LoginCredentials?){
-        //googleSignInService.init()
         viewModelScope.launch {
-            // Result in [AuthenticationHelper]
-            //authenticationRepository.login(credentials)
+            /**
+             *  Result in [AuthenticationHelper]
+             */
             authenticationRepository.signupWithGoogle()
         }
     }
@@ -138,7 +129,9 @@ class AuthenticationViewModel(
     @Throws(IllegalStateException::class)
     private fun signInWithTwitter(credentials: LoginCredentials?) =
         viewModelScope.launch {
-            // Result in [AuthenticationHelper]
+            /**
+             *  Result in [AuthenticationHelper]
+             */
             authenticationRepository.signupWithTwitter()
         }
 
