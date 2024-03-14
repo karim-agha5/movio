@@ -80,8 +80,8 @@ class AuthenticationViewModel(
 
     override fun postAction(data: LoginCredentials?, action: SignInActions) {
         when(action){
-            is SignInActions.GoogleClicked  -> signInWithGoogle(data)
-            is SignInActions.TwitterClicked -> signInWithTwitter(data)
+            is SignInActions.GoogleClicked  -> signInWithGoogle()
+            is SignInActions.TwitterClicked -> signInWithTwitter()
             is SignInActions.SignInClicked  -> navigateToSignIn()
             is SignInActions.SignupClicked  -> navigateToSignup()
             else                            -> { /*Do Nothing*/ }
@@ -117,7 +117,7 @@ class AuthenticationViewModel(
 
 
     @Throws(IllegalStateException::class)
-    private fun signInWithGoogle(credentials: LoginCredentials?){
+    private fun signInWithGoogle(){
         viewModelScope.launch {
             /**
              *  Result in [AuthenticationHelper]
@@ -127,7 +127,7 @@ class AuthenticationViewModel(
     }
 
     @Throws(IllegalStateException::class)
-    private fun signInWithTwitter(credentials: LoginCredentials?) =
+    private fun signInWithTwitter() =
         viewModelScope.launch {
             /**
              *  Result in [AuthenticationHelper]
