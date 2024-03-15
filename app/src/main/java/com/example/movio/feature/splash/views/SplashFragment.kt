@@ -1,6 +1,5 @@
 package com.example.movio.feature.splash.views
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -24,10 +23,10 @@ class SplashFragment : BaseFragment<FragmentSplashBinding,Nothing,Authentication
 
     private lateinit var splashViewModel: BaseViewModel<Nothing,AuthenticationActions, UserAuthenticationStatus>
 
-    override fun onAttach(context: Context) {
+    /*override fun onAttach(context: Context) {
         super.onAttach(context)
         activity?.lifecycle?.addObserver(this)
-    }
+    }*/
 
     override fun inflateBinding(
         inflater: LayoutInflater,
