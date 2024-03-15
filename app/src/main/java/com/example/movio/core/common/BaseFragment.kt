@@ -1,5 +1,6 @@
 package com.example.movio.core.common
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +31,11 @@ abstract class BaseFragment<
     protected lateinit var viewModel: BaseViewModel<D,ActionType,S>
 
     abstract fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): VB
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.lifecycle?.addObserver(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
