@@ -21,31 +21,25 @@ import com.example.movio.core.helpers.Event
 import com.example.movio.core.helpers.ViewModelDelegate
 import com.example.movio.core.navigation.RootCoordinator
 import com.example.movio.core.util.FormUtils
-import com.example.movio.core.util.Utils
 import com.example.movio.databinding.FragmentSignInBinding
-import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
-import com.example.movio.feature.common.models.LoginCredentials
+import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.signin.actions.SignInActions
 import com.example.movio.feature.authentication.status.SignInStatus
-import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.common.helpers.MessageShower
-import com.example.movio.feature.common.status.UserAuthenticationStatus
+import com.example.movio.feature.common.models.LoginCredentials
 import com.example.movio.feature.common.status.ValidationResultState
 import com.example.movio.feature.common.viewmodels.FieldValidationViewModel
 import com.example.movio.feature.common.viewmodels.FieldValidationViewModelFactory
-import com.example.movio.feature.splash.viewmodel.SplashViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec
 import com.google.android.material.progressindicator.IndeterminateDrawable
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 
 class SignInFragment :
-    BaseFragment<FragmentSignInBinding>(),
+    BaseFragment<FragmentSignInBinding,LoginCredentials, SignInActions, Event<SignInStatus>>(SignInFragment::class.java),
     AuthenticationResultCallbackLauncher,
     LifecycleEventObserver{
 

@@ -20,7 +20,7 @@ import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.common.status.UserAuthenticationStatus
 import com.example.movio.feature.splash.viewmodel.SplashViewModel
 
-class SplashFragment : BaseFragment<FragmentSplashBinding>(),LifecycleEventObserver {
+class SplashFragment : BaseFragment<FragmentSplashBinding,Nothing,AuthenticationActions, UserAuthenticationStatus>(SplashFragment::class.java),LifecycleEventObserver {
 
     private lateinit var splashViewModel: BaseViewModel<Nothing,AuthenticationActions, UserAuthenticationStatus>
 

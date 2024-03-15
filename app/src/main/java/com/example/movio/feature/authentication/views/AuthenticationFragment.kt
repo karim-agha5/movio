@@ -8,14 +8,12 @@ import android.view.ViewGroup
 import androidx.activity.result.IntentSenderRequest
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.example.movio.MainActivity
 import com.example.movio.R
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.Experimental
 import com.example.movio.core.helpers.Event
-import com.example.movio.core.helpers.ViewModelDelegate
 import com.example.movio.core.navigation.CoordinatorHost
 import com.example.movio.core.navigation.RootCoordinator
 import com.example.movio.databinding.FragmentAuthenticationBinding
@@ -32,15 +30,21 @@ import com.google.android.material.progressindicator.CircularProgressIndicatorSp
 import com.google.android.material.progressindicator.IndeterminateDrawable
 
 class AuthenticationFragment :
-    BaseFragment<FragmentAuthenticationBinding>(),
+    BaseFragment
+    <
+            FragmentAuthenticationBinding,
+            LoginCredentials,
+            SignInActions,
+            Event<SignInStatus>
+    > (AuthenticationFragment::class.java),
     AuthenticationResultCallbackLauncher,
-    CoordinatorHost,
-    LifecycleEventObserver{
+    CoordinatorHost{
 
     override val coordinator by lazy {
         movioApplication.movioContainer.rootCoordinator.requireCoordinator()
     }
 
+    //private lateinit var authenticationViewModel: FederatedAuthenticationBaseViewModel<LoginCredentials,SignInActions, Event<SignInStatus>>
     private lateinit var authenticationViewModel: FederatedAuthenticationBaseViewModel<LoginCredentials,SignInActions, Event<SignInStatus>>
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var progressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
@@ -68,9 +72,11 @@ class AuthenticationFragment :
      * The observation on the [MainActivity] lifecycle is registered in the [onAttach] lifecycle callback.
      * */
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        super.onStateChanged(source, event)
         if (event == Lifecycle.Event.ON_CREATE) {
-            val vm by ViewModelDelegate<LoginCredentials,SignInActions, Event<SignInStatus>>(movioApplication,this::class.java)
-            authenticationViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
+            /*val vm by ViewModelDelegate<LoginCredentials,SignInActions, Event<SignInStatus>>(movioApplication,this::class.java)
+            authenticationViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>*/
+            authenticationViewModel = viewModel as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
             authenticationViewModel.register(requireActivity())
             authenticationLifecycleObserver =
                 AuthenticationLifecycleObserver(this::class.java.simpleName,requireActivity().activityResultRegistry,authenticationViewModel::authenticateWithFirebase)

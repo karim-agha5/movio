@@ -13,12 +13,12 @@ import kotlin.reflect.KProperty
 class ViewModelDelegate<D : Data, ActionType : Action, S : Status>(
     movioApplication: MovioApplication,
     private val cls: Class<out Fragment>
-) : ReadOnlyProperty<BaseFragment<*>,BaseViewModel<D,ActionType,S>>{
+) : ReadOnlyProperty<BaseFragment<*,*,*,*>,BaseViewModel<D,ActionType,S>>{
 
     private val coordinator by CoordinatorDelegate(movioApplication)
 
     override operator fun getValue(
-        thisRef: BaseFragment<*>,
+        thisRef: BaseFragment<*,*,*,*>,
         property: KProperty<*>
     ): BaseViewModel<D,ActionType,S> {
         return  coordinator.requireViewModel<D,ActionType,S>(cls)

@@ -2,7 +2,6 @@ package com.example.movio.feature.authentication.signup.views
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,11 +24,11 @@ import com.example.movio.databinding.FragmentSignupBinding
 import com.example.movio.feature.authentication.helpers.AuthenticationLifecycleObserver
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
-import com.example.movio.feature.common.models.SignupCredentials
 import com.example.movio.feature.authentication.signup.actions.SignupActions
 import com.example.movio.feature.authentication.signup.status.SignupStatus
 import com.example.movio.feature.authentication.signup.viewmodel.SignupViewModel
 import com.example.movio.feature.common.helpers.MessageShower
+import com.example.movio.feature.common.models.SignupCredentials
 import com.example.movio.feature.common.status.ValidationResultState
 import com.example.movio.feature.common.viewmodels.FieldValidationViewModel
 import com.example.movio.feature.common.viewmodels.FieldValidationViewModelFactory
@@ -39,7 +38,7 @@ import com.google.android.material.progressindicator.IndeterminateDrawable
 import kotlinx.coroutines.launch
 
 class SignupFragment :
-    BaseFragment<FragmentSignupBinding>(),
+    BaseFragment<FragmentSignupBinding,SignupCredentials, SignupActions, Event<SignupStatus>>(SignupFragment::class.java),
     AuthenticationResultCallbackLauncher,
     LifecycleEventObserver {
 
