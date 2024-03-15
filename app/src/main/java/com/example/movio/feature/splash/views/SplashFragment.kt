@@ -6,13 +6,10 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import com.example.movio.MainActivity
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.common.BaseViewModel
-import com.example.movio.core.helpers.ViewModelDelegate
 import com.example.movio.core.navigation.RootCoordinator
 import com.example.movio.databinding.FragmentSplashBinding
 import com.example.movio.feature.common.actions.AuthenticationActions
@@ -46,7 +43,8 @@ class SplashFragment : BaseFragment<FragmentSplashBinding,Nothing,Authentication
     * Navigates to either the AuthenticationFragment or to the HomeFragment
     * */
     private fun navigateFromSplash(){
-        splashViewModel.postAction(null,AuthenticationActions.FromSplashScreen)
+        //splashViewModel.postAction(null,AuthenticationActions.FromSplashScreen)
+        viewModel.postAction(null,AuthenticationActions.FromSplashScreen)
     }
 
     /**
@@ -56,7 +54,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding,Nothing,Authentication
      * Therefore, an observation on the [MainActivity] lifecycle is necessary.
      * The observation on the [MainActivity] lifecycle is registered in the [onAttach] lifecycle callback.
     * */
-    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+    /*override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         if (event == Lifecycle.Event.ON_CREATE) {
             val vm by ViewModelDelegate<Nothing, AuthenticationActions, UserAuthenticationStatus>(
                 movioApplication,
@@ -64,5 +62,5 @@ class SplashFragment : BaseFragment<FragmentSplashBinding,Nothing,Authentication
             )
             splashViewModel = vm
         }
-    }
+    }*/
 }
