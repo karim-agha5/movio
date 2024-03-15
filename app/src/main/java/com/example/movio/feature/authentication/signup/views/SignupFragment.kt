@@ -1,6 +1,5 @@
 package com.example.movio.feature.authentication.signup.views
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -54,10 +53,10 @@ class SignupFragment :
             .create(FieldValidationViewModel::class.java)
     }
 
-    override fun onAttach(context: Context) {
+    /*override fun onAttach(context: Context) {
         super.onAttach(context)
         activity?.lifecycle?.addObserver(this)
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
