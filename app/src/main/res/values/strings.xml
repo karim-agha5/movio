@@ -47,7 +47,6 @@
     <!-- End Form Error Messages-->
 
 
-
     <!-- Start Toast Messages -->
 
     <string name="should_verify_email">Verification link is sent</string>
