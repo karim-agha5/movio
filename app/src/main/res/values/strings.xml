@@ -62,6 +62,7 @@
     <string name="attempting_to_sign_in_message">Attempting to sign in</string>
     <string name="full_name">Full Name</string>
     <string name="name_tag">Name Tag</string>
+    <string name="sex">sex</string>
 
     <!-- End Authentication Loading Messages -->
 
