@@ -1,7 +1,6 @@
 package com.example.movio.feature.authentication.signup.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.Lifecycle
@@ -10,24 +9,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movio.core.MovioApplication
-import com.example.movio.core.helpers.CoordinatorDelegate
 import com.example.movio.core.helpers.Event
-import com.example.movio.core.navigation.Coordinator
-import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.helpers.AuthenticationResult
 import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
-import com.example.movio.feature.common.models.SignupCredentials
+import com.example.movio.feature.authentication.helpers.FederatedAuthenticationBaseViewModel
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.signup.actions.SignupActions
 import com.example.movio.feature.authentication.signup.status.SignupStatus
 import com.example.movio.feature.common.actions.AuthenticationActions
 import com.example.movio.feature.common.data_access.IAuthenticationRepository
+import com.example.movio.feature.common.models.SignupCredentials
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.rxjava3.disposables.Disposable
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.UnsupportedOperationException
-import kotlin.jvm.Throws
 
 class SignupViewModel(
     application: Application,
@@ -114,10 +108,6 @@ class SignupViewModel(
      * interface so it starts the [IntentSenderRequest] and authenticate the user.
     * */
     override fun unregister() = authenticationRepository.unregister()
-
-
-
-    //override fun getGoogleSignInService() = authenticationRepository.getGoogleSignInService()
 
 
     private fun signup(credentials: SignupCredentials?) =

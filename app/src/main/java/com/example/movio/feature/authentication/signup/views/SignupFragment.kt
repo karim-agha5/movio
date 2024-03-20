@@ -53,11 +53,6 @@ class SignupFragment :
             .create(FieldValidationViewModel::class.java)
     }
 
-    /*override fun onAttach(context: Context) {
-        super.onAttach(context)
-        activity?.lifecycle?.addObserver(this)
-    }*/
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prepareAuthenticationLoading()
