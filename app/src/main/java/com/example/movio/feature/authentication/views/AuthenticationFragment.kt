@@ -43,15 +43,9 @@ class AuthenticationFragment :
         movioApplication.movioContainer.rootCoordinator.requireCoordinator()
     }
 
-    //private lateinit var authenticationViewModel: FederatedAuthenticationBaseViewModel<LoginCredentials,SignInActions, Event<SignInStatus>>
     private lateinit var authenticationViewModel: FederatedAuthenticationBaseViewModel<LoginCredentials,SignInActions, Event<SignInStatus>>
     private lateinit var authenticationLifecycleObserver: AuthenticationLifecycleObserver
     private lateinit var progressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
-
-    /*override fun onAttach(context: Context) {
-        super.onAttach(context)
-        activity?.lifecycle?.addObserver(this)
-    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,8 +67,6 @@ class AuthenticationFragment :
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         super.onStateChanged(source, event)
         if (event == Lifecycle.Event.ON_CREATE) {
-            /*val vm by ViewModelDelegate<LoginCredentials,SignInActions, Event<SignInStatus>>(movioApplication,this::class.java)
-            authenticationViewModel = vm as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>*/
             authenticationViewModel = viewModel as FederatedAuthenticationBaseViewModel<LoginCredentials, SignInActions, Event<SignInStatus>>
             authenticationViewModel.register(requireActivity())
             authenticationLifecycleObserver =
