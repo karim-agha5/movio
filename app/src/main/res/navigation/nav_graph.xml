@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/fillYourProfileFragment">
 
     <fragment
         android:id="@+id/splashFragment"
@@ -39,4 +39,9 @@
         android:name="com.example.movio.feature.authentication.signin.views.SignInFragment"
         android:label="SignInFragment" />
     <action android:id="@+id/action_global_signInFragment" app:destination="@id/signInFragment" /><action android:id="@+id/action_global_signupFragment" app:destination="@id/signupFragment"/>
+    <fragment
+        android:id="@+id/fillYourProfileFragment"
+        android:name="com.example.movio.feature.account_setup.fill_profile.FillYourProfileFragment"
+        android:label="fragment_fill_your_profile"
+        tools:layout="@layout/fragment_fill_your_profile" />
 </navigation>
