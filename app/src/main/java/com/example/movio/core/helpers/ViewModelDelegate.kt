@@ -21,6 +21,10 @@ class ViewModelDelegate<D : Data, ActionType : Action, S : Status>(
         thisRef: BaseFragment<*,*,*,*>,
         property: KProperty<*>
     ): BaseViewModel<D,ActionType,S> {
+        /**
+         * TODO consider the case where you have no view model for that specific class to be returned
+         *  as the class implemented no view model because there's no need for it
+         * */
         return  coordinator.requireViewModel(cls)
     }
 
