@@ -21,7 +21,7 @@ class ViewModelDelegate<D : Data, ActionType : Action, S : Status>(
         thisRef: BaseFragment<*,*,*,*>,
         property: KProperty<*>
     ): BaseViewModel<D,ActionType,S> {
-        return  coordinator.requireViewModel<D,ActionType,S>(cls)
+        return  coordinator.requireViewModel(cls)
     }
 
     operator fun getValue(s: S?, property: KProperty<*>): BaseViewModel<D, ActionType, S> {
