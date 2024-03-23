@@ -1,6 +1,5 @@
 package com.example.movio.feature.account_setup.fill_profile.views
 
-import android.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,11 +24,14 @@ class FillYourProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initSexDropDownMenuUIState()
+        binding.actSex.setOnItemClickListener { _, _, pos, id ->
+
+        }
     }
 
     private fun initSexDropDownMenuUIState(){
         val items = arrayOf(Sex.MALE.sexAsString, Sex.FEMALE.sexAsString)
-        binding.actSex.setAdapter(ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line,items))
+        binding.actSex.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line,items))
         binding.actSex.setText(items[0],false)
     }
 }
