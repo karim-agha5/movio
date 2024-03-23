@@ -11,6 +11,7 @@
         android:id="@+id/iv_profile_picture"
         android:layout_width="150dp"
         android:layout_height="150dp"
+        android:src="@drawable/profile_picture_placeholder"
         android:background="@color/white"
         android:adjustViewBounds="true"
         android:scaleType="centerInside"
