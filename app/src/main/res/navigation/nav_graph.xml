@@ -41,7 +41,7 @@
     <action android:id="@+id/action_global_signInFragment" app:destination="@id/signInFragment" /><action android:id="@+id/action_global_signupFragment" app:destination="@id/signupFragment"/>
     <fragment
         android:id="@+id/fillYourProfileFragment"
-        android:name="com.example.movio.feature.account_setup.fill_profile.FillYourProfileFragment"
+        android:name="com.example.movio.feature.account_setup.fill_profile.views.FillYourProfileFragment"
         android:label="fragment_fill_your_profile"
         tools:layout="@layout/fragment_fill_your_profile" />
 </navigation>
