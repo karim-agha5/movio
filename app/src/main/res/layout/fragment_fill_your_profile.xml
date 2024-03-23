@@ -101,6 +101,7 @@
         android:layout_marginTop="24dp"
         android:hint="@string/sex"
         android:textColorHint="@color/gray"
+        app:endIconTint="@color/white"
         app:boxBackgroundColor="@color/containerColor"
         app:boxCornerRadiusTopStart="@dimen/corner_radius"
         app:boxCornerRadiusTopEnd="@dimen/corner_radius"
@@ -118,7 +119,7 @@
             android:layout_height="wrap_content"
             android:inputType="none"
             app:dropDownBackgroundTint="@color/containerColor"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
