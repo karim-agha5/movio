@@ -103,12 +103,13 @@
         app:layout_constraintEnd_toEndOf="parent">
 
 
-        <AutoCompleteTextView
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/act_sex"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none"
-            android:textColor="@color/white"/>
+            app:dropDownBackgroundTint="@color/containerColor"
+            android:textColor="@color/white" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
