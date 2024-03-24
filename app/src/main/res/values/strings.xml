@@ -63,6 +63,8 @@
     <string name="full_name">Full Name</string>
     <string name="name_tag">Name Tag</string>
     <string name="sex">Sex</string>
+    <string name="btn_continue">Continue</string>
+    <string name="skip">Skip</string>
 
     <!-- End Authentication Loading Messages -->
 
