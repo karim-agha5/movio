@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import com.example.movio.databinding.FragmentFillYourProfileBinding
 import com.example.movio.feature.account_setup.fill_profile.status.Sex
@@ -27,6 +28,7 @@ class FillYourProfileFragment : Fragment() {
         binding.actSex.setOnItemClickListener { _, _, pos, id ->
 
         }
+        setupEgPhoneNumberUITextConditions()
         binding.ccp.registerCarrierNumberEditText(binding.etPhoneNumber)
     }
 
@@ -34,5 +36,13 @@ class FillYourProfileFragment : Fragment() {
         val items = arrayOf(Sex.MALE.sexAsString, Sex.FEMALE.sexAsString)
         binding.actSex.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line,items))
         binding.actSex.setText(items[0],false)
+    }
+
+    private fun setupEgPhoneNumberUITextConditions(){
+        binding.etPhoneNumber.doOnTextChanged { text, start, before, count ->
+            if (count > 0 && text?.get(0) == '0' && binding.ccp.selectedCountryNameCode.equals("EG")){
+                binding.etPhoneNumber.text = null
+            }
+        }
     }
 }
