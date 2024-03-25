@@ -137,12 +137,12 @@
         app:ccp_arrowColor="@color/white"
         app:ccpDialog_showTitle="false"
         app:layout_constraintStart_toStartOf="@id/til_sex"
-        app:layout_constraintTop_toTopOf="@id/til_phone"
-        app:layout_constraintBottom_toBottomOf="@id/til_phone"/>
+        app:layout_constraintTop_toTopOf="@id/til_phone_number"
+        app:layout_constraintBottom_toBottomOf="@id/til_phone_number"/>
 
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_phone"
+        android:id="@+id/til_phone_number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         style="?attr/textInputFilledStyle"
@@ -163,10 +163,11 @@
         app:layout_constraintTop_toBottomOf="@id/til_sex">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_cpp"
+            android:id="@+id/et_phone_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:inputType="phone"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 

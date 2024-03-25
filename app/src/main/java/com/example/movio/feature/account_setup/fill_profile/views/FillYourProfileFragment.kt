@@ -27,6 +27,7 @@ class FillYourProfileFragment : Fragment() {
         binding.actSex.setOnItemClickListener { _, _, pos, id ->
 
         }
+        binding.ccp.registerCarrierNumberEditText(binding.etPhoneNumber)
     }
 
     private fun initSexDropDownMenuUIState(){
