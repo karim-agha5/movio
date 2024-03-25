@@ -132,7 +132,7 @@
         app:ccp_defaultNameCode="EG"
         app:ccp_showNameCode="false"
         app:ccp_showPhoneCode="false"
-        android:background="@color/containerColor"
+        android:background="@drawable/container_shape"
         app:ccp_arrowColor="@color/white"
         app:ccpDialog_showTitle="false"
         app:layout_constraintStart_toStartOf="@id/til_sex"
