@@ -124,6 +124,53 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
+    <com.hbb20.CountryCodePicker
+        android:id="@+id/ccp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center"
+        app:ccp_defaultNameCode="EG"
+        app:ccp_showNameCode="false"
+        app:ccp_showPhoneCode="false"
+        android:background="@color/containerColor"
+        app:ccp_arrowColor="@color/white"
+        app:ccpDialog_showTitle="false"
+        app:layout_constraintStart_toStartOf="@id/til_sex"
+        app:layout_constraintTop_toTopOf="@id/til_phone"
+        app:layout_constraintBottom_toBottomOf="@id/til_phone"/>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_phone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="?attr/textInputFilledStyle"
+        app:layout_constraintWidth_max="320dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="4dp"
+        android:hint="Phone Number"
+        android:textColorHint="@color/gray"
+        app:errorTextColor="@color/warning_yellow"
+        app:boxBackgroundColor="@color/containerColor"
+        app:boxCornerRadiusTopStart="@dimen/corner_radius"
+        app:boxCornerRadiusTopEnd="@dimen/corner_radius"
+        app:boxCornerRadiusBottomStart="@dimen/corner_radius"
+        app:boxCornerRadiusBottomEnd="@dimen/corner_radius"
+        app:boxStrokeWidth="0dp"
+        app:layout_constraintStart_toEndOf="@id/ccp"
+        app:layout_constraintEnd_toEndOf="@id/til_sex"
+        app:layout_constraintTop_toBottomOf="@id/til_sex">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_cpp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_skip"
         android:layout_width="0dp"
