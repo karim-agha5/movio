@@ -8,6 +8,7 @@
     <color name="containerColor">#1f232a</color>
     <color name="strokeColor">#2b2f34</color>
     <color name="gray">#9E9E9E</color>
+    <color name="saturated_gray">#35383F</color>
 
     <color name="warning_yellow">#E9D502</color>
 
