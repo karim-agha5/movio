@@ -65,6 +65,7 @@
     <string name="sex">Sex</string>
     <string name="btn_continue">Continue</string>
     <string name="skip">Skip</string>
+    <string name="phone_number">Phone Number</string>
 
     <!-- End Authentication Loading Messages -->
 

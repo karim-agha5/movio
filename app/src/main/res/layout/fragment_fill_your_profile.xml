@@ -148,7 +148,7 @@
         app:layout_constraintWidth_max="320dp"
         android:layout_marginTop="24dp"
         android:layout_marginStart="4dp"
-        android:hint="Phone Number"
+        android:hint="@string/phone_number"
         android:textColorHint="@color/gray"
         app:errorTextColor="@color/warning_yellow"
         app:boxBackgroundColor="@color/containerColor"
