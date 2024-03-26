@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import com.example.movio.core.util.ConstantStrings
 import com.example.movio.databinding.FragmentFillYourProfileBinding
 import com.example.movio.feature.account_setup.fill_profile.status.Sex
 
@@ -40,7 +41,7 @@ class FillYourProfileFragment : Fragment() {
 
     private fun setupEgPhoneNumberUITextConditions(){
         binding.etPhoneNumber.doOnTextChanged { text, start, before, count ->
-            if (count > 0 && text?.get(0) == '0' && binding.ccp.selectedCountryNameCode.equals("EG")){
+            if (count > 0 && text?.get(0) == '0' && binding.ccp.selectedCountryNameCode.equals(ConstantStrings.COUNTRY_NAME_CODE_EG)){
                 binding.etPhoneNumber.text = null
             }
         }
