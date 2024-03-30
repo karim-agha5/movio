@@ -1,4 +1,4 @@
-package com.example.movio.feature.account_setup.viewmodel
+package com.example.movio.feature.account_setup.fill_profile.viewmodel
 
 import androidx.lifecycle.LiveData
 import com.example.movio.core.MovioApplication
