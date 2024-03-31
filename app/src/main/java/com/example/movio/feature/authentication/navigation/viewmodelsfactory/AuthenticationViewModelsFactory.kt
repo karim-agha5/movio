@@ -27,52 +27,26 @@ import com.example.movio.feature.splash.views.SplashFragment
 // TODO refactor this class to inherit AndroidViewModelFactory
 class AuthenticationViewModelsFactory(
     private val application: Application,
-    //private val firebaseAuth: FirebaseAuth,
-    //private val authenticationHelper: AuthenticationHelper,
-    //private val userManager: UserManager
 ) {
 
     private val movioContainer = (application as MovioApplication).movioContainer
-    private fun createSplashViewModel() : SplashViewModel{
-        val factory = SplashViewModelFactory(movioContainer.userManager,application)
-        return factory.create(SplashViewModel::class.java)
-    }
-     private fun createSignupViewModel() : SignupViewModel {
-        val service =
-            EmailAndPasswordAuthenticationService
-                .getInstance(movioContainer.firebaseAuth)
+    private fun createSplashViewModel() = SplashViewModelFactory(movioContainer.userManager,application).create(SplashViewModel::class.java)
 
-        val factory = SignupViewModelFactory(
-            //service,
-            //(application as MovioApplication).movioContainer.googleSignInService,
-            //application.movioContainer.twitterAuthenticationService,
-            //authenticationHelper,
+     private fun createSignupViewModel() =
+         SignupViewModelFactory(application, movioContainer.authenticationRepository).create(SignupViewModel::class.java)
+
+
+    private fun createSignInViewModel() =
+        SignInViewModelFactory(
+            EmailAndPasswordAuthenticationService.getInstance(movioContainer.firebaseAuth),
             application,
             movioContainer.authenticationRepository
-        )
-        return factory.create(SignupViewModel::class.java)
-    }
+        ).create(SignInViewModel::class.java)
 
-    private fun createSignInViewModel() : SignInViewModel {
-        val service =
-            EmailAndPasswordAuthenticationService
-                .getInstance(movioContainer.firebaseAuth)
 
-        val factory = SignInViewModelFactory(
-            service,
-            //(application as MovioApplication).movioContainer.googleSignInService,
-            //application.movioContainer.twitterAuthenticationService,
-            //authenticationHelper,
-            application,
-            movioContainer.authenticationRepository
-        )
-        return factory.create(SignInViewModel::class.java)
-    }
+    private fun createAuthenticationViewModel() =
+        AuthenticationViewModelFactory(application,movioContainer.authenticationRepository).create(AuthenticationViewModel::class.java)
 
-    private fun createAuthenticationViewModel() : AuthenticationViewModel {
-        val factory = AuthenticationViewModelFactory(application,movioContainer.authenticationRepository)
-        return factory.create(AuthenticationViewModel::class.java)
-    }
 
     private fun createFillYourProfileViewModel() = FillYourProfileViewModelFactory(application).create(FillYourProfileViewModel::class.java)
 
