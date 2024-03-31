@@ -31,6 +31,7 @@ class FillYourProfileFragment :
         binding.actSex.setOnItemClickListener { _, _, pos, id ->
 
         }
+        binding.btnContinue.setOnClickListener { viewModel.postAction(getProfile(),FillYourProfileActions.ContinueClicked) }
         setupEgPhoneNumberUITextConditions()
         binding.ccp.registerCarrierNumberEditText(binding.etPhoneNumber)
     }
@@ -47,5 +48,16 @@ class FillYourProfileFragment :
                 binding.etPhoneNumber.text = null
             }
         }
+    }
+    /**
+     * TODO this method assumes that data are filled appropriately without any validation. Add some later.
+     * */
+    private fun getProfile() : Profile{
+        return Profile(
+            binding.etFullName.text.toString(),
+            binding.etNameTag.text.toString(),
+            Sex.MALE,
+            binding.etPhoneNumber.text.toString()
+        )
     }
 }
