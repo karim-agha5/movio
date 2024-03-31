@@ -6,21 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.Fragment
+import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.util.ConstantStrings
 import com.example.movio.databinding.FragmentFillYourProfileBinding
+import com.example.movio.feature.account_setup.fill_profile.actions.FillYourProfileActions
+import com.example.movio.feature.account_setup.fill_profile.models.Profile
+import com.example.movio.feature.account_setup.fill_profile.status.FillYourProfileStatus
 import com.example.movio.feature.account_setup.fill_profile.status.Sex
 
-class FillYourProfileFragment : Fragment() {
+class FillYourProfileFragment :
+    BaseFragment<FragmentFillYourProfileBinding, Profile,FillYourProfileActions,FillYourProfileStatus>(FillYourProfileFragment::class.java) {
 
-    private lateinit var binding: FragmentFillYourProfileBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentFillYourProfileBinding.inflate(inflater,container,false)
-        return binding.root
+    //private lateinit var binding: FragmentFillYourProfileBinding
+    override fun inflateBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentFillYourProfileBinding {
+        return FragmentFillYourProfileBinding.inflate(inflater,container,false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
