@@ -11,7 +11,7 @@ import com.example.movio.feature.account_setup.fill_profile.models.Profile
 import com.example.movio.feature.account_setup.fill_profile.status.FillYourProfileStatus
 
 class FillYourProfileViewModel(
-    private val application: Application
+    application: Application
 ) : BaseViewModel<Profile,FillYourProfileActions,FillYourProfileStatus>(application){
 
     override val coordinator: Coordinator by CoordinatorDelegate(application as MovioApplication)
