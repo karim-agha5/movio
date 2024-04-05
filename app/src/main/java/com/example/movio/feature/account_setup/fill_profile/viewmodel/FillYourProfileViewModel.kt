@@ -1,6 +1,7 @@
 package com.example.movio.feature.account_setup.fill_profile.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.movio.core.MovioApplication
 import com.example.movio.core.common.BaseViewModel
@@ -32,6 +33,13 @@ class FillYourProfileViewModel(
     }
 
     override fun postAction(data: Profile?, action: FillYourProfileActions) {
-        TODO("Not yet implemented")
+        when(action){
+            is FillYourProfileActions.ContinueClicked -> onContinueClicked(data)
+            else -> {/* Do Nothing */}
+        }
+    }
+
+    private fun onContinueClicked(profile: Profile?){
+        Log.i("MainActivity", "onContinueClicked -> $profile")
     }
 }
