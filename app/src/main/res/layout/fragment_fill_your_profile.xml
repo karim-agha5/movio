@@ -64,7 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:text="@{profile.component1}"
+                android:onTextChanged="(text, start, before, count) -> "
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -95,7 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:text="@{profile.component2}"/>
+                android:text="@{profile.nameTag}"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -127,7 +127,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="none"
                 app:dropDownBackgroundTint="@color/containerColor"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                />
 
         </com.google.android.material.textfield.TextInputLayout>
 
