@@ -1,7 +1,6 @@
 package com.example.movio.feature.account_setup.fill_profile.views
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,15 +27,12 @@ class FillYourProfileFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val profile = Profile()
-        binding.profile = profile
         initSexDropDownMenuUIState()
         binding.actSex.setOnItemClickListener { _, _, pos, id ->
 
         }
         binding.btnContinue.setOnClickListener {
-            //viewModel.postAction(getProfile(),FillYourProfileActions.ContinueClicked)
-            Log.i("MainActivity", "$profile")
+            viewModel.postAction(getProfile(),FillYourProfileActions.ContinueClicked)
         }
         binding.etFullName.doOnTextChanged { text, start, before, count ->  }
         setupEgPhoneNumberUITextConditions()
