@@ -4,9 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable
-            name="profile"
-            type="com.example.movio.feature.account_setup.fill_profile.models.Profile" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -63,9 +61,7 @@
                 android:id="@+id/et_full_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:onTextChanged="(text, start, before, count) -> "
-                />
+                android:textColor="@color/white" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
