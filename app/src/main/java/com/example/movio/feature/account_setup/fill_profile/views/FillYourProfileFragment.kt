@@ -35,9 +35,6 @@ class FillYourProfileFragment :
         binding.btnContinue.setOnClickListener {
             viewModel.postAction(getProfile(), FillYourProfileActions.ContinueClicked)
         }
-        binding.etFullName.doOnTextChanged { text, start, before, count ->
-            fullName = text.toString()
-        }
         setupEgPhoneNumberUITextConditions()
         binding.ccp.registerCarrierNumberEditText(binding.etPhoneNumber)
     }
