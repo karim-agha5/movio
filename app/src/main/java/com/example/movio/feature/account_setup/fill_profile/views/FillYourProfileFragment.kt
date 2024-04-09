@@ -1,13 +1,14 @@
 package com.example.movio.feature.account_setup.fill_profile.views
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.lifecycleScope
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.util.ConstantStrings
 import com.example.movio.databinding.FragmentFillYourProfileBinding
@@ -16,6 +17,7 @@ import com.example.movio.feature.account_setup.fill_profile.models.Profile
 import com.example.movio.feature.account_setup.fill_profile.status.FillYourProfileStatus
 import com.example.movio.feature.account_setup.fill_profile.status.Sex
 import com.example.movio.feature.account_setup.fill_profile.viewmodel.FillYourProfileFieldValidationViewModel
+import kotlinx.coroutines.launch
 
 class FillYourProfileFragment :
     BaseFragment<FragmentFillYourProfileBinding, Profile, FillYourProfileActions, FillYourProfileStatus>(FillYourProfileFragment::class.java) {
@@ -36,9 +38,17 @@ class FillYourProfileFragment :
         initSexDropDownMenuUIState()
         setupEgPhoneNumberUITextConditions()
         binding.actSex.setOnItemClickListener { _, _, pos, id -> chosenSex = sexValues[pos] }
-        binding.btnContinue.setOnClickListener { viewModel.postAction(getProfile(), FillYourProfileActions.ContinueClicked) }
+        binding.btnContinue.setOnClickListener {
+            //viewModel.postAction(getProfile(), FillYourProfileActions.ContinueClicked)
+            fieldsViewModel.validate(getProfile())
+        }
         binding.ccp.registerCarrierNumberEditText(binding.etPhoneNumber)
-        fieldsViewModel.viewModelScope
+
+        lifecycleScope.launch {
+            fieldsViewModel.fullNameUiState.collect{
+                Log.i("MainActivity", "$it")
+            }
+        }
     }
 
     private fun initSexDropDownMenuUIState() {
