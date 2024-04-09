@@ -46,7 +46,13 @@ class FillYourProfileFragment :
 
         lifecycleScope.launch {
             fieldsViewModel.fullNameUiState.collect{
-                Log.i("MainActivity", "$it")
+                Log.i("MainActivity", "full name -> $it")
+            }
+        }
+
+        lifecycleScope.launch {
+            fieldsViewModel.nameTagUiState.collect{
+                Log.i("MainActivity", "name tag -> $it")
             }
         }
     }
