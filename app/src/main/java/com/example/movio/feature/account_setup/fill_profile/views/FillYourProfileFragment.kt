@@ -17,7 +17,8 @@ import com.example.movio.feature.account_setup.fill_profile.status.Sex
 class FillYourProfileFragment :
     BaseFragment<FragmentFillYourProfileBinding, Profile, FillYourProfileActions, FillYourProfileStatus>(FillYourProfileFragment::class.java) {
 
-    private lateinit var fullName: String
+    private val sexValues = arrayOf(Sex.MALE,Sex.FEMALE)
+    private var chosenSex: Sex = sexValues[0]
 
     override fun inflateBinding(
         inflater: LayoutInflater,
@@ -29,13 +30,9 @@ class FillYourProfileFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initSexDropDownMenuUIState()
-        binding.actSex.setOnItemClickListener { _, _, pos, id ->
-
-        }
-        binding.btnContinue.setOnClickListener {
-            viewModel.postAction(getProfile(), FillYourProfileActions.ContinueClicked)
-        }
         setupEgPhoneNumberUITextConditions()
+        binding.actSex.setOnItemClickListener { _, _, pos, id -> chosenSex = sexValues[pos] }
+        binding.btnContinue.setOnClickListener { viewModel.postAction(getProfile(), FillYourProfileActions.ContinueClicked) }
         binding.ccp.registerCarrierNumberEditText(binding.etPhoneNumber)
     }
 
@@ -69,7 +66,7 @@ class FillYourProfileFragment :
         return Profile(
             binding.etFullName.text.toString(),
             binding.etNameTag.text.toString(),
-            Sex.MALE,
+            chosenSex,
             binding.etPhoneNumber.text.toString()
         )
     }
