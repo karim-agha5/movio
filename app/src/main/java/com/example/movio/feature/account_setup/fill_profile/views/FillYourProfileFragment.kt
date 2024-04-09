@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import com.example.movio.core.common.BaseFragment
 import com.example.movio.core.util.ConstantStrings
 import com.example.movio.databinding.FragmentFillYourProfileBinding
@@ -13,12 +15,14 @@ import com.example.movio.feature.account_setup.fill_profile.actions.FillYourProf
 import com.example.movio.feature.account_setup.fill_profile.models.Profile
 import com.example.movio.feature.account_setup.fill_profile.status.FillYourProfileStatus
 import com.example.movio.feature.account_setup.fill_profile.status.Sex
+import com.example.movio.feature.account_setup.fill_profile.viewmodel.FillYourProfileFieldValidationViewModel
 
 class FillYourProfileFragment :
     BaseFragment<FragmentFillYourProfileBinding, Profile, FillYourProfileActions, FillYourProfileStatus>(FillYourProfileFragment::class.java) {
 
     private val sexValues = arrayOf(Sex.MALE,Sex.FEMALE)
     private var chosenSex: Sex = sexValues[0]
+    private val fieldsViewModel: FillYourProfileFieldValidationViewModel by viewModels {FillYourProfileFieldValidationViewModel.factory}
 
     override fun inflateBinding(
         inflater: LayoutInflater,
@@ -34,6 +38,7 @@ class FillYourProfileFragment :
         binding.actSex.setOnItemClickListener { _, _, pos, id -> chosenSex = sexValues[pos] }
         binding.btnContinue.setOnClickListener { viewModel.postAction(getProfile(), FillYourProfileActions.ContinueClicked) }
         binding.ccp.registerCarrierNumberEditText(binding.etPhoneNumber)
+        fieldsViewModel.viewModelScope
     }
 
     private fun initSexDropDownMenuUIState() {
