@@ -46,13 +46,22 @@ class FillYourProfileFieldValidationViewModel(
         )
     val nameTagUiState = _nameTagUiState.asSharedFlow()
 
+    private val _phoneNumberUiState: MutableSharedFlow<ValidationResultState> =
+        MutableSharedFlow(
+            replay = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST
+        )
+    val phoneNumberUiState = _phoneNumberUiState.asSharedFlow()
+
     init {
         _fullNameUiState.tryEmit(ValidationResultState.Neutral)
         _nameTagUiState.tryEmit(ValidationResultState.Neutral)
+        _phoneNumberUiState.tryEmit(ValidationResultState.Neutral)
     }
 
     fun validate(profile: Profile){
         _fullNameUiState.tryEmit(validateFullName.execute(profile.fullName))
         _nameTagUiState.tryEmit(validateNameTag.execute(profile.nameTag))
+        //_phoneNumberUiState.tryEmit(validateNameTag.execute(profile.nameTag))
     }
 }
