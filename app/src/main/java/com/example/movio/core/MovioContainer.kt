@@ -1,11 +1,11 @@
 package com.example.movio.core
 
 import android.app.Application
-import androidx.activity.ComponentActivity
 import com.example.movio.core.helpers.ViewModelsFactoryProvider
 import com.example.movio.core.navigation.RootCoordinator
+import com.example.movio.feature.account_setup.fill_profile.use_cases.ValidateFullName
+import com.example.movio.feature.account_setup.fill_profile.use_cases.ValidateNameTag
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
-import com.example.movio.feature.authentication.helpers.AuthenticationResultCallbackLauncher
 import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
 import com.example.movio.feature.authentication.services.GoogleSignInService
 import com.example.movio.feature.authentication.services.TwitterAuthenticationService
@@ -32,6 +32,8 @@ class MovioContainer(private val application: Application){
         RootCoordinator(application,viewModelsFactoryProvider,firebaseAuth, authenticationHelper,userManager)
     val validateEmail = ValidateEmail()
     val validatePassword = ValidatePassword()
+    val validateFullName = ValidateFullName()
+    val validateNameTag = ValidateNameTag()
     val authenticationRepository = AuthenticationRepository(
         googleSignInService,
         twitterAuthenticationService,
