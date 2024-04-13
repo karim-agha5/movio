@@ -6,5 +6,6 @@ enum class ValidationFailureTypes(val errorMessage: String  ) {
     EMAIL_PATTERN_MISMATCH("The email format is incorrect"),
     PASSWORD_FIELD_EMPTY("Please fill the password field"),
     PASSWORD_LENGTH("The password must be 6 characters or more"),
-    FULL_NAME_FIELD_EMPTY("Please fill the full name field")
+    FULL_NAME_FIELD_EMPTY("Please fill the full name field"),
+    UNABLE_TO_CONTINUE("Unable to continue due to invalid fields")
 }
