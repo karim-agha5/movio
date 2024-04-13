@@ -17,6 +17,7 @@ import com.example.movio.feature.account_setup.fill_profile.models.Profile
 import com.example.movio.feature.account_setup.fill_profile.status.FillYourProfileStatus
 import com.example.movio.feature.account_setup.fill_profile.status.Sex
 import com.example.movio.feature.account_setup.fill_profile.viewmodel.FillYourProfileFieldValidationViewModel
+import com.example.movio.feature.common.status.ValidationResultState
 import kotlinx.coroutines.launch
 
 class FillYourProfileFragment :
@@ -59,6 +60,16 @@ class FillYourProfileFragment :
         lifecycleScope.launch {
             fieldsViewModel.phoneNumberUiState.collect{
                 Log.i("MainActivity", "phone number -> $it")
+            }
+        }
+
+        lifecycleScope.launch {
+            fieldsViewModel.continueUiState.collect{
+                when(it){
+                    is ValidationResultState.Success -> Log.i("MainActivity", "can navigate")
+                    is ValidationResultState.Failure -> Log.i("MainActivity", "cannot navigate")
+                    else -> Log.i("MainActivity", "neutral")
+                }
             }
         }
     }
