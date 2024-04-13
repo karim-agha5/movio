@@ -8,10 +8,13 @@ import com.example.movio.feature.account_setup.fill_profile.models.Profile
 import com.example.movio.feature.account_setup.fill_profile.use_cases.ValidateFullName
 import com.example.movio.feature.account_setup.fill_profile.use_cases.ValidateNameTag
 import com.example.movio.feature.account_setup.fill_profile.use_cases.ValidatePhoneNumber
+import com.example.movio.feature.common.status.ValidationFailureTypes
 import com.example.movio.feature.common.status.ValidationResultState
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class FillYourProfileFieldValidationViewModel(
     private val validateFullName: ValidateFullName,
@@ -56,6 +59,9 @@ class FillYourProfileFieldValidationViewModel(
         )
     val phoneNumberUiState = _phoneNumberUiState.asSharedFlow()
 
+    private val _continueUiState: MutableStateFlow<ValidationResultState> = MutableStateFlow(ValidationResultState.Neutral)
+    val continueUiState = _continueUiState.asStateFlow()
+
     init {
         _fullNameUiState.tryEmit(ValidationResultState.Neutral)
         _nameTagUiState.tryEmit(ValidationResultState.Neutral)
@@ -63,8 +69,22 @@ class FillYourProfileFieldValidationViewModel(
     }
 
     fun validate(profile: Profile){
-        _fullNameUiState.tryEmit(validateFullName.execute(profile.fullName))
-        _nameTagUiState.tryEmit(validateNameTag.execute(profile.nameTag))
-        _phoneNumberUiState.tryEmit(validatePhoneNumber.execute(profile.nameTag))
+        val fullNameState = validateFullName.execute(profile.fullName)
+        val nameTagState = validateNameTag.execute(profile.nameTag)
+        val phoneNumberState = validatePhoneNumber.execute(profile.nameTag)
+
+        _fullNameUiState.tryEmit(fullNameState)
+        _nameTagUiState.tryEmit(nameTagState)
+        _phoneNumberUiState.tryEmit(phoneNumberState)
+
+        if(
+            nameTagState == ValidationResultState.Success
+            &&
+            phoneNumberState == ValidationResultState.Success
+            ){
+            _continueUiState.value = ValidationResultState.Success
+        }else{
+            _continueUiState.value = ValidationResultState.Failure(ValidationFailureTypes.UNABLE_TO_CONTINUE)
+        }
     }
 }
