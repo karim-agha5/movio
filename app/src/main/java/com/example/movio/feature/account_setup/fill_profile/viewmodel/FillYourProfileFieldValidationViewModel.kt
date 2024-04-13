@@ -7,6 +7,7 @@ import com.example.movio.core.MovioApplication
 import com.example.movio.feature.account_setup.fill_profile.models.Profile
 import com.example.movio.feature.account_setup.fill_profile.use_cases.ValidateFullName
 import com.example.movio.feature.account_setup.fill_profile.use_cases.ValidateNameTag
+import com.example.movio.feature.account_setup.fill_profile.use_cases.ValidatePhoneNumber
 import com.example.movio.feature.common.status.ValidationResultState
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 class FillYourProfileFieldValidationViewModel(
     private val validateFullName: ValidateFullName,
-    private val validateNameTag: ValidateNameTag
+    private val validateNameTag: ValidateNameTag,
+    private val validatePhoneNumber: ValidatePhoneNumber
 ) : ViewModel(){
 
     companion object{
@@ -24,7 +26,8 @@ class FillYourProfileFieldValidationViewModel(
                 val application = extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as MovioApplication
                 return FillYourProfileFieldValidationViewModel(
                     application.movioContainer.validateFullName,
-                    application.movioContainer.validateNameTag
+                    application.movioContainer.validateNameTag,
+                    application.movioContainer.validatePhoneNumber
                 ) as T
             }
         }
@@ -62,6 +65,6 @@ class FillYourProfileFieldValidationViewModel(
     fun validate(profile: Profile){
         _fullNameUiState.tryEmit(validateFullName.execute(profile.fullName))
         _nameTagUiState.tryEmit(validateNameTag.execute(profile.nameTag))
-        //_phoneNumberUiState.tryEmit(validateNameTag.execute(profile.nameTag))
+        _phoneNumberUiState.tryEmit(validatePhoneNumber.execute(profile.nameTag))
     }
 }

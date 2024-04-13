@@ -5,6 +5,7 @@ import com.example.movio.core.helpers.ViewModelsFactoryProvider
 import com.example.movio.core.navigation.RootCoordinator
 import com.example.movio.feature.account_setup.fill_profile.use_cases.ValidateFullName
 import com.example.movio.feature.account_setup.fill_profile.use_cases.ValidateNameTag
+import com.example.movio.feature.account_setup.fill_profile.use_cases.ValidatePhoneNumber
 import com.example.movio.feature.authentication.helpers.AuthenticationHelper
 import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
 import com.example.movio.feature.authentication.services.GoogleSignInService
@@ -34,6 +35,7 @@ class MovioContainer(private val application: Application){
     val validatePassword = ValidatePassword()
     val validateFullName = ValidateFullName()
     val validateNameTag = ValidateNameTag()
+    val validatePhoneNumber = ValidatePhoneNumber()
     val authenticationRepository = AuthenticationRepository(
         googleSignInService,
         twitterAuthenticationService,

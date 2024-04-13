@@ -55,6 +55,12 @@ class FillYourProfileFragment :
                 Log.i("MainActivity", "name tag -> $it")
             }
         }
+
+        lifecycleScope.launch {
+            fieldsViewModel.phoneNumberUiState.collect{
+                Log.i("MainActivity", "phone number -> $it")
+            }
+        }
     }
 
     private fun initSexDropDownMenuUIState() {
