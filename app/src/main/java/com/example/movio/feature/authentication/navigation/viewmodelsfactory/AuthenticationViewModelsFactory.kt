@@ -10,7 +10,6 @@ import com.example.movio.core.common.Status
 import com.example.movio.feature.account_setup.fill_profile.viewmodel.FillYourProfileViewModel
 import com.example.movio.feature.account_setup.fill_profile.viewmodel.FillYourProfileViewModelFactory
 import com.example.movio.feature.account_setup.fill_profile.views.FillYourProfileFragment
-import com.example.movio.feature.authentication.services.EmailAndPasswordAuthenticationService
 import com.example.movio.feature.authentication.signin.viewmodel.SignInViewModel
 import com.example.movio.feature.authentication.signin.viewmodel.SignInViewModelFactory
 import com.example.movio.feature.authentication.signin.views.SignInFragment
@@ -38,7 +37,6 @@ class AuthenticationViewModelsFactory(
 
     private fun createSignInViewModel() =
         SignInViewModelFactory(
-            EmailAndPasswordAuthenticationService.getInstance(movioContainer.firebaseAuth),
             application,
             movioContainer.authenticationRepository
         ).create(SignInViewModel::class.java)
