@@ -1,7 +1,6 @@
 package com.example.movio.feature.authentication.signin.views
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,11 +52,6 @@ class SignInFragment :
     private lateinit var progressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
     private lateinit var credentialsProgressIndicatorDrawable: IndeterminateDrawable<CircularProgressIndicatorSpec>
 
-
-    /*override fun onAttach(context: Context) {
-        super.onAttach(context)
-        activity?.lifecycle?.addObserver(this)
-    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -229,7 +223,6 @@ class SignInFragment :
         stopGoogleAuthenticationLoading()
         stopTwitterAuthenticationLoading()
         stopCredentialsAuthenticationLoading()
-        Log.i("MainActivity", "Inside sign in fragment")
     }
 
     private fun isEmailFieldValid() : Boolean {
