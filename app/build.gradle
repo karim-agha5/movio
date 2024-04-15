@@ -51,6 +51,9 @@ dependencies {
     // Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:32.2.0')
 
+    // Firebase Realtime Database
+    implementation("com.google.firebase:firebase-database")
+
     // Google Sign-In
     implementation 'com.google.android.gms:play-services-auth:20.7.0'
 
